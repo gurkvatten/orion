@@ -1,0 +1,169 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MainWindow: Adw.ApplicationWindow {
+  default-width: 1440;
+  default-height: 900;
+  name: "main-window";
+
+  realize => $main_window_realize();
+  unrealize => $main_window_unrealize();
+
+  // note: AdwTabOverview should be a direct child of the window
+  // (see https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1.7/class.TabOverview.html), 
+  // otherwise the tab overview button will not work
+
+  content: Adw.TabOverview tab_overview {
+    enable-new-tab: true;
+    create-tab => $on_create_tab();
+
+    child: Overlay {
+      Adw.OverlaySplitView overlay_split_view {
+        show-sidebar: false; // initial state (avoids flickering)
+
+        sidebar: $Sidebar sidebar {
+        };
+
+        content: Adw.OverlaySplitView js_sidebar_split_view {
+          show-sidebar: false;
+          sidebar-position: end;
+
+          sidebar: $JsSidebar js_sidebar {
+
+          };
+        
+          content: Adw.ToolbarView main_toolbar_view {
+            // If the toolbar is in auto-show mode, we want to display
+            // it on top of the content (z-axis), not above it (y-axis).
+            extend-content-to-top-edge: true;
+
+            [top]
+            Gtk.Overlay top_bar_overlay {
+              [overlay]
+              Gtk.Revealer main_ui_revealer {
+                // this CSS class is important to avoid transparent background in the top header bar
+                styles ["window-bg-color-background"]
+                transition-type: slide_down;
+                transition-duration: 500; // milliseconds
+                reveal-child: true;
+
+                child: Gtk.Box main_box {
+                  orientation: vertical;
+                  spacing: 0;
+                  $HeaderBar header_bar {halign:fill; hexpand:true;}
+                  $BookmarksBar bookmarks_bar {}
+                  // Gtk.Box tab_bar_box {
+                  //   visible: false; // we use custom TabBar below instead
+                  //   Adw.TabBar page_content_tabbar {
+                  //     autohide: false;
+                  //     styles ["inline"]
+                  //   }
+                  //   /*
+                  //   Gtk.DropTarget {
+                  //     actions: move;
+                  //     drop => $on_tab_bar_drop_target_drop();
+                  //     propagation-phase: target;
+                  //   }
+                  //   */
+                  // }
+                  
+                  $TabBar tab_bar {
+                    hexpand: true;
+                    halign: fill;
+                    visible: true;
+                  }
+                  
+                  $EraseElementsBar erase_elements_bar {
+                    hexpand:true;
+                    halign: center;
+                    visible: false;
+                  }
+                  
+                  $FindBar find_bar {}
+
+                  //NOTE: only for debugging, shows current window id
+                  Label {
+                    label: bind ($get_window_id_label(template.window-id)) as <string>;
+                    visible: false;
+                  }
+                };
+              }
+            }
+
+            content: Box page_content_box {
+              vexpand: true;
+              hexpand: true;
+              orientation: vertical;
+
+              styles ["gray-background"]
+
+              Overlay {
+                Box page_tabview_box {
+                  vexpand: true;
+                  hexpand: true;
+                  // child OrionWebviewTabView (or multiple such children) is set in the code
+                }
+
+                [overlay]
+                Gtk.Revealer link_overlay_revealer {
+                  can-target: false; //To prevent this overlay from blocking mouse inputs
+                  transition-type: crossfade;
+                  reveal-child: false;
+                  Box {
+                    halign: start;
+                    valign: end; 
+                    styles ["gray-background"]
+
+                    Label link_label{}
+                  }
+                }
+              }
+            };
+          };
+        };
+      }
+
+      [overlay]
+      $TabSwitcher tab_switcher {
+        halign:center;
+        valign:center;
+        visible: false;
+        margin-start: 24;
+        margin-end: 24;
+        margin-top: 24;
+        margin-bottom: 24;
+      }
+      get-child-position => $tab_switcher_overlay_get_child_position();
+    };
+  };
+  DropControllerMotion {
+    enter => $on_main_window_drop_controller_motion_enter();
+    leave => $on_main_window_drop_controller_motion_leave();
+    propagation-phase: capture;
+  }
+  
+  DropTarget drop_target {
+    propagation-phase: bubble;
+    drop => $on_main_window_drop_target_drop();
+    accept => $on_main_window_drop_target_accept();
+  }
+
+  EventControllerKey {
+    propagation-phase: capture;
+    key-pressed => $on_main_window_key_pressed(tab_switcher);
+    key-released => $on_main_window_key_released(tab_switcher);
+  }
+
+  GestureClick {
+    button: 1;
+    propagation-phase: capture;
+    pressed => $on_main_window_primary_pressed() swapped;
+  }
+  ShortcutController programmable_button_shortcut_controller {
+    scope: managed; //meaning shortcut handling is done by first ancestor GtkShortcutManager, that is, our main window
+  }
+  notify::is-active => $on_main_window_notify_is_active();
+  EventControllerMotion {
+    motion => $on_mouse_motion() swapped;
+  }
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Orion API Tests — Corpus Run</title>
+  <link rel="stylesheet" href="lib/app.css">
+</head>
+<body>
+  <a class="back" href="popup.html">&larr; Back to API tests</a>
+  <h1 id="title">Running corpus…</h1>
+  <div id="summary" class="running">Starting…</div>
+  <table id="results">
+    <thead>
+      <tr>
+        <th>Suite</th>
+        <th>Test</th>
+        <th>Result</th>
+        <th>Details</th>
+        <th style="text-align:right">Time</th>
+      </tr>
+    </thead>
+    <!-- one <tbody> per suite is appended here by aggregate.js -->
+  </table>
+  <div id="frames" style="display:none"></div>
+
+  <script src="lib/env.js"></script>
+  <script src="lib/highlight.js"></script>
+  <script src="lib/results_view.js"></script>
+  <script src="corpus/catalog.js"></script>
+  <script src="aggregate.js"></script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $SettingsForWebsitePopover: Adw.Dialog {
+  height-request: 800;
+  name: "settings-for-website-popover";
+  title: _("Website Settings");
+
+  Adw.ToolbarView toolbar_view {
+    [top]
+    Adw.HeaderBar {}
+
+    ScrolledWindow {
+      margin-start: 8;
+      margin-bottom: 12;
+      margin-end: 8;
+
+      hscrollbar-policy: never;
+      Box {
+        orientation: vertical;
+        valign: start;
+        halign: start;
+        margin-start: 8;
+        margin-top: 8;
+        margin-end: 16; // leave extra space on the right for vertical scrollbar
+        
+        Box {
+          margin-bottom: 16;
+
+          Label website_label {
+            label: _("Settings for website:");
+            margin-top: 8;
+            margin-bottom: 8;
+          }
+
+          Button reset_button {
+            label: _("Reset");
+            hexpand: true;
+            halign: end;
+            valign: center;
+            clicked => $on_reset_button_clicked();
+          }
+        }
+
+        Box {
+          orientation: horizontal;
+          halign: fill;
+          hexpand: true;
+        
+          Label {
+            label: _("Compatibility Mode"); // use header capitalization in switch labels
+          }
+
+          Button {
+            margin-start: 8;
+            clicked => $on_compatibility_help_clicked();
+
+            Image {
+              icon-name: "question-round-outline-symbolic";
+              pixel-size: 20;
+            }
+          }
+
+          Switch compatibility_mode_switch {
+            hexpand: true;
+            halign: end;
+            valign: center;
+            map => $on_compatibility_mode_switch_map();
+            state-set => $on_compatibility_mode_switch_state_set();
+          }
+        }
+        Separator {
+          margin-top:20;
+          margin-bottom:0;
+          margin-end:0;
+          orientation:horizontal;
+        }
+        
+        Grid {
+          hexpand:false;
+          row-spacing:0;
+          CheckButton enable_content_blockers_button {
+            margin-top: 20;
+            layout {
+              row:0;
+              column:0;
+            }
+            halign:start;
+            label:_("Enable Content Blockers");
+            map => $on_enable_content_blockers_button_map();
+            toggled => $on_enable_content_blockers_button_toggled();
+          }
+          CheckButton enable_intelligent_tracking_prevention_button {
+            layout {
+              row:1;
+              column:0;
+            }
+            halign:start;
+            label:_("Enable Intelligent Tracking Prevention");
+            map => $on_enable_intelligent_tracking_prevention_button_map();
+            toggled => $on_enable_intelligent_tracking_prevention_button_toggled();
+            //sensitive: false; // not working properly at the moment, would apply to each webview in webview factory
+          }
+          CheckButton block_web_fonts_button {
+            layout {
+              row:2;
+              column:0;
+            }
+            halign:start;
+            label:_("Block Web Fonts");
+            map => $on_block_web_fonts_button_map();
+            toggled => $on_block_web_fonts_button_toggled();
+          }
+          CheckButton enable_javascript_button {
+            layout {
+              row:3;
+              column:0;
+            }
+            halign:start;
+            label:_("Enable JavaScript");
+            map => $on_enable_javascript_button_map();
+            toggled => $on_enable_javascript_button_toggled();
+          }
+          CheckButton enable_cookies_button {
+            layout {
+              row:4;
+              column:0;
+            }
+            halign:start;
+            label:_("Enable Cookies");
+            map => $on_enable_cookies_button_map();
+            toggled => $on_enable_cookies_button_toggled();
+          }
+          CheckButton enable_reader_mode_button {
+            sensitive: true; // TODO: implement this
+            layout {
+              row:5;
+              column:0;
+            }
+            halign:start;
+            label:_("Enable Reader Mode");
+            map => $on_enable_reader_mode_button_map();
+            toggled => $on_enable_reader_mode_button_toggled();
+          }
+          CheckButton enable_page_tweaks_button {
+            layout {
+              row:6;
+              column:0;
+            }
+            halign:start;
+            label:_("Enable Page Tweaks");
+            map => $on_enable_page_tweaks_button_map();
+            toggled => $on_enable_page_tweaks_button_toggled();
+          }
+        }
+        Separator {
+          margin-top:20;
+          margin-bottom:20;
+          margin-end:0;
+          orientation:horizontal;
+        }
+        Box {
+          orientation: horizontal;
+          
+          Expander {
+            label-widget: Label {
+              label: _("Extension permissions");
+              margin-start: 8;
+            };
+            
+            Grid {
+              hexpand:false;
+              row-spacing:0;
+              Box one_password_setting {
+                sensitive: false; // TODO: implement this
+                layout {
+                  row:0;
+                  column:0;
+                }
+                halign: start;
+                Label {
+                  margin-start: 0;
+                  margin-top: 20;
+                  label:_("1Password:");
+                }
+              }
+              Box {
+                sensitive: false; // TODO: implement this
+                margin-top: 20;
+                layout {
+                  row:0;
+                  column:1;
+                }
+                margin-start:150;
+                halign:start;
+                DropDown one_password_combo_box {
+                  hexpand:true;
+                  model: StringList {
+                    strings [
+                      _("All Time"),
+                      _("One Hour"),
+                      _("One Day"),
+                      _("One Week"),
+                      _("One Month"),
+                    ]
+                  };
+                }
+              }
+              Box last_pass_setting {
+                sensitive: false; // TODO: implement this
+                layout {
+                  row:1;
+                  column:0;
+                }
+                halign: start;
+                Label {
+                  margin-start: 0;
+                  margin-top: 20;
+                  label:_("LastPass");
+                }
+              }
+              Box {
+                sensitive: false; // TODO: implement this
+                margin-top: 20;
+                layout {
+                  row:1;
+                  column:1;
+                }
+                margin-start:150;
+                halign:start;
+                DropDown last_pass_combo_box {
+                  hexpand:true;
+                  model: StringList {
+                    strings [
+                      _("All Time"),
+                      _("One Hour"),
+                      _("One Day"),
+                      _("One Week"),
+                      _("One Month"),
+                    ]
+                  };
+                }
+              }
+            }
+          }
+        }
+            
+        Separator {
+          margin-top:20;
+          margin-bottom:20;
+          margin-end:0;
+          orientation:horizontal;
+        }
+        Grid {
+          hexpand:false;
+          row-spacing:0;
+          Box page_zoom_setting {
+            layout {
+              row:0;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Page zoom:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:0;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown page_zoom_drop_down {
+              hexpand:true;
+              model: StringList {
+                strings [
+                  _("50%"),
+                  _("75%"),
+                  _("80%"),
+                  _("85%"),
+                  _("90%"),
+                  _("95%"),
+                  _("100%"),
+                  _("115%"),
+                  _("125%"),
+                  _("150%"),
+                  _("175%"),
+                  _("200%"),
+                  _("250%"),
+                  _("300%"),
+                ]
+              };
+              map => $on_page_zoom_drop_down_map();
+              notify::selected => $on_page_zoom_drop_down_notify_selected();
+            }
+          }
+
+          Box auto_play_setting {
+            layout {
+              row:1;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Auto-Play:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:1;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown auto_play_combo_box {
+              hexpand:true;
+              sensitive:true;
+              model: StringList {
+                strings [
+                  _("Allow All Auto-Play"),
+                  _("Stop Media with Sound"),
+                  _("Never Auto-Play"),
+                ]
+              };
+              map => $on_auto_play_combo_box_map();
+              notify::selected => $on_auto_play_combo_box_notify_selected();
+            }
+          }
+          Box picture_in_picture_setting {
+            layout {
+              row:2;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Picture in Picture:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:2;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown picture_in_picture_combo_box {
+              hexpand:true;
+              sensitive:false;
+              model: StringList {
+                strings [
+                  _("Automatic"),
+                  _("Manual"),
+                ]
+              };
+              map => $on_picture_in_picture_combo_box_map();
+              notify::selected => $on_picture_in_picture_combo_box_notify_selected();
+            }
+          }
+          Box pop_up_windows_setting{
+            layout {
+              row:3;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Pop-up Windows:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:3;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown pop_up_windows_combo_box {
+              hexpand:true;
+              sensitive:true;
+              model: StringList {
+                strings [
+                  _("Allow"),
+                  _("Block"),
+                  _("Block and Notify"),
+                ]
+              };
+              map => $on_pop_up_windows_combo_box_map();
+              notify::selected => $on_pop_up_windows_combo_box_notify_selected();
+            }
+          }
+          Box user_agent_setting {
+            layout {
+              row:4;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("User Agent:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:4;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown user_agent_drop_down {
+              hexpand:true;
+              model: StringList {
+                strings [
+                  _("Automatic"),
+                  _("Custom"),
+                  _("Chrome"),
+                  _("Firefox"),
+                  _("Safari"),
+                  _("Safari iPhone"),
+                  _("Safari iPad"),
+                  _("Edge"),
+                ]
+              };
+              map => $on_user_agent_drop_down_map();
+              notify::selected => $on_user_agent_drop_down_notify_selected();
+            }
+          }
+          Box ssl_certificate_check_setting {
+            layout {
+              row:5;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("SSL Certificate Check:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:5;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown ssl_certificate_check_combo_box {
+              hexpand:true;
+              sensitive:true;
+              model: StringList {
+                strings [
+                  _("Strict"),
+                  _("Ignore"),
+                ]
+              };
+              map => $on_ssl_certificate_check_combo_box_map();
+              notify::selected => $on_ssl_certificate_check_combo_box_notify_selected();
+            }
+          }
+        }
+
+        Separator {
+          margin-top:20;
+          margin-bottom:20;
+          margin-end:0;
+          orientation:horizontal;
+        }
+        
+        Grid {
+          hexpand:false;
+          row-spacing:0;
+          Box camera_setting {
+            layout {
+              row:0;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Camera:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:0;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown camera_combo_box {
+              hexpand:true;
+              model: StringList {
+                strings [
+                  _("Ask"),
+                  _("Deny"),
+                  _("Allow"),
+                ]
+              };
+              map => $on_camera_combo_box_map();
+              notify::selected => $on_camera_combo_box_notify_selected();
+            }
+          }
+          Box microphone_setting {
+            layout {
+              row:1;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Microphone:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:1;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown microphone_combo_box {
+              hexpand:true;
+              model: StringList {
+                strings [
+                  _("Ask"),
+                  _("Deny"),
+                  _("Allow"),
+                ]
+              };
+              map => $on_microphone_combo_box_map();
+              notify::selected => $on_microphone_combo_box_notify_selected();
+            }
+          }
+          Box screen_sharing_setting {
+            layout {
+              row:2;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Screen Sharing:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:2;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown screen_sharing_combo_box {
+              hexpand:true;
+              model: StringList {
+                strings [
+                  _("Ask"),
+                  _("Deny"),
+                  _("Allow"),
+                ]
+              };
+              map => $on_screen_sharing_combo_box_map();
+              notify::selected => $on_screen_sharing_combo_box_notify_selected();
+            }
+          }
+          Box location_setting {
+            layout {
+              row:3;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Location:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:3;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown location_combo_box {
+              hexpand:true;
+              model: StringList {
+                strings [
+                  _("Ask"),
+                  _("Don't Allow"),
+                  _("Allow"),
+                ]
+              };
+              map => $on_location_combo_box_map();
+              notify::selected => $on_location_combo_box_notify_selected();
+            }
+          }
+          Box notifications_setting {
+            layout {
+              row:4;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Notifications:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:4;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown notifications_combo_box {
+              hexpand:true;
+              sensitive:true;
+              model: StringList {
+                strings [
+                  _("Ask"),
+                  _("Allow"),
+                  _("Don't Allow"),
+                ]
+              };
+              map => $on_notifications_combo_box_map();
+              notify::selected => $on_notifications_combo_box_notify_selected();
+            }
+          }
+          Box downloads_setting {
+            layout {
+              row:5;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("Downloads:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:5;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown downloads_combo_box {
+              hexpand:true;
+              sensitive:true;
+              model: StringList {
+                strings [
+                  _("Ask"),
+                  _("Don't Allow"),
+                  _("Allow"),
+                ]
+              };
+              map => $on_downloads_combo_box_map();
+              notify::selected => $on_downloads_combo_box_notify_selected();
+            }
+          }
+          Box external_apps_setting {
+            layout {
+              row:6;
+              column:0;
+            }
+            halign: start;
+            Label {
+              margin-start: 0;
+              margin-top: 20;
+              label:_("External Apps:");
+            }
+          }
+          Box {
+            margin-top: 20;
+            layout {
+              row:6;
+              column:1;
+            }
+            margin-start:100;
+            halign:start;
+            DropDown external_apps_combo_box {
+              hexpand:true;
+              sensitive:true;
+              model: StringList {
+                strings [
+                  _("Ask"),
+                  _("Don't Allow"),
+                  _("Allow"),
+                ]
+              };
+              map => $on_external_apps_combo_box_map();
+              notify::selected => $on_external_apps_combo_box_notify_selected();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  GestureClick {
+    button: 1;
+    propagation-phase: bubble;
+    pressed => $on_dialog_clicked(toolbar_view);
+    //detects clicks outside of the content box, closing dialog if so
+    //(dialog widget covers whole window)
+  }
+}
+
+Popover compatibility_help_popover {
+  Box {
+    orientation: vertical;
+    margin-top: 10;
+    margin-end: 10;
+    margin-bottom: 10;
+    margin-start: 10;
+
+    Label {
+      label: _("‘Compatibility Mode’ attempts to resolve website issues. This will automatically apply the following settings:");
+      halign: start;
+      wrap: true;
+      max-width-chars: 40;
+    }
+    Label {
+      label: _("– Disable all web extensions");
+      margin-top: 8;
+      halign: start;
+      styles ["bold-text"]
+    }
+    Label {
+      label: _("– Disable content-blocker");
+      halign: start;
+    }
+    Label {
+      label: _("– Disable tracking prevention");
+      halign: start;
+    }
+    Label {
+      label: _("– Disable web-font blocking");
+      halign: start;
+    }
+    Label {
+      label: _("– Enable cookies");
+      halign: start;
+    }
+    Label {
+      label: _("– Disable page tweaks");
+      halign: start;
+    }
+    Label {
+      // This label is "Using Safari user-agent" in Mac Orion browser
+      label: _("– Using Firefox user-agent");
+      halign: start;
+    }
+  }
+}

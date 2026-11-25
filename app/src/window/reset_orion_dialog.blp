@@ -1,0 +1,297 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ResetOrionDialog: Adw.Dialog {
+  width-request: 500;
+  height-request: 700;
+  title: _("Reset Orion");
+  name: "reset-orion-dialog";
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Grid {
+      margin-end: 20;
+      Box {
+        layout {
+          row: 0;
+          column: 0;
+        }
+        valign: start;
+
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 64;
+          margin-start: 40;
+        }
+      }
+
+      Box {
+        layout {
+          row: 0;
+          column: 1;
+        }
+
+        orientation: vertical;
+        valign: center;
+        halign: start;
+        margin-start: 30;
+        margin-top: 8;
+
+        Box {
+          orientation: vertical;
+          homogeneous: true;
+          halign: start;
+        
+          Label {
+            styles [
+                "bold-text"
+              ]
+            label: _("Are you sure you want to reset Orion?");
+              }
+        }
+      
+        Box {
+          margin-top: 20;
+          Label {
+            label: _("Select the items you want to reset, then click Reset.");
+          }
+        }
+        Box {
+          Label {
+            label: _("You cannot undo this operation.");
+          }
+        }
+      
+        Box {
+          margin-top: 20;
+          Label {
+            styles [
+                "bold-text"
+              ]
+            label: _("Browsing data");
+          }
+        }
+
+        Grid {
+                hexpand:false;
+                row-spacing:0;
+                CheckButton openClearHistoryButton {
+                  margin-top: 20;
+                  layout {
+                    row:0;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Clear history");
+                  toggled => $on_clear_history_check_button_toggled();
+                  map => $on_clear_history_check_button_map();
+                  
+                }
+                CheckButton openRemoveAllBookmarksButton {
+                  layout {
+                    row:1;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove all bookmarks");
+                  toggled => $on_remove_bookmarks_check_button_toggled();
+                  map => $on_remove_bookmarks_check_button_map();
+                }
+                CheckButton openRemoveTheReadingListButton {
+                  layout {
+                    row:2;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove the reading list");
+                  toggled => $on_remove_reading_list_check_button_toggled();
+                  map => $on_remove_reading_list_check_button_map();
+                }
+                CheckButton openRemoveAllSnapshostsButton {
+                  layout {
+                    row:3;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove all snapshots");
+                  toggled => $on_remove_snapshots_check_button_toggled();
+                  map => $on_remove_snapshots_check_button_map();
+                }
+                CheckButton openRemoveAllDownloadsButton {
+                  layout {
+                    row:4;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove all downloads");
+                  toggled => $on_remove_downloads_check_button_toggled();
+                  map => $on_remove_downloads_check_button_map();
+                }
+                CheckButton openRemoveICloudAppDataButton {
+                  layout {
+                    row:5;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove server sync app data");
+                  active: false;
+                  sensitive: false;
+                  toggled => $on_remove_icloud_app_data_check_button_toggled();
+                  map => $on_remove_icloud_app_data_check_button_map();
+                }
+            }
+          Grid {
+                hexpand:false;
+                row-spacing:0;
+                Box settingOlderThan{
+                  layout {
+                    row:0;
+                    column:0;
+                  }
+                  halign: start;
+                  Label {
+                    margin-start: 0;
+                    margin-top: 20;
+                    label:_("Older than:");
+                  }
+                }
+                Box {
+                  margin-top: 20;
+                  layout {
+                    row:0;
+                    column:1;
+                  }
+                  margin-start:20;
+                  halign:start;
+                  DropDown olderThanDropDown {
+                    hexpand:true;
+                    model: StringList {
+                      strings [
+                        _("All Time"),
+                        _("One Hour"),
+                        _("One Day"),
+                        _("One Week"),
+                        _("One Month"),
+                      ]
+                    };
+                    notify::selected => $on_older_than_drop_down_notify_selected();
+                    map => $on_older_than_drop_down_map();
+                  }
+                }
+              }
+            Box {
+              margin-top: 20;
+              Label {
+                styles [
+                "bold-text"
+                ]
+                label: _("Resources");
+              }
+            }
+
+            Grid {
+                hexpand:false;
+                row-spacing:0;
+                CheckButton openResetAllSettingsButton {
+                  margin-top: 20;
+                  layout {
+                    row:0;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Reset all settings (Relaunch To Take Effect)");
+                  toggled => $on_reset_all_settings_check_button_toggled();
+                  map => $on_reset_all_settings_check_button_map();
+                }
+                CheckButton openRemoveAllCookiesButton {
+                  layout {
+                    row:1;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove all cookies");
+                  toggled => $on_remove_all_cookies_check_button_toggled();
+                  map => $on_remove_all_cookies_check_button_map();
+                }
+                CheckButton openEmptyTheBrowserCacheButton {
+                  layout {
+                    row:2;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Empty the browser cache");
+                  toggled => $on_empty_browser_cache_check_button_toggled();
+                  map => $on_empty_browser_cache_check_button_map();
+                }
+                CheckButton openEmptyLocalStorageAndDatabasesButton {
+                  layout {
+                    row:3;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Empty local storage and databases");
+                  toggled => $on_empty_local_storage_and_databases_check_button_toggled();
+                  map => $on_empty_local_storage_and_databases_check_button_map();
+                }
+                CheckButton openRemoveSavedPasswordsButton {
+                  layout {
+                    row:4;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove saved passwords");
+                  toggled => $on_remove_saved_passwords_check_button_toggled();
+                  map => $on_remove_saved_passwords_check_button_map();
+                }
+                CheckButton openRemoveAllExtensions {
+                  layout {
+                    row:5;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Remove all extensions");
+                  toggled => $on_remove_all_extensions_check_button_toggled();
+                  map => $on_remove_all_extensions_check_button_map();
+                }
+                CheckButton openCloseAllWindows {
+                  layout {
+                    row:6;
+                    column:0;
+                  }
+                  halign:start;
+                  label:_("Close all windows");
+                  toggled => $on_close_all_windows_check_button_toggled();
+                  map => $on_close_all_windows_check_button_map();
+                }
+        }
+
+        Box {
+          margin-top: 20;
+          margin-bottom: 20;
+          hexpand: true;
+          halign: end;
+
+          Button cancel_button {
+            label: _("Cancel");
+            styles ["suggested-action"]
+            clicked => $on_cancel_clicked();
+          }
+
+          Button reset_button {
+            label: _("Reset");
+            clicked => $on_reset_clicked();
+            margin-start: 8;
+          }
+        }
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, reset_button]
+}

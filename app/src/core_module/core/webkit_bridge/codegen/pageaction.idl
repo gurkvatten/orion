@@ -1,0 +1,3 @@
+service PageAction [global=browser.pageAction] {
+    listener onClicked ();
+}

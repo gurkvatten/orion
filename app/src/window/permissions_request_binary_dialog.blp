@@ -1,0 +1,80 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PermissionsRequestBinaryDialog: Adw.Dialog {
+  content-width: 320;
+  content-height: 250;
+  title: _("Permissions Request Binary");
+  //TODO nastav jmeno
+
+  Adw.ToolbarView {
+    //[top]
+   // Adw.HeaderBar {}
+
+    Box {
+      orientation: vertical;
+      Box {
+        margin-top: 20;
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 49;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+
+      Box {
+        orientation: vertical;
+        margin-top: 20;
+        margin-bottom: 20;
+        margin-end: 20;
+        margin-start: 20;
+        spacing: 10;
+
+        Label perm_label{
+          wrap: true;
+          max-width-chars: 60;
+          width-chars:15;
+          justify: center;
+          styles [
+            "bold-text"
+          ]
+          label: _("The website “https://kagi.com/” would like to use your current location.");
+        }
+
+        Label change_label{
+          wrap: true;
+          max-width-chars: 60;
+          width-chars:15;
+          justify: center;
+          label: _("You can change this setting in Orion Websites preferences.");
+        }
+
+        Box {
+          orientation: horizontal;
+          spacing: 10;
+
+          Button dont_allow_button {
+            label: _("Don't Allow");
+            styles ["suggested-action"]
+            hexpand: true;
+            halign: fill;
+            clicked => $on_dont_allow_button_clicked();
+          }
+          Button allow_once_button {
+            label: _("Allow");
+            hexpand: true;
+            halign: fill;
+            clicked => $on_allow_once_button_clicked();
+          }
+        }
+      }
+    }
+  }
+}
+SizeGroup {
+  mode: horizontal;
+  widgets [allow_once_button, dont_allow_button]
+}

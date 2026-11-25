@@ -1,0 +1,77 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $UpToDateDialog: Adw.Dialog {
+  content-width: 300;
+  content-height: 320;
+  title: _("Orion Up-to-Date");
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Box {
+      orientation: vertical;
+
+      Box {
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 60;
+          margin-start: 10;
+          margin-end: 10;
+          margin-top: 10;
+        }
+      }
+
+      Box {
+        margin-top: 16;
+        halign: center;
+        Label {
+          label: _("You’re up-to-date!");
+          styles ["bold-text"]
+        }
+      }
+      Box {
+        margin-top: 8;
+        halign: center;
+        Label {
+          label: _("Orion <VERSION> is currently the newest version available.");
+          styles ["small-text"]
+          wrap: true;
+          justify: center;
+        }
+      }
+      Box {
+        margin-top: 16;
+        halign: center;
+        Label {
+          label: _("For access to more frequent updates, please subscribe to Orion+"); // TODO: hide this label if the user is already subscribed
+          styles ["small-text"]
+          wrap: true;
+          justify: center;
+        }
+      }
+
+      Box {
+        margin-top: 16;
+        halign: center;
+        Button cancel_button {
+          label: _("Cancel");
+          clicked => $on_cancel_clicked();
+        }
+        Button get_orion_plus_button {
+          label: _("Get Orion+"); // TODO: hide this label if the user is already subscribed
+          styles ["suggested-action"]
+          margin-start: 8;
+        }
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, get_orion_plus_button]
+}

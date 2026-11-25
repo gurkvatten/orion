@@ -1,0 +1,72 @@
+using Gtk 4.0;
+//using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+template $PrivacyPopover: Popover {
+  width-request:600;
+  autohide:true;
+
+  Box {
+    margin-top:15;
+    margin-start:15;
+    margin-end:15;
+    margin-bottom:10;
+    orientation:vertical;
+    spacing:15;
+    Box {
+      hexpand:true;
+      orientation:horizontal;
+      spacing:15;
+      Image {
+        icon-name:"orion-logo";
+        halign:start;
+      }
+      Box {
+        orientation:vertical;
+        hexpand:true;
+        halign:start;
+        Label {
+          halign:start;
+          label:_("kagi.com"); //TODO: set this dynamically
+          styles ["heading"]
+        }
+        Label {
+          halign:start;
+          label:_("Privacy Report");
+        }
+      }
+      Image {
+        halign:end;
+        icon-name:"padlock2-symbolic";
+      }
+    }
+
+    Label {
+      label:_("Here belongs an AdwToggleGroup, removed for compatibility reasons because your libadwaita is older than 1.7");
+      wrap: true;
+      max-width-chars: 50;
+    }
+
+    // Adw.Toggle and Adw.ToggleGroup is not present in Adwaita 1.6 and older
+    //Adw.ToggleGroup content_toggle_group {
+    //  hexpand:true;
+    //  height-request:60;
+    //  Adw.Toggle {
+    //    label:_("XXX requests blocked"); //TODO: load correct data from program
+    //  }
+    //  Adw.Toggle {
+    //    label:_("XXX trackers prevented"); //TODO: load correct data from program
+    //  }
+    //}
+
+    ScrolledWindow {
+      hexpand:true;
+      vexpand:true;
+      height-request:150;
+      ColumnView content_column_view {
+
+      }
+    }
+  }
+}

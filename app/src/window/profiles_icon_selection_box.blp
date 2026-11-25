@@ -1,0 +1,78 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ProfilesIconSelectionBox : Box {
+  name:"profiles-icon";
+  orientation:horizontal;
+  spacing:5;
+  Adw.ToggleGroup toggle_group{ //TODO: same code as in save window popover
+    styles [ 
+      "monospace-font"
+    ]
+    hexpand:false;
+    halign:start;
+    homogeneous:true;
+    can-shrink:false;
+    
+    //code for getting the selected string relies on the exact structure,
+    //check profiles_icon_selection_get_current_selection
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#2646DE\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#871AD6\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#FF75CC\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#FF4040\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#FF9032\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#FFE340\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#59C214\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label {
+        label: "<span foreground=\"#858585\">⬤</span>";
+        use-markup:true;
+      };
+    }
+    Adw.Toggle {
+      child: Label emoji_label {
+        label:"🚀";
+      };
+    }
+  }
+  MenuButton emoji_chooser_button {
+    icon-name:"reaction-add-symbolic";
+    popover: EmojiChooser emoji_chooser { //TODO: this breaks the higher level popover, can't close in normal fashion
+    };
+  }
+}

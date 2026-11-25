@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebExtensions API Tracker</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1f2328; --muted: #656d76; --line: #d0d7de;
+    --hover: #f6f8fa; --sel: #ddf4ff; --sel-line: #54aeff;
+    --done: #1a7f37; --done-bg: #dafbe1; --prog: #9a6700; --prog-bg: #fff8c5;
+    --np: #82071e; --np-bg: #ffebe9; --chip-off: #eaeef2; --accent: #0969da;
+    --btn-bg: #f6f8fa; --matrix-no: #cf222e; --matrix-yes: #1a7f37;
+    /* Desaturated link colour for set-aside (Not Planned) rows: dimmed, but
+       still recognisably a link. */
+    --muted-link: #6a7f99;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e; --line: #30363d;
+      --hover: #161b22; --sel: #0c2d6b; --sel-line: #1f6feb;
+      --done: #3fb950; --done-bg: #12261e; --prog: #d29922; --prog-bg: #272115;
+      --np: #f85149; --np-bg: #2d1214; --chip-off: #21262d; --accent: #58a6ff;
+      --btn-bg: #21262d; --matrix-no: #f85149; --matrix-yes: #3fb950;
+      --muted-link: #7d93ab;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font: 14px/1.45 -apple-system, "Segoe UI", system-ui, sans-serif; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header { position: sticky; top: 0; z-index: 10; background: var(--bg);
+    border-bottom: 1px solid var(--line); padding: 8px 16px;
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  header h1 { font-size: 16px; margin: 0 6px 0 0; }
+  header button { padding: 4px 8px; }
+  header .meta { color: var(--muted); font-size: 12px; }
+  header input[type=search] { padding: 4px 8px; border: 1px solid var(--line);
+    border-radius: 6px; background: var(--bg); color: var(--fg); width: 200px; }
+  .plat-toggle { display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13px; color: var(--muted); user-select: none; cursor: pointer; }
+  /* Floats under the top bar rather than sitting in it, so appearing and
+     disappearing can never reflow (or wrap) the header. --chrome-h tracks
+     the real header + totals height from script, so the badge overlays the
+     list rather than covering the totals text. */
+  #dirty-tag { position: fixed; top: calc(var(--chrome-h, 75px) + 6px); left: 50%;
+    transform: translateX(-50%); z-index: 9;
+    font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px;
+    background: var(--np-bg); color: var(--np); border: 1px solid var(--np);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .3); }
+  .spacer { flex: 1; }
+  button { font: inherit; padding: 4px 10px; border: 1px solid var(--line);
+    border-radius: 6px; background: var(--btn-bg); color: var(--fg); cursor: pointer; }
+  button:hover { border-color: var(--muted); }
+  button.on { background: var(--sel); border-color: var(--sel-line); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button:disabled:hover { border-color: var(--line); }
+  /* Toolbar buttons are colour-coded by what they do — coloured edge plus a
+     subtle wash, text stays the normal foreground colour. A button showing
+     its "undo" label (Core Not Done, Undecided, …) turns red, whatever its
+     base colour, so clearing always reads the same. */
+  /* Declared after button:hover so the coloured edge survives hovering
+     (same specificity, later rule wins). */
+  button.b-blue    { border-color: rgba(31, 111, 235, .7);  background: rgba(31, 111, 235, .13); }
+  button.b-yellow  { border-color: rgba(210, 153, 34, .75); background: rgba(210, 153, 34, .14); }
+  button.b-green   { border-color: rgba(46, 160, 67, .7);   background: rgba(46, 160, 67, .14); }
+  button.b-purple  { border-color: rgba(163, 113, 247, .7); background: rgba(163, 113, 247, .14); }
+  button.b-red     { border-color: rgba(248, 81, 73, .7);   background: rgba(248, 81, 73, .12); }
+  button.b-gray    { border-color: var(--muted);            background: var(--chip-off); }
+  button.b-faint   { border-color: var(--line);             background: rgba(128, 140, 160, .10); }
+  button.undo      { border-color: rgba(248, 81, 73, .8);   background: rgba(248, 81, 73, .14);
+    color: var(--fg); }
+  #toolbar button:hover { filter: brightness(1.25); }
+
+  /* Sticks under the header, so the summary stays visible while scrolling
+     and the floating Unsaved Changes badge has a stable thing to sit below. */
+  #totals { position: sticky; top: var(--header-h, 47px); z-index: 9;
+    padding: 6px 16px; color: var(--muted); font-size: 13px;
+    background: var(--bg); border-bottom: 1px solid var(--line); }
+
+  .ns { border-bottom: 1px solid var(--line); }
+  /* min-width: max-content keeps the row background spanning the whole row
+     when a narrow window makes the page scroll sideways. */
+  .ns-head { display: flex; align-items: center; gap: 8px; padding: 6px 16px;
+    cursor: pointer; user-select: none; min-width: max-content; }
+  .ns-head:hover { background: var(--hover); }
+  .ns-head .arrow { width: 14px; flex: none; color: var(--muted); font-size: 11px; }
+  /* Enlarged hit area around the checkbox: clicks here toggle selection
+     additively (multiselect) instead of replacing it. */
+  .checkzone { display: inline-flex; align-items: center; align-self: stretch;
+    padding: 0 7px; margin: -3px 0 -3px -7px; }
+  /* Namespace headers and item rows share one column layout, so the
+     Core/Linux/Windows cells line up down the whole page:
+       [checkbox][arrow][name 34ch][Core][Linux][Windows][tags…][matrix]
+     The name column is fixed width (longer names ellipsize, with the full
+     name in a tooltip) so nothing can push the cells out of alignment. */
+  .ns-head .name, .row .iname { width: 34ch; flex: none;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ns-head .name { font-weight: 600; font-family: ui-monospace, Consolas, monospace; }
+  /* Fixed-width slot (widest is "108 items") so the tags after it all start
+     at the same x; the item rows' kind badge occupies the same column. */
+  /* One column, sitting between the name and the platform cells: the item
+     count for namespaces, the TYPE/EVENT badge for items. Absolute width,
+     not ch — the two use different font sizes. */
+  .ns-head .count { color: var(--muted); font-size: 12px; width: 68px; flex: none; }
+  .kind-slot { width: 68px; flex: none; display: inline-flex; align-items: center; }
+  /* flex: none everywhere on the fixed cells — otherwise a narrow window
+     shrinks the namespace cells but not the item ones, and the columns stop
+     lining up (the row scrolls sideways instead, like a table). */
+  .pct { font-size: 12px; padding: 1px 7px; border-radius: 10px; background: var(--chip-off);
+    flex: none; }
+  .pct.full { background: var(--done-bg); color: var(--done); font-weight: 600; }
+  .pct.ip { background: var(--prog-bg); color: var(--prog); }
+  .pct.np { background: rgba(207, 34, 46, .08); color: #8a6a6a; }
+  @media (prefers-color-scheme: dark) {
+    .pct.np { background: rgba(248, 81, 73, .09); color: #b59a9a; }
+  }
+  .pct.und { background: rgba(163, 113, 247, .14); color: #8250df; }
+  @media (prefers-color-scheme: dark) { .pct.und { color: #b392f0; } }
+  .pct.plat-pct { width: 100px; text-align: center; padding: 1px 0; }
+  .slot { visibility: hidden; }
+
+  /* Subtle state backgrounds (alpha-based so they work in both themes):
+     green = done or not planned (resolved), yellow = in progress,
+     light purple = undecided (untouched). Namespace headers use the same
+     hues at higher alpha, and a faint neutral tint by default, so they
+     separate from the item rows. */
+  .row.st-done { background: rgba(46, 160, 67, .20); }
+  .row.st-prog { background: rgba(210, 153, 34, .18); }
+  .row.st-und  { background: rgba(163, 113, 247, .14); }
+  .ns-head { background: rgba(128, 140, 160, .17); }
+  .ns-head.st-done { background: rgba(46, 160, 67, .34); }
+  .ns-head.st-prog { background: rgba(210, 153, 34, .30); }
+  .ns-head.st-und  { background: rgba(163, 113, 247, .24); }
+  .assignee { font-size: 12px; padding: 1px 7px; border-radius: 10px;
+    background: var(--sel); flex: none; white-space: nowrap; }
+  .note-btn { flex: none; }
+
+  .row { display: flex; align-items: center; gap: 8px; padding: 3px 16px;
+    cursor: pointer; user-select: none; min-width: max-content; }
+  .row:hover { background: var(--hover); }
+  .row.selected, .ns-head.selected { background: var(--sel); }
+  .row .iname { font-family: ui-monospace, Consolas, monospace; }
+  /* Stands in for the namespace's disclosure arrow so the name columns match. */
+  .row .arrow-spacer { width: 14px; flex: none; }
+  /* Not Planned: text grays out even on the green (resolved) background —
+     but links keep a muted blue so they still read as links. */
+  .row.np-row .iname, .row.np-row .kind
+    { text-decoration: line-through; color: var(--muted); }
+  .row.np-row .iname a { text-decoration: line-through; color: var(--muted-link); }
+  .row.np-row .kind { text-decoration: none; }
+  /* Keep the hover underline on struck-through links (the line-through rule
+     above is more specific than a:hover, so it needs restating). */
+  .row.np-row .iname a:hover { text-decoration: line-through underline; }
+  .ns-head.np-all .name a { color: var(--muted-link); }
+  .ns-head.np-all .count { color: var(--muted); }
+  .ns-head.np-all .name a:hover { text-decoration: underline; }
+  .kind { font-size: 10px; padding: 0 5px; border-radius: 4px; background: var(--chip-off);
+    color: var(--muted); text-transform: uppercase; flex: none; }
+  .row .fill { flex: 1; }
+  /* Same width and spacing as the namespace percentage cells (.plat-pct). */
+  .plat { display: inline-flex; gap: 8px; flex: none; }
+  .chip { font-size: 11px; width: 100px; text-align: center; padding: 1px 0;
+    border-radius: 4px; background: var(--chip-off); color: var(--muted); flex: none; }
+  .chip.done { background: var(--done-bg); color: var(--done); font-weight: 600; }
+  /* Free-width state tags (In Progress / Not Planned / Undecided / Core Only) */
+  .tag { font-size: 11px; padding: 1px 7px; border-radius: 4px;
+    background: var(--chip-off); color: var(--muted); white-space: nowrap; flex: none; }
+  .tag.prog { background: var(--prog-bg); color: var(--prog); }
+  /* Not Planned reads as "set aside", not as an error: mostly grey with a
+     red tint (bright red stays reserved for the Unsaved Changes warning). */
+  .tag.npc { background: rgba(207, 34, 46, .08); color: #8a6a6a; }
+  @media (prefers-color-scheme: dark) {
+    .tag.npc { background: rgba(248, 81, 73, .09); color: #b59a9a; }
+  }
+  .tag.und { background: rgba(163, 113, 247, .14); color: #8250df; }
+  @media (prefers-color-scheme: dark) { .tag.und { color: #b392f0; } }
+
+  .matrix { display: inline-flex; gap: 2px; margin-left: 6px; }
+  .mcell { font-size: 10px; width: 44px; text-align: center; padding: 1px 0;
+    border-radius: 3px; background: var(--chip-off); color: var(--fg);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mcell.no { color: var(--matrix-no); }
+  .mcell.yes { color: var(--matrix-yes); }
+  /* Column headers for the browser matrix, in their own strip under the
+     totals bar (and sticky with it), right-aligned to match the cells. */
+  #matrix-head { display: none; justify-content: flex-end; gap: 2px;
+    position: sticky; top: var(--top-h, 79px); z-index: 9;
+    padding: 3px 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  #matrix-head .mcell { background: none; color: var(--muted); }
+
+  #toolbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25); padding: 8px 12px; display: none;
+    flex-direction: column; gap: 8px; z-index: 20;
+    /* A fixed box at left:50% would otherwise only get half the viewport as
+       available width, wrapping the Mark row early. max-content plus a full
+       -width cap keeps both rows on one line whenever they fit. */
+    width: max-content; max-width: calc(100vw - 24px); }
+  #toolbar.visible { display: flex; }
+  #toolbar .tbrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #toolbar .selcount { font-weight: 600; }
+  /* Fixed-width leading slot (empty on the first row) so Assign and Core
+     Done start at the same x. */
+  #toolbar .tblabel { color: var(--muted); font-size: 13px; width: 38px; flex: none; }
+
+  #assign-panel { position: fixed; left: 50%; transform: translateX(-50%); bottom: 66px;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25); padding: 10px; display: none; z-index: 21;
+    min-width: 220px; }
+  #assign-panel.visible { display: block; }
+  #assign-panel .alist { max-height: 200px; overflow-y: auto; margin-bottom: 8px; }
+  #assign-panel .aopt { padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+  #assign-panel .aopt:hover { background: var(--hover); }
+  #assign-panel input { width: 100%; padding: 4px 8px; border: 1px solid var(--line);
+    border-radius: 6px; background: var(--bg); color: var(--fg); }
+  .hint { color: var(--muted); font-size: 11px; margin-top: 6px; }
+
+  .note-btn { font-size: 11px; padding: 0 7px; border-radius: 10px;
+    border: 1px solid rgba(210, 153, 34, .6); background: var(--prog-bg);
+    color: var(--prog); cursor: pointer;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .15); }
+  .note-btn:hover { border-color: var(--prog); filter: brightness(1.12); }
+  .note-btn:active { box-shadow: none; transform: translateY(1px); }
+  /* Dims the page behind any modal panel. */
+  #backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, .5); z-index: 25;
+    display: none; }
+  #backdrop.visible { display: block; }
+
+  #link-panel, #conflict-panel, #download-panel, #intro-panel { position: fixed;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    max-height: 88vh; overflow-y: auto;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25); padding: 14px; display: none; z-index: 30;
+    max-width: 440px; }
+  #link-panel.visible, #conflict-panel.visible, #download-panel.visible,
+  #intro-panel.visible { display: block; }
+  #link-panel p, #conflict-panel p, #download-panel p, #intro-panel p {
+    margin: 0 0 10px; font-size: 13px; line-height: 1.5; }
+  #link-panel .nbuttons, #conflict-panel .nbuttons, #download-panel .nbuttons,
+  #intro-panel .nbuttons { display: flex; gap: 8px; justify-content: flex-end; }
+  #link-panel .clip-hint { margin: 0 0 12px; padding: 8px 10px; border-radius: 6px;
+    border: 1px solid #3b82f6; background: rgba(59, 130, 246, .12); color: #bfdbfe; }
+  #link-panel .clip-hint code { color: #fff; word-break: break-all; }
+  #intro-panel { max-width: 520px; }
+  #intro-panel h2 { font-size: 15px; margin: 0 0 10px; }
+  #intro-panel ul { margin: 0 0 10px; padding-left: 20px; font-size: 13px; line-height: 1.55; }
+  #intro-panel li { margin-bottom: 6px; }
+  #intro-panel code { background: var(--chip-off); padding: 0 4px; border-radius: 4px; }
+  #conflict-panel { z-index: 31; }
+  /* The download link doubles as a button: click saves to the download
+     folder, right-click offers "Save Link As…" (a real save dialog). */
+  #download-link { display: inline-block; font: inherit; padding: 6px 14px;
+    border: 1px solid var(--sel-line); border-radius: 6px; background: var(--sel);
+    color: var(--fg); text-decoration: none; font-weight: 600; }
+  #download-link:hover { border-color: var(--accent); text-decoration: none; }
+  #note-panel { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25); padding: 12px; display: none; z-index: 30; }
+  #note-panel.visible { display: block; }
+  #note-panel .ntitle { font-weight: 600; margin-bottom: 8px;
+    font-family: ui-monospace, Consolas, monospace; }
+  #note-panel textarea { display: block; width: 480px; max-width: 90vw; height: 180px;
+    font: 13px/1.4 ui-monospace, Consolas, monospace; padding: 8px;
+    border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); color: var(--fg); resize: both; }
+  #note-panel .nbuttons { display: flex; gap: 8px; margin-top: 8px; justify-content: flex-end; }
+</style>
+</head>
+<body>
+<header>
+  <h1>WebExtensions API Tracker</h1>
+  <input type="search" id="filter" placeholder="Filter items/users/statuses…"
+    title="Matches API and namespace names, assignees and note text anywhere; status words (planned, not planned, undecided, in progress, core only, core/linux/windows done, note) from the start.">
+  <button id="btn-expand-all" title="Expand every namespace">Expand</button>
+  <button id="btn-collapse-all" title="Collapse every namespace">Collapse</button>
+  <button id="btn-undo" title="Undo (Ctrl+Z)" disabled>↶</button>
+  <button id="btn-redo" title="Redo (Ctrl+Shift+Z / Ctrl+Y)" disabled>↷</button>
+  <span class="spacer"></span>
+  <label class="plat-toggle"><input type="checkbox" id="show-linux" checked> Linux</label>
+  <label class="plat-toggle"><input type="checkbox" id="show-windows" checked> Windows</label>
+  <button id="btn-matrix" title="Show/hide the MDN browser-support matrix">Other Browsers</button>
+  <button id="btn-import" title="Load a status.json. The tracker's folder path is copied to the clipboard — paste it into the open dialog's file name field to load from here.">Copy Path &amp; Import</button>
+  <button id="btn-export" title="Save status.json. The tracker's folder path is copied to the clipboard — paste it into the save dialog's file name field to save here.">Copy Path &amp; Export</button>
+  <button id="btn-link" title="Auto-save straight to a status.json on disk (Chromium only). The tracker's folder path is copied to the clipboard — paste it into the picker's file name field.">Link file</button>
+  <button id="btn-help" title="How saving works">?</button>
+  <input type="file" id="import-file" accept=".json,application/json" hidden>
+</header>
+<span id="dirty-tag" title="Changes have not been written to status.json — use Copy Path &amp; Export, or link the file." hidden>Unsaved Changes</span>
+<div id="totals"></div>
+<div id="matrix-head"></div>
+<main id="list"></main>
+
+<div id="toolbar">
+  <div class="tbrow">
+    <span class="tblabel"></span>
+    <button id="btn-assign" class="b-blue">Assign</button>
+    <button id="btn-note" class="b-yellow" title="Add or edit a note for the selection" hidden>Edit Note</button>
+    <span class="spacer"></span>
+    <span class="selcount" id="sel-count"></span>
+    <button id="btn-clear-sel" title="Clear selection">✕</button>
+  </div>
+  <div class="tbrow">
+    <span class="tblabel">Mark:</span>
+    <button data-act="core" class="b-green">Core Done</button>
+    <button data-act="linux" class="b-green">Linux Done</button>
+    <button data-act="windows" class="b-green">Windows Done</button>
+    <button data-act="inProgress" class="b-yellow">In Progress</button>
+    <button data-act="coreOnly" class="b-faint">Core Only</button>
+    <button data-act="undecided" class="b-purple">Undecided</button>
+    <button data-act="planned" class="b-gray">Planned</button>
+    <button data-act="notPlanned" class="b-red">Not Planned</button>
+  </div>
+</div>
+
+<div id="link-panel">
+  <p><b>Link a status.json on disk</b></p>
+  <p>Linking binds the tracker to a real file: every change auto-saves into
+  it (localStorage stays as a backup). The link is remembered across
+  reloads — Chrome may ask for one-click permission to reconnect.</p>
+  <div id="link-choices">
+    <p><b>Import &amp; Link</b> opens an existing status.json, loads it, and
+    links to it — the file's contents win (if that would discard changes you
+    made here, you get to pick which side wins).
+    <b>Export &amp; Link</b> goes the other way: it writes what is in the
+    browser right now into a new (or replaced) file and links to it.</p>
+    <p id="link-status" hidden><b>Currently linked</b> — every change
+    auto-saves to the file. Unlinking keeps your data (localStorage still has
+    it) and leaves the file on disk untouched.</p>
+    <p class="clip-hint">📋 <b>Clicking either button copies the path to your
+    clipboard</b> — in the file dialog just <b>Ctrl+V</b> into <i>File name</i>
+    and press Enter: <code class="clip-path"></code></p>
+    <div class="nbuttons">
+      <button id="link-unlink" style="margin-right:auto" hidden>Unlink</button>
+      <button id="link-cancel">Cancel</button>
+      <button id="link-export">Export &amp; Link…</button>
+      <button id="link-import" class="b-blue">Import &amp; Link…</button>
+    </div>
+  </div>
+  <div id="link-export-warn" hidden>
+    <p><b>⚠ Export &amp; Link replaces the file you pick.</b></p>
+    <p>The save dialog writes the current in-browser state into the chosen
+    file. If you point it at an existing status.json, that file is
+    <b>overwritten</b> — anything in it that isn't in this browser is lost.
+    To load a file instead, go back and use <b>Import &amp; Link</b>.</p>
+    <p class="clip-hint">📋 <b>The path is copied to your clipboard</b> — in
+    the save dialog just <b>Ctrl+V</b> into <i>File name</i> and press
+    Enter: <code class="clip-path"></code></p>
+    <div class="nbuttons">
+      <button id="link-export-back">Back</button>
+      <button id="link-export-go" class="b-red">Overwrite &amp; Link…</button>
+    </div>
+  </div>
+</div>
+
+<div id="backdrop"></div>
+
+<div id="intro-panel">
+  <h2>Tracking the WebExtensions API port</h2>
+  <p>Select items (or a whole namespace) and mark them Core/Linux/Windows done,
+  in progress, planned or not planned, assign an owner, and add notes.</p>
+  <p><b>Selecting:</b> a click selects one item, <b>Ctrl+click</b> adds or
+  removes one, <b>Shift+click</b> takes a range, and clicking the checkbox
+  area toggles without clearing the rest. A namespace's checkbox selects
+  everything in it. <b>Ctrl+Z</b> / <b>Ctrl+Shift+Z</b> undo and redo.</p>
+  <p><b>Where your work is stored:</b></p>
+  <ul>
+    <li>Everything is saved in this browser automatically, so you can just
+      start clicking. That copy is per-browser and per-origin, though — it
+      is not the file the team shares.</li>
+    <li><b>Link file</b> (Chromium only) binds a <code>status.json</code> on
+      disk: every change is written to it straight away, and the link is
+      restored the next time you open the page. <b>Import &amp; Link</b> loads
+      an existing file; <b>Export &amp; Link</b> writes the browser's state
+      into a new one (and warns before replacing an existing file).</li>
+    <li><b>Copy Path &amp; Import</b> / <b>Copy Path &amp; Export</b> read and
+      write that same <code>status.json</code> by hand — use these on Firefox
+      and Safari, or to move state between browsers. Both copy this folder's
+      path to the clipboard so you can paste it into the file dialog.</li>
+  </ul>
+  <p>Reopen this any time with the <b>?</b> button.</p>
+  <div class="nbuttons">
+    <button id="intro-link" class="b-blue">Link a File…</button>
+    <button id="intro-import">Import a status.json…</button>
+    <span class="spacer"></span>
+    <button id="intro-close">Close</button>
+  </div>
+</div>
+
+<div id="download-panel">
+  <p><b>Saving status.json</b></p>
+  <p>This browser has no save-dialog API, so the tracker can't write the file
+  directly. The folder path is already on your clipboard.</p>
+  <p><b>Right-click</b> the link below → <i>Save Link As…</i>, then paste the
+  path into the <i>File name</i> field to save it back into the tracker's
+  folder. A normal click just downloads it to your downloads folder.</p>
+  <p><a id="download-link" download="status.json" href="#">status.json</a></p>
+  <div class="nbuttons">
+    <button id="download-close">Close</button>
+  </div>
+</div>
+
+<div id="conflict-panel">
+  <p><b>That file holds different data</b></p>
+  <p>The status.json you picked doesn't match what's in the tracker right
+  now, and you have changes here. Which one should win?</p>
+  <div class="nbuttons">
+    <button id="conflict-cancel">Cancel</button>
+    <button id="conflict-overwrite">Overwrite File</button>
+    <button id="conflict-load">Discard My Changes</button>
+  </div>
+</div>
+
+<div id="note-panel">
+  <div class="ntitle" id="note-title"></div>
+  <textarea id="note-text" spellcheck="false"></textarea>
+  <div class="nbuttons">
+    <span class="hint" style="margin:auto auto auto 0">empty = remove note · Ctrl+Enter saves</span>
+    <button id="note-cancel">Cancel</button>
+    <button id="note-save">Save</button>
+  </div>
+</div>
+
+<div id="assign-panel">
+  <div class="alist" id="assign-list"></div>
+  <input id="assign-input" placeholder="Type a name, Enter to assign">
+  <div style="display:flex; align-items:center; gap:8px; margin-top:8px">
+    <span class="hint" style="margin:0; flex:1">Enter assigns to the typed name</span>
+    <button id="assign-clear-btn">Clear</button>
+  </div>
+</div>
+
+<script src="api-data.js"></script>
+<script>
+'use strict';
+const DATA = window.API_DATA;
+const STORAGE_KEY = 'wx-api-tracker-status';
+const BROWSER_LABELS = { chrome: 'Chr', edge: 'Edge', firefox: 'Fx', firefox_android: 'FxA',
+  opera: 'Op', safari: 'Saf', safari_ios: 'SafI' };
+const BROWSER_NAMES = { chrome: 'Chrome', edge: 'Edge', firefox: 'Firefox',
+  firefox_android: 'Firefox for Android', opera: 'Opera', safari: 'Safari (macOS)',
+  safari_ios: 'Safari on iOS' };
+const PLATFORMS = ['core', 'linux', 'windows'];
+const PLATFORM_LABELS = { core: 'Core', linux: 'Linux', windows: 'Windows' };
+
+const VIEW_KEY = 'wx-api-tracker-view';
+
+let status = loadStatus();          // { version, assignees: [], items: { id: {...} } }
+// Platform visibility (view preference, not part of status.json). A hidden
+// platform disappears from rows, headers, the toolbar, and the resolved
+// computation — core+windows done counts as done when Linux is hidden.
+let showPlat = loadView();
+
+function loadView() {
+  try { return { linux: true, windows: true, ...JSON.parse(localStorage.getItem(VIEW_KEY) || '{}') }; }
+  catch (e) { return { linux: true, windows: true }; }
+}
+
+function saveView() {
+  try { localStorage.setItem(VIEW_KEY, JSON.stringify(showPlat)); } catch (e) { /* quota */ }
+}
+
+function platformShown(p) { return p === 'core' || showPlat[p]; }
+const selection = new Set();        // item ids
+const expanded = new Set();         // namespace names
+let showMatrix = false;
+let filterText = '';
+let fileHandle = null;              // File System Access handle when linked
+let saveTimer = null;
+
+// ── status model ─────────────────────────────────────────────────────────────
+
+function loadStatus() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return normalizeStatus(JSON.parse(raw));
+  } catch (e) { /* corrupted or unavailable: start fresh */ }
+  return { version: 1, assignees: [], items: {}, namespaces: {} };
+}
+
+// Every field an item / namespace entry can carry, with its default. The
+// serializer writes all of them explicitly (see statusJson) so each entry
+// occupies a fixed block of lines; in memory they are pruned back to the
+// non-default fields only.
+const ITEM_FIELDS = { assignee: '', core: false, coreOnly: false, inProgress: false,
+  linux: false, note: '', plan: '', windows: false };
+const NAMESPACE_FIELDS = { note: '' };
+
+function pruneDefaults(entry) {
+  const out = {};
+  for (const [k, v] of Object.entries(entry)) {
+    if (v !== false && v !== '' && v != null) out[k] = v;
+  }
+  return out;
+}
+
+function pruneAll(map) {
+  const out = {};
+  for (const [k, entry] of Object.entries(map || {})) {
+    const pruned = pruneDefaults(entry);
+    if (Object.keys(pruned).length) out[k] = pruned;
+  }
+  return out;
+}
+
+function normalizeStatus(s) {
+  const items = s.items || {};
+  // Migrate the old boolean notPlanned to the three-state plan field
+  // ('planned' | 'notPlanned'; absent = undecided).
+  for (const it of Object.values(items)) {
+    if (it.notPlanned) { it.plan = 'notPlanned'; delete it.notPlanned; }
+  }
+  return { version: 1, assignees: s.assignees || [], items: pruneAll(items),
+    namespaces: pruneAll(s.namespaces) };
+}
+
+function isNp(s) { return s.plan === 'notPlanned'; }
+
+// Fully resolved: not planned, or done on every visible platform that
+// applies (hidden platforms don't count against it).
+function isResolved(s) {
+  return isNp(s) || (!!s.core && (s.coreOnly
+    || ((!platformShown('linux') || !!s.linux) && (!platformShown('windows') || !!s.windows))));
+}
+
+// Undecided = no scope decision recorded, which is exactly what the plan
+// field says. Work state is tracked separately (the platform chips and the
+// In Progress tag), so clearing Planned always returns an item to
+// Undecided, whatever work has already been done on it.
+function isUndecided(s) { return !s.plan; }
+
+// Background state for an item row: '' = neutral (planned / partly touched).
+function itemState(s) {
+  if (isResolved(s)) return 'st-done';
+  if (s.inProgress) return 'st-prog';
+  if (isUndecided(s)) return 'st-und';
+  return '';
+}
+
+function nsState(items) {
+  if (items.length === 0) return '';
+  const sts = items.map(it => st(it.id));
+  if (sts.every(isResolved)) return 'st-done';
+  if (sts.some(s => s.inProgress)) return 'st-prog';
+  if (sts.every(isUndecided)) return 'st-und';
+  return '';
+}
+
+function nsNote(name) { return status.namespaces[name]?.note || ''; }
+
+function setNsNote(name, text) {
+  if (text) status.namespaces[name] = { ...status.namespaces[name], note: text };
+  else delete status.namespaces[name];
+}
+
+// ── undo / redo ──────────────────────────────────────────────────────────────
+// Snapshot-based: every mutation funnels through pushUndo() first, so no
+// per-action inverse logic is needed. Selection and expanded namespaces ride
+// along so an undo reveals what it changed instead of altering something
+// off-screen.
+const UNDO_LIMIT = 100;
+const undoStack = [];
+const redoStack = [];
+
+function snapshot() {
+  return {
+    status: JSON.parse(JSON.stringify(status)),
+    selection: [...selection],
+    expanded: [...expanded],
+  };
+}
+
+function pushUndo() {
+  undoStack.push(snapshot());
+  redoStack.length = 0;
+  if (undoStack.length > UNDO_LIMIT) {
+    undoStack.shift();
+    if (savedDepth >= 0) savedDepth--;   // positions all shifted down by one
+  }
+  // The saved state sat on the branch this edit just discarded: unreachable.
+  if (savedDepth > undoStack.length - 1) savedDepth = -1;
+}
+
+function restoreSnapshot(snap) {
+  status = snap.status;
+  selection.clear();
+  for (const id of snap.selection) selection.add(id);
+  expanded.clear();
+  for (const name of snap.expanded) expanded.add(name);
+}
+
+function undo() {
+  if (!undoStack.length) return;
+  redoStack.push(snapshot());
+  restoreSnapshot(undoStack.pop());
+  afterUndoRedo();
+}
+
+function redo() {
+  if (!redoStack.length) return;
+  undoStack.push(snapshot());
+  restoreSnapshot(redoStack.pop());
+  afterUndoRedo();
+}
+
+function afterUndoRedo() {
+  persist();
+  render();
+  revealSelection();
+}
+
+// Publishes the sticky chrome's height so the floating Unsaved Changes badge
+// can sit below it. Called on every render as well as from a ResizeObserver:
+// the observer alone can miss the first fill, when the totals bar grows from
+// empty to one line.
+function syncChromeHeight() {
+  const header = document.querySelector('header').getBoundingClientRect().height;
+  const totals = totalsEl.getBoundingClientRect().height;
+  // Zero while the browser-matrix strip is hidden.
+  const mhead = document.getElementById('matrix-head').getBoundingClientRect().height;
+  const root = document.documentElement.style;
+  root.setProperty('--header-h', `${header}px`);
+  root.setProperty('--top-h', `${header + totals}px`);      // matrix strip sticks here
+  root.setProperty('--chrome-h', `${header + totals + mhead}px`);  // badge sits below all
+}
+
+function updateUndoButtons() {
+  const u = document.getElementById('btn-undo');
+  const r = document.getElementById('btn-redo');
+  if (u) u.disabled = undoStack.length === 0;
+  if (r) r.disabled = redoStack.length === 0;
+}
+
+// Scrolls the first selected row into view, but only when it is off-screen.
+function revealSelection() {
+  const row = listEl.querySelector('.row.selected');
+  if (!row) return;
+  const r = row.getBoundingClientRect();
+  if (r.top < 60 || r.bottom > innerHeight) row.scrollIntoView({ block: 'center' });
+}
+
+function st(id) { return status.items[id] || {}; }
+
+function setSt(id, patch) {
+  const cur = { ...st(id), ...patch };
+  // prune defaults so the JSON stays small
+  for (const k of Object.keys(cur)) {
+    if (cur[k] === false || cur[k] === '' || cur[k] == null) delete cur[k];
+  }
+  if (Object.keys(cur).length === 0) delete status.items[id];
+  else status.items[id] = cur;
+}
+
+// "Unsaved changes" = edits that have not reached a status.json. While a
+// file is linked every change is written straight through, so nothing is
+// ever pending. The flag outlives reloads (localStorage), so edits made in
+// an earlier session still show as unsaved.
+const DIRTY_KEY = 'wx-api-tracker-dirty';
+
+// Unsaved state is tracked against the undo history rather than as a sticky
+// flag: undoStack.length is the position in the (linear) history, because
+// redo pushes back onto it. savedDepth is the position the last save/import
+// happened at, so undoing your way back to it clears the tag again.
+// savedDepth -1 means "the saved state is no longer reachable" (it was on a
+// branch discarded by a new edit, or came from an earlier session).
+let savedDepth = 0;
+try { if (localStorage.getItem(DIRTY_KEY) === '1') savedDepth = -1; } catch (e) { /* unavailable */ }
+
+function updateDirtyTag() {
+  const value = undoStack.length !== savedDepth;
+  try {
+    if (value) localStorage.setItem(DIRTY_KEY, '1');
+    else localStorage.removeItem(DIRTY_KEY);
+  } catch (e) { /* quota */ }
+  const tag = document.getElementById('dirty-tag');
+  if (tag) tag.hidden = !value;
+  updateUndoButtons();
+}
+
+function markSaved() {
+  savedDepth = undoStack.length;
+  updateDirtyTag();
+}
+
+function persist() {
+  // A linked file receives every change, so the file is never behind.
+  if (fileHandle) savedDepth = undoStack.length;
+  updateDirtyTag();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(status)); } catch (e) { /* quota */ }
+  if (fileHandle) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        const w = await fileHandle.createWritable();
+        await w.write(statusJson());
+        await w.close();
+      } catch (e) { console.warn('auto-save failed', e); }
+    }, 400);
+  }
+}
+
+// Merge-friendly serialization. Every key is sorted, so the same logical
+// state always produces byte-identical output whatever order things were
+// edited in; and every entry writes all its fields explicitly, one per
+// line, so an entry is a fixed block of lines. That means two people
+// changing different fields — even of the same item — touch different
+// lines and git merges them without conflicts. Still plain JSON, read back
+// by the browser's own JSON.parse.
+function serializeStatus(state) {
+  // Every namespace and every item is written, even when untouched, so the
+  // file always has the same shape: a change is always a modified line and
+  // never an inserted or removed one, which is what keeps merges clean.
+  const allItemIds = DATA.namespaces.flatMap(ns => ns.items.map(it => it.id));
+  const allNamespaces = DATA.namespaces.map(ns => ns.name);
+  const block = (name, obj, defaults, known) => {
+    const keys = [...new Set([...known, ...Object.keys(obj)])].sort();
+    const entries = keys.map(key => {
+      const full = { ...defaults, ...obj[key] };
+      const fields = Object.keys(full).sort()
+        .map(f => `      ${JSON.stringify(f)}: ${JSON.stringify(full[f])}`)
+        .join(',\n');
+      return `    ${JSON.stringify(key)}: {\n${fields}\n    }`;
+    });
+    return entries.length ? `  ${JSON.stringify(name)}: {\n${entries.join(',\n')}\n  }`
+                          : `  ${JSON.stringify(name)}: {}`;
+  };
+  const assignees = [...state.assignees].sort();
+  return [
+    '{',
+    '  "version": 1,',
+    assignees.length
+      ? `  "assignees": [\n${assignees.map(a => `    ${JSON.stringify(a)}`).join(',\n')}\n  ],`
+      : '  "assignees": [],',
+    block('namespaces', state.namespaces, NAMESPACE_FIELDS, allNamespaces) + ',',
+    block('items', state.items, ITEM_FIELDS, allItemIds),
+    '}',
+  ].join('\n') + '\n';   // trailing newline keeps git happy
+}
+
+function statusJson() { return serializeStatus(status); }
+
+function allAssignees() {
+  const set = new Set(status.assignees);
+  for (const s of Object.values(status.items)) if (s.assignee) set.add(s.assignee);
+  return [...set].sort((a, b) => a.localeCompare(b));
+}
+
+// ── stats ────────────────────────────────────────────────────────────────────
+// Percentages count planned features only (Not Planned items are excluded
+// everywhere). Core Only items are excluded from the Linux/Windows
+// denominators too; when nothing needs Linux/Windows work, those
+// percentages are hidden (null).
+
+function computeStats(items) {
+  const n = items.length;
+  let np = 0, ip = 0, und = 0, coreOnly = 0;
+  const done = { core: 0, linux: 0, windows: 0 };
+  const assignees = new Set();
+  let unassigned = 0;
+  for (const it of items) {
+    const s = st(it.id);
+    if (isNp(s)) { np++; continue; }
+    if (isUndecided(s)) und++;
+    if (s.inProgress) ip++;
+    if (s.coreOnly) coreOnly++;
+    if (s.core) done.core++;
+    if (!s.coreOnly) {
+      if (s.linux) done.linux++;
+      if (s.windows) done.windows++;
+    }
+    if (s.assignee) assignees.add(s.assignee); else unassigned++;
+  }
+  const denomCore = n - np;
+  const denomLW = denomCore - coreOnly;
+  const pct = (count, denom) => denom > 0 ? Math.round(count / denom * 100) : null;
+  return {
+    n, np, ip,
+    pct: {
+      core: pct(done.core, denomCore),
+      linux: pct(done.linux, denomLW),
+      windows: pct(done.windows, denomLW),
+    },
+    ipPct: denomCore > 0 ? Math.round(ip / denomCore * 100) : 0,
+    npPct: n === 0 ? 0 : Math.round(np / n * 100),
+    und, undPct: n === 0 ? 0 : Math.round(und / n * 100),
+    allNp: n > 0 && np === n,
+    assignee: (assignees.size === 1 && unassigned === 0) ? [...assignees][0] : null,
+    multiAssignee: assignees.size > 1,
+  };
+}
+
+// ── rendering ────────────────────────────────────────────────────────────────
+
+const listEl = document.getElementById('list');
+const totalsEl = document.getElementById('totals');
+
+function esc(s) { return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+// The status words an item can be filtered by. Matched as prefixes, so
+// "planned" finds Planned without also dragging in Not Planned, while "not"
+// or "not p" finds the latter.
+function statusWords(s) {
+  const words = [isNp(s) ? 'not planned' : (s.plan === 'planned' ? 'planned' : 'undecided')];
+  if (s.inProgress) words.push('in progress');
+  if (s.coreOnly) words.push('core only');
+  if (s.core) words.push('core done');
+  if (s.linux) words.push('linux done');
+  if (s.windows) words.push('windows done');
+  if (s.note) words.push('note');
+  return words;
+}
+
+// Item name (and namespace, since ids are "namespace.item"), assignee and
+// note text match anywhere; status words match from the start.
+function itemMatchesFilter(it, f) {
+  if (it.id.toLowerCase().includes(f)) return true;
+  const s = st(it.id);
+  if (s.assignee && s.assignee.toLowerCase().includes(f)) return true;
+  if (s.note && s.note.toLowerCase().includes(f)) return true;
+  return statusWords(s).some(word => word.startsWith(f));
+}
+
+function visibleItems(ns) {
+  if (!filterText) return ns.items;
+  const f = filterText.toLowerCase();
+  return ns.items.filter(it => itemMatchesFilter(it, f));
+}
+
+// Fixed-width slot chips so the C/L/W columns line up across every row;
+// a null value renders an invisible placeholder (hidden but space kept).
+function pctChip(label, value) {
+  if (value == null) return '<span class="pct plat-pct slot"></span>';
+  return `<span class="pct plat-pct${value >= 100 ? ' full' : ''}">${label} ${value}%</span>`;
+}
+
+// Human-readable support text for a cell's tooltip.
+function supportTitle(browser, cell) {
+  const name = BROWSER_NAMES[browser];
+  const state = cell.v === 'No' ? 'not supported'
+    : cell.v === '?' ? 'support unknown'
+    : cell.v === 'Yes' ? 'supported'
+    : `supported since version ${cell.v}`;
+  return `${name}: ${state}${cell.p ? ' (partial implementation)' : ''}`;
+}
+
+function matrixHtml(support) {
+  const cells = DATA.browsers.map(b => {
+    const c = support[b] || { v: '?' };
+    const cls = c.v === 'No' ? ' no' : (c.v === '?' ? '' : ' yes');
+    return `<span class="mcell${cls}" title="${esc(supportTitle(b, c))}">${
+      esc(c.v)}${c.p ? '*' : ''}</span>`;
+  }).join('');
+  return `<span class="matrix">${cells}</span>`;
+}
+
+// The Core/Linux/Windows cells, in the same columns as the namespace
+// percentages.
+function platChips(s) {
+  const chips = PLATFORMS.filter(platformShown).map(p => {
+    if (p !== 'core' && s.coreOnly) return '<span class="chip slot"></span>';
+    const d = !isNp(s) && !!s[p];
+    return `<span class="chip${d ? ' done' : ''}">${PLATFORM_LABELS[p]}${d ? ' ✓' : ''}</span>`;
+  }).join('');
+  return `<span class="plat">${chips}</span>`;
+}
+
+// State tags shown after the cells. Not Planned and Undecided are explicit;
+// planned is the untagged default.
+function stateTags(s) {
+  return (s.inProgress ? '<span class="tag prog">In Progress</span>' : '')
+    + (isNp(s) ? '<span class="tag npc">Not Planned</span>' : '')
+    + (isUndecided(s) ? '<span class="tag und">Undecided</span>' : '')
+    + (s.coreOnly ? '<span class="tag">Core Only</span>' : '');
+}
+
+function render() {
+  const frag = [];
+  for (const ns of DATA.namespaces) {
+    const items = visibleItems(ns);
+    if (filterText && items.length === 0) continue;
+    const stats = computeStats(ns.items);
+    const isOpen = expanded.has(ns.name) || (filterText && items.length > 0);
+    const allSel = ns.items.length > 0 && ns.items.every(it => selection.has(it.id));
+    const someSel = !allSel && ns.items.some(it => selection.has(it.id));
+
+    frag.push(`<section class="ns" data-ns="${esc(ns.name)}">
+      <div class="ns-head ${nsState(ns.items)}${allSel ? ' selected' : ''}${stats.allNp ? ' np-all' : ''}">
+        <span class="checkzone"><input type="checkbox" class="ns-check" ${allSel ? 'checked' : ''}
+          ${someSel ? 'data-ind="1"' : ''}></span>
+        <span class="arrow">${isOpen ? '▼' : '▶'}</span>
+        <span class="name"><a href="${esc(ns.mdnUrl)}" target="_blank" rel="noopener">${esc(ns.name)}</a></span>
+        <span class="count">${stats.n} items</span>
+        ${pctChip('Core', stats.pct.core)}${
+          platformShown('linux') ? pctChip('Linux', stats.pct.linux) : ''}${
+          platformShown('windows') ? pctChip('Windows', stats.pct.windows) : ''}
+        ${nsNote(ns.name) ? `<button class="note-btn" data-note-ns="${esc(ns.name)}" title="${esc(nsNote(ns.name))}">Note</button>` : ''}
+        ${stats.ip ? `<span class="pct ip">In Progress ${stats.ipPct}%</span>` : ''}
+        ${stats.np ? `<span class="pct np">Not Planned ${stats.npPct}%</span>` : ''}
+        ${stats.und ? `<span class="pct und">Undecided ${stats.undPct}%</span>` : ''}
+        ${stats.assignee ? `<span class="assignee">${esc(stats.assignee)}</span>`
+          : stats.multiAssignee ? '<span class="assignee" title="Items in this namespace have different assignees">[multiple]</span>' : ''}
+        <span class="fill" style="flex:1"></span>
+        ${showMatrix ? matrixHtml(ns.support) : ''}
+      </div>`);
+
+    if (isOpen) {
+      for (const it of items) {
+        const s = st(it.id);
+        const sel = selection.has(it.id);
+        const url = it.mdnUrl || ns.mdnUrl;
+        frag.push(`<div class="row ${itemState(s)}${sel ? ' selected' : ''}${isNp(s) ? ' np-row' : ''}"
+            data-id="${esc(it.id)}">
+          <span class="checkzone"><input type="checkbox" class="row-check" ${sel ? 'checked' : ''}></span>
+          <span class="arrow-spacer"></span>
+          <span class="iname" title="${esc(it.id)}"
+              style="padding-left:${it.depth * 18}px">${it.mdnUrl
+            ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(it.name)}</a>`
+            : esc(it.name)}</span>
+          <span class="kind-slot">${it.kind ? `<span class="kind">${it.kind}</span>` : ''}</span>
+          ${platChips(s)}
+          ${stateTags(s)}
+          ${s.note ? `<button class="note-btn" data-note-item="${esc(it.id)}" title="${esc(s.note)}">Note</button>` : ''}
+          ${s.assignee ? `<span class="assignee">${esc(s.assignee)}</span>` : ''}
+          <span class="fill"></span>
+          ${showMatrix ? matrixHtml(it.support) : ''}
+        </div>`);
+      }
+    }
+    frag.push('</section>');
+  }
+  listEl.innerHTML = frag.join('');
+  for (const cb of listEl.querySelectorAll('.ns-check[data-ind]')) cb.indeterminate = true;
+
+  // Browser-support column headers, on top of (and aligned with) the matrix.
+  const mhead = document.getElementById('matrix-head');
+  mhead.style.display = showMatrix ? 'flex' : 'none';
+  if (showMatrix) {
+    mhead.innerHTML = DATA.browsers
+      .map(b => `<span class="mcell" title="${esc(BROWSER_NAMES[b])} — version the API landed in (* = partial, No = unsupported)">${
+        BROWSER_LABELS[b]}</span>`).join('');
+  }
+
+  const all = DATA.namespaces.flatMap(ns => ns.items);
+  const t = computeStats(all);
+  totalsEl.innerHTML = `Total: ${t.n} items in ${DATA.namespaces.length} namespaces · ` +
+    `Core ${t.pct.core}%` +
+    (platformShown('linux') ? ` · Linux ${t.pct.linux}%` : '') +
+    (platformShown('windows') ? ` · Windows ${t.pct.windows}%` : '') +
+    ` · In progress ${t.ipPct}% · Not planned ${t.npPct}% · Undecided ${t.undPct}%` +
+    `<span style="float:right">MDN browser-compat-data ${DATA.bcdVersion} · ${DATA.generated}</span>`;
+
+  renderToolbar();
+  syncChromeHeight();
+}
+
+// ── selection & toolbar ──────────────────────────────────────────────────────
+
+const toolbarEl = document.getElementById('toolbar');
+const assignPanel = document.getElementById('assign-panel');
+const notePanel = document.getElementById('note-panel');
+
+function selectedStatuses() { return [...selection].map(id => st(id)); }
+
+// What a note would attach to: the whole namespace when the selection is
+// exactly all of one namespace's items, else the single selected item;
+// null (button hidden) for any other selection.
+function noteTarget() {
+  if (selection.size === 0) return null;
+  for (const ns of DATA.namespaces) {
+    if (ns.items.length === selection.size && ns.items.every(it => selection.has(it.id)))
+      return { ns: ns.name };
+  }
+  if (selection.size === 1) return { item: [...selection][0] };
+  return null;
+}
+
+function noteFor(target) {
+  return target.ns != null ? nsNote(target.ns) : (st(target.item).note || '');
+}
+
+function renderToolbar() {
+  toolbarEl.classList.toggle('visible', selection.size > 0);
+  if (selection.size === 0) {
+    assignPanel.classList.remove('visible');
+    notePanel.classList.remove('visible');
+    return;
+  }
+  const target = noteTarget();
+  // Whether a note exists is already visible as the Note chip, so the label
+  // only says what the note would attach to.
+  const noteBtn = document.getElementById('btn-note');
+  noteBtn.hidden = !target;
+  if (target) noteBtn.textContent = target.ns != null ? 'Edit Namespace Note' : 'Edit Note';
+  document.getElementById('sel-count').textContent = `${selection.size} selected`;
+  const sts = selectedStatuses();
+  // [label, undo label, test, base colour, undo colour]. A null undo label
+  // marks a direct-set button (the three plan states): it never changes
+  // label, and is simply disabled when the whole selection is already in
+  // that state. The toggles instead flip to their undo label in red.
+  const cfg = {
+    core: ['Core Done', 'Core Not Done', s => !!s.core, 'b-green', 'undo'],
+    linux: ['Linux Done', 'Linux Not Done', s => !!s.linux, 'b-green', 'undo'],
+    windows: ['Windows Done', 'Windows Not Done', s => !!s.windows, 'b-green', 'undo'],
+    inProgress: ['In Progress', 'Not In Progress', s => !!s.inProgress, 'b-yellow', 'undo'],
+    coreOnly: ['Core Only', 'Not Core Only', s => !!s.coreOnly, 'b-faint', 'undo'],
+    undecided: ['Undecided', null, s => !s.plan, 'b-purple', null],
+    planned: ['Planned', null, s => s.plan === 'planned', 'b-gray', null],
+    notPlanned: ['Not Planned', null, s => s.plan === 'notPlanned', 'b-red', null],
+  };
+  // Linux/Windows are meaningless for a selection that is entirely Core
+  // Only, so hide those buttons (as well as when the platform is toggled
+  // off in the header).
+  const allCoreOnly = sts.every(s => !!s.coreOnly);
+  for (const btn of toolbarEl.querySelectorAll('button[data-act]')) {
+    const act = btn.dataset.act;
+    const [label, undoLabel, test, baseClass, undoClass] = cfg[act];
+    const allOn = sts.every(test);
+    if (undoLabel === null) {          // direct-set: label fixed, no flip
+      btn.textContent = label;
+      btn.className = baseClass;
+      // Nothing to do when the whole selection is already in this state, so
+      // drop the button rather than showing a dead one.
+      btn.hidden = allOn;
+      continue;
+    } else {
+      btn.textContent = allOn ? undoLabel : label;
+      btn.className = allOn ? undoClass : baseClass;
+    }
+    if (act === 'linux' || act === 'windows')
+      btn.hidden = !platformShown(act) || allCoreOnly;
+  }
+}
+
+function applyAction(act) {
+  pushUndo();
+  const sts = selectedStatuses();
+  const PLAN_VALUES = { undecided: '', planned: 'planned', notPlanned: 'notPlanned' };
+  if (act in PLAN_VALUES) {
+    // The three plan buttons set their state directly — no toggling, so a
+    // mixed selection can be pushed to any one of them.
+    for (const id of selection) setSt(id, { plan: PLAN_VALUES[act] });
+  } else {
+    const tests = {
+      core: s => !!s.core, linux: s => !!s.linux, windows: s => !!s.windows,
+      inProgress: s => !!s.inProgress, coreOnly: s => !!s.coreOnly,
+    };
+    const value = !sts.every(tests[act]);
+    for (const id of selection) setSt(id, { [act]: value });
+  }
+  persist();
+  render();
+}
+
+function usedAssignees() {
+  const used = new Set();
+  for (const s of Object.values(status.items)) if (s.assignee) used.add(s.assignee);
+  return used;
+}
+
+function assignSelected(name) {
+  pushUndo();
+  const before = usedAssignees();
+  if (name && !status.assignees.includes(name)) status.assignees.push(name);
+  for (const id of selection) setSt(id, { assignee: name });
+  // If this reassignment removed someone's last item, offer to drop them
+  // from the assignee list too (declining keeps them available in the
+  // Assign picker).
+  const after = usedAssignees();
+  for (const prev of before) {
+    if (prev !== name && !after.has(prev) && status.assignees.includes(prev)
+        && confirm(`"${prev}" is no longer assigned to anything.\nRemove from the assignee list?`)) {
+      status.assignees = status.assignees.filter(a => a !== prev);
+    }
+  }
+  persist();
+  assignPanel.classList.remove('visible');
+  render();
+}
+
+function renderAssignPanel() {
+  const listHtml = allAssignees()
+    .map(a => `<div class="aopt" data-name="${esc(a)}">${esc(a)}</div>`).join('')
+    || '<div class="hint">No assignees yet — type a name below.</div>';
+  document.getElementById('assign-list').innerHTML = listHtml;
+}
+
+// ── events ───────────────────────────────────────────────────────────────────
+
+// Selection model: plain click selects just the clicked row; Ctrl+click
+// toggles it into/out of the selection; Shift+click selects the visible
+// range from the last clicked row (Ctrl+Shift adds the range instead of
+// replacing); the checkbox zone always toggles additively. The namespace
+// checkbox zone selects/deselects the whole namespace; clicking the rest
+// of the header expands/collapses it.
+let anchorId = null;
+let nsAnchorName = null;   // last namespace whose header was used to select
+
+listEl.addEventListener('click', e => {
+  if (e.target.closest('a')) return; // MDN links pass through
+
+  const noteBtn = e.target.closest('.note-btn');
+  if (noteBtn) {
+    openNoteEditor(noteBtn.dataset.noteNs != null
+      ? { ns: noteBtn.dataset.noteNs } : { item: noteBtn.dataset.noteItem });
+    return;
+  }
+
+  const head = e.target.closest('.ns-head');
+  if (head) {
+    const ns = DATA.namespaces.find(n => n.name === head.parentElement.dataset.ns);
+    // The checkbox zone toggles the namespace's items; so does Ctrl+click.
+    // Shift+click selects every namespace from the last one used, through
+    // this one. A plain click anywhere else expands/collapses.
+    const modified = e.ctrlKey || e.metaKey || e.shiftKey;
+    if (e.target.closest('.checkzone') || modified) {
+      // With nothing selected there is no range to extend — the anchor is a
+      // leftover from an earlier click — so just take this namespace.
+      const rangeSelect = e.shiftKey && !(e.ctrlKey || e.metaKey)
+        && nsAnchorName && selection.size > 0;
+      if (rangeSelect) {
+        const order = [...listEl.querySelectorAll('.ns')].map(s => s.dataset.ns);
+        let a = order.indexOf(nsAnchorName), b = order.indexOf(ns.name);
+        if (a === -1) a = b;
+        if (a > b) [a, b] = [b, a];
+        for (const name of order.slice(a, b + 1)) {
+          const each = DATA.namespaces.find(n => n.name === name);
+          for (const it of each.items) selection.add(it.id);
+        }
+        // anchor stays put so successive shift-clicks re-range from it
+      } else {
+        const allSel = ns.items.every(it => selection.has(it.id));
+        for (const it of ns.items) allSel ? selection.delete(it.id) : selection.add(it.id);
+        nsAnchorName = ns.name;
+      }
+      anchorId = null;
+    } else {
+      expanded.has(ns.name) ? expanded.delete(ns.name) : expanded.add(ns.name);
+    }
+    render();
+    return;
+  }
+
+  const row = e.target.closest('.row');
+  if (!row) return;
+  const id = row.dataset.id;
+
+  if (e.target.closest('.checkzone')) {
+    selection.has(id) ? selection.delete(id) : selection.add(id);
+    anchorId = id;
+  } else if (e.shiftKey && anchorId && selection.size > 0) {
+    const order = [...listEl.querySelectorAll('.row')].map(r => r.dataset.id);
+    let a = order.indexOf(anchorId), b = order.indexOf(id);
+    if (a === -1) a = b;
+    if (a > b) [a, b] = [b, a];
+    if (!(e.ctrlKey || e.metaKey)) selection.clear();
+    for (const rid of order.slice(a, b + 1)) selection.add(rid);
+    // anchor stays put so successive shift-clicks re-range from it
+  } else if (e.ctrlKey || e.metaKey) {
+    selection.has(id) ? selection.delete(id) : selection.add(id);
+    anchorId = id;
+  } else {
+    const only = selection.size === 1 && selection.has(id);
+    selection.clear();
+    if (!only) selection.add(id); // clicking the sole selected row deselects
+    anchorId = id;
+  }
+  render();
+});
+
+toolbarEl.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  if (btn.dataset.act) { applyAction(btn.dataset.act); return; }
+  if (btn.id === 'btn-clear-sel') { selection.clear(); render(); return; }
+  if (btn.id === 'btn-assign') {
+    renderAssignPanel();
+    assignPanel.classList.toggle('visible');
+    if (assignPanel.classList.contains('visible')) document.getElementById('assign-input').focus();
+    return;
+  }
+  if (btn.id === 'btn-note') {
+    const target = noteTarget();
+    if (target) openNoteEditor(target);
+  }
+});
+
+// ── note editor ──────────────────────────────────────────────────────────────
+
+let noteEditorTarget = null;
+
+function openNoteEditor(target) {
+  noteEditorTarget = target;
+  document.getElementById('note-title').textContent =
+    target.ns != null ? `Note — ${target.ns} (namespace)` : `Note — ${target.item}`;
+  const ta = document.getElementById('note-text');
+  ta.value = noteFor(target);
+  notePanel.classList.add('visible');
+  ta.focus();
+}
+
+function saveNote() {
+  const text = document.getElementById('note-text').value.trim();
+  if (text === noteFor(noteEditorTarget)) {   // nothing changed: no undo step
+    notePanel.classList.remove('visible');
+    return;
+  }
+  pushUndo();
+  if (noteEditorTarget.ns != null) setNsNote(noteEditorTarget.ns, text);
+  else setSt(noteEditorTarget.item, { note: text });
+  persist();
+  notePanel.classList.remove('visible');
+  render();
+}
+
+document.getElementById('note-save').addEventListener('click', saveNote);
+document.getElementById('note-cancel').addEventListener('click', () =>
+  notePanel.classList.remove('visible'));
+document.getElementById('note-text').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) saveNote();   // Escape: see the global handler
+});
+
+// Escape closes whatever panel is open, topmost first. It goes through each
+// panel's own button so their side effects still run — the conflict panel
+// resolves its promise as a cancel, and the intro records that it was seen.
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const dismiss = [
+    ['conflict-panel', 'conflict-cancel'],
+    ['note-panel', 'note-cancel'],
+    ['download-panel', 'download-close'],
+    ['link-panel', 'link-cancel'],
+    ['intro-panel', 'intro-close'],
+  ].find(([panel]) => document.getElementById(panel).classList.contains('visible'));
+  if (dismiss) {
+    document.getElementById(dismiss[1]).click();
+    e.preventDefault();
+  } else if (assignPanel.classList.contains('visible')) {
+    assignPanel.classList.remove('visible');
+  }
+});
+
+assignPanel.addEventListener('click', e => {
+  const opt = e.target.closest('.aopt');
+  if (opt) assignSelected(opt.dataset.name);
+});
+document.getElementById('assign-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const name = e.target.value.trim();
+    if (!name) return; // clearing goes through the Clear button
+    assignSelected(name);
+    e.target.value = '';
+  }
+  if (e.key === 'Escape') assignPanel.classList.remove('visible');
+});
+document.getElementById('assign-clear-btn').addEventListener('click', () => assignSelected(''));
+
+// Clicking anywhere outside the assign panel (except the Assign button,
+// which toggles it itself) closes it.
+document.addEventListener('click', e => {
+  if (!assignPanel.classList.contains('visible')) return;
+  if (e.target.closest('#assign-panel') || e.target.closest('#btn-assign')) return;
+  assignPanel.classList.remove('visible');
+});
+
+document.getElementById('filter').addEventListener('input', e => {
+  const cleared = filterText && !e.target.value.trim();
+  filterText = e.target.value.trim();
+  // Filtering auto-expands matches; when the filter is cleared, keep any
+  // selected items visible by expanding the namespaces that contain them
+  // and scrolling the (first) selected row back into view.
+  if (cleared) {
+    for (const id of selection) expanded.add(id.split('.')[0]);
+  }
+  render();
+  if (cleared && selection.size > 0) {
+    listEl.querySelector('.row.selected')?.scrollIntoView({ block: 'center' });
+  }
+});
+
+document.getElementById('btn-matrix').addEventListener('click', e => {
+  showMatrix = !showMatrix;
+  e.target.classList.toggle('on', showMatrix);
+  render();
+});
+
+document.getElementById('btn-expand-all').addEventListener('click', () => {
+  for (const ns of DATA.namespaces) expanded.add(ns.name);
+  render();
+});
+document.getElementById('btn-collapse-all').addEventListener('click', () => {
+  expanded.clear();
+  render();
+});
+
+document.getElementById('btn-undo').addEventListener('click', undo);
+document.getElementById('btn-redo').addEventListener('click', redo);
+
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+  // Leave text fields to the browser's own undo.
+  if (e.target instanceof Element && e.target.closest('input, textarea')) return;
+  const key = e.key.toLowerCase();
+  if (key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+  else if ((key === 'z' && e.shiftKey) || key === 'y') { e.preventDefault(); redo(); }
+});
+
+for (const p of ['linux', 'windows']) {
+  const cb = document.getElementById(`show-${p}`);
+  cb.checked = showPlat[p];
+  cb.addEventListener('change', () => {
+    showPlat[p] = cb.checked;
+    saveView();
+    render();
+  });
+}
+
+// ── file I/O ─────────────────────────────────────────────────────────────────
+
+// A save dialog can't be pointed at an arbitrary folder from JS, so put
+// this page's own folder in the clipboard instead: pasting it into the
+// dialog's file-name field lands there. Only meaningful on file://.
+function folderStatusPath() {
+  if (location.protocol !== 'file:') return null;
+  const dir = decodeURIComponent(location.pathname).replace(/\/[^/]*$/, '');
+  return dir.replace(/^\//, '').replace(/\//g, '\\') + '\\status.json';
+}
+async function copyFolderPath() {
+  try {
+    const winPath = folderStatusPath();
+    if (winPath) await navigator.clipboard.writeText(winPath);
+  } catch (e) { /* clipboard unavailable — the dialog still works */ }
+}
+
+document.getElementById('btn-export').addEventListener('click', async () => {
+  await copyFolderPath();
+  // Where the File System Access API exists, export through a real "save
+  // as" dialog (paste the copied path into it); elsewhere fall back to a
+  // plain download.
+  if ('showSaveFilePicker' in window) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: 'status.json',
+        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
+      });
+      const w = await handle.createWritable();
+      await w.write(statusJson());
+      await w.close();
+      markSaved();
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;   // user cancelled the dialog
+      /* otherwise fall through to the download */
+    }
+  }
+  showDownloadPanel();
+});
+
+// Firefox and Safari have no save-dialog API. Instead of silently dropping
+// the file in the download folder, offer a link: right-click → "Save Link
+// As…" gives a real save dialog, where the already-copied folder path can be
+// pasted.
+const downloadPanel = document.getElementById('download-panel');
+const downloadLink = document.getElementById('download-link');
+
+function showDownloadPanel() {
+  if (downloadLink.href.startsWith('blob:')) URL.revokeObjectURL(downloadLink.href);
+  downloadLink.href = URL.createObjectURL(
+    new Blob([statusJson()], { type: 'application/json' }));
+  downloadPanel.classList.add('visible');
+}
+
+// Saving through the link can't be observed to completion, so treat either
+// gesture as "saved" — the tag is a reminder, not an audit trail.
+downloadLink.addEventListener('click', () => { markSaved(); downloadPanel.classList.remove('visible'); });
+downloadLink.addEventListener('contextmenu', () => markSaved());
+document.getElementById('download-close').addEventListener('click', () =>
+  downloadPanel.classList.remove('visible'));
+
+function loadStatusText(text) {
+  let parsed;
+  try {
+    parsed = normalizeStatus(JSON.parse(text));
+  } catch (err) {
+    alert('Not a valid status.json: ' + err.message);
+    return;
+  }
+  pushUndo();          // importing replaces everything: make it undoable
+  status = parsed;
+  persist();
+  markSaved();         // now identical to a file on disk
+  render();
+}
+
+document.getElementById('btn-import').addEventListener('click', async () => {
+  await copyFolderPath();
+  // Chromium: a real open dialog (paste the copied path into it); elsewhere
+  // the plain file input.
+  if ('showOpenFilePicker' in window) {
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
+      });
+      loadStatusText(await (await handle.getFile()).text());
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;   // user cancelled the dialog
+      /* otherwise fall through to the file input */
+    }
+  }
+  document.getElementById('import-file').click();
+});
+
+document.getElementById('import-file').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  loadStatusText(await file.text());
+  e.target.value = '';
+});
+
+// Chromium enhancement: bind to a status.json on disk and auto-save into
+// it. The handle persists in IndexedDB, so the link survives reloads —
+// Chrome either reconnects silently or asks for one-click permission
+// (silently, or on the first click; a refusal simply means "not linked").
+if ('showSaveFilePicker' in window) {
+  const linkBtn = document.getElementById('btn-link');
+  const linkPanel = document.getElementById('link-panel');
+
+  const idb = {
+    open: () => new Promise((res, rej) => {
+      const r = indexedDB.open('wx-api-tracker', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    }),
+    async get(key) {
+      const db = await this.open();
+      return new Promise((res, rej) => {
+        const r = db.transaction('kv').objectStore('kv').get(key);
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => rej(r.error);
+      });
+    },
+    async set(key, val) {
+      const db = await this.open();
+      return new Promise((res, rej) => {
+        const r = db.transaction('kv', 'readwrite').objectStore('kv').put(val, key);
+        r.onsuccess = () => res();
+        r.onerror = () => rej(r.error);
+      });
+    },
+    async del(key) {
+      const db = await this.open();
+      return new Promise((res, rej) => {
+        const r = db.transaction('kv', 'readwrite').objectStore('kv').delete(key);
+        r.onsuccess = () => res();
+        r.onerror = () => rej(r.error);
+      });
+    },
+  };
+
+  // preferFile: on reconnect the file on disk is the source of truth
+  // (another session may have written it since).
+  // Nothing tracked yet: the page was opened and left alone, so adopting a
+  // file's contents cannot lose anything and needs no confirmation.
+  function isUntouchedState() {
+    return Object.keys(status.items).length === 0
+      && Object.keys(status.namespaces).length === 0
+      && status.assignees.length === 0;
+  }
+
+  // Three-way choice when a picked file disagrees with real local changes.
+  function askConflict() {
+    return new Promise(resolve => {
+      const panel = document.getElementById('conflict-panel');
+      const buttons = {
+        'conflict-load': 'load',
+        'conflict-overwrite': 'overwrite',
+        'conflict-cancel': 'cancel',
+      };
+      const handlers = [];
+      const finish = choice => {
+        for (const [id, fn] of handlers) document.getElementById(id).removeEventListener('click', fn);
+        panel.classList.remove('visible');
+        resolve(choice);
+      };
+      for (const [id, choice] of Object.entries(buttons)) {
+        const fn = () => finish(choice);
+        handlers.push([id, fn]);
+        document.getElementById(id).addEventListener('click', fn);
+      }
+      panel.classList.add('visible');
+    });
+  }
+
+  // Binds the handle and starts auto-saving. A file that already holds data
+  // is loaded rather than overwritten; when that would discard real local
+  // changes the user is asked which side wins. Loads go through the undo
+  // stack, so Ctrl+Z restores the previous in-browser state. Returns false
+  // when nothing was linked.
+  async function adoptLinkedFile(handle, { silent = false, write = false } = {}) {
+    let text = '';
+    // write: Export & Link — the browser state is the source, so the file's
+    // contents are not consulted (the save picker has truncated it anyway).
+    if (!write) {
+      try { text = await (await handle.getFile()).text(); } catch (e) { /* new file */ }
+    }
+    if (text.trim()) {
+      let parsed;
+      try {
+        parsed = normalizeStatus(JSON.parse(text));
+      } catch (e) {
+        // Never overwrite a file we cannot read — it may hold real work.
+        if (!silent) alert(`Not linked: that file is not a valid status.json.\n\n${e.message}`);
+        return false;
+      }
+      const differs = serializeStatus(parsed) !== serializeStatus(status);
+      let takeFile = true;
+      if (differs && !isUntouchedState() && !silent) {
+        const choice = await askConflict();
+        if (choice === 'cancel') return false;
+        takeFile = choice === 'load';
+      }
+      if (takeFile) {
+        pushUndo();
+        status = parsed;
+      }
+    }
+    fileHandle = handle;
+    persist();
+    markSaved();
+    linkBtn.classList.add('on');
+    linkBtn.textContent = 'Linked ✓';
+    render();
+    return true;
+  }
+
+  const showChoices = show => {
+    document.getElementById('link-choices').hidden = !show;
+    document.getElementById('link-export-warn').hidden = show;
+  };
+  linkBtn.addEventListener('click', () => {
+    // Reflect the current link state in the panel.
+    const linked = !!fileHandle;
+    document.getElementById('link-status').hidden = !linked;
+    document.getElementById('link-unlink').hidden = !linked;
+    // Only a file:// page knows its own folder; served over http there is
+    // nothing useful to paste.
+    const path = folderStatusPath();
+    for (const el of linkPanel.querySelectorAll('.clip-path')) el.textContent = path || '';
+    for (const el of linkPanel.querySelectorAll('.clip-hint')) el.hidden = !path;
+    showChoices(true);
+    linkPanel.classList.add('visible');
+  });
+
+  document.getElementById('link-unlink').addEventListener('click', async () => {
+    fileHandle = null;
+    clearTimeout(saveTimer);            // drop any debounced write
+    try { await idb.del('fileHandle'); } catch (e) { /* ignore */ }
+    linkBtn.classList.remove('on');
+    linkBtn.textContent = 'Link file';
+    linkPanel.classList.remove('visible');
+  });
+
+  document.getElementById('link-cancel').addEventListener('click', () =>
+    linkPanel.classList.remove('visible'));
+
+  const JSON_TYPES = [{ description: 'JSON', accept: { 'application/json': ['.json'] } }];
+
+  async function linkToHandle(handle, { write = false } = {}) {
+    // An open-picker handle starts read-only; writing needs an explicit grant.
+    try {
+      if (await handle.queryPermission({ mode: 'readwrite' }) !== 'granted'
+          && await handle.requestPermission({ mode: 'readwrite' }) !== 'granted') {
+        alert('Not linked: permission to edit that file was not granted.');
+        return;
+      }
+    } catch (e) { /* no permission API on this handle — try the write anyway */ }
+    if (await adoptLinkedFile(handle, { write })) {
+      try { await idb.set('fileHandle', handle); } catch (e) { /* not persistable */ }
+    }
+  }
+
+  // Import & Link MUST go through the open picker: the save picker truncates
+  // the chosen file as soon as it returns, which would destroy the
+  // status.json before it could be read.
+  document.getElementById('link-import').addEventListener('click', async () => {
+    await copyFolderPath();
+    try {
+      const [handle] = await window.showOpenFilePicker({ types: JSON_TYPES });
+      linkPanel.classList.remove('visible');
+      await linkToHandle(handle);
+    } catch (e) { /* user cancelled the picker */ }
+  });
+
+  // Export & Link: warn first, then the save picker (which replaces whatever
+  // is chosen) and write the browser state into it.
+  document.getElementById('link-export').addEventListener('click', () => showChoices(false));
+  document.getElementById('link-export-back').addEventListener('click', () => showChoices(true));
+  document.getElementById('link-export-go').addEventListener('click', async () => {
+    await copyFolderPath();
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: 'status.json', types: JSON_TYPES,
+      });
+      linkPanel.classList.remove('visible');
+      await linkToHandle(handle, { write: true });
+    } catch (e) { /* user cancelled the picker */ }
+  });
+
+  // Restore a previous link on load, automatically. Chrome usually needs a
+  // user gesture before it will re-grant access, so when the permission is
+  // merely "prompt" the reconnect rides on the first interaction with the
+  // page. A refused prompt means "not linked": the stored handle is dropped
+  // so it stops asking, and the tracker carries on with localStorage.
+  (async () => {
+    try {
+      const stored = await idb.get('fileHandle');
+      if (!stored) return;
+      if (await stored.queryPermission({ mode: 'readwrite' }) === 'granted') {
+        await adoptLinkedFile(stored, { silent: true });
+        return;
+      }
+      const retry = async () => {
+        document.removeEventListener('pointerdown', retry, true);
+        try {
+          if (await stored.requestPermission({ mode: 'readwrite' }) === 'granted') {
+            await adoptLinkedFile(stored, { silent: true });
+            return;
+          }
+        } catch (e) { /* refused, or still no activation */ }
+        try { await idb.del('fileHandle'); } catch (e) { /* ignore */ }
+      };
+      document.addEventListener('pointerdown', retry, true);
+    } catch (e) { /* no stored handle / IDB unavailable */ }
+  })();
+} else {
+  // Firefox and Safari have no File System Access API: their FileSystemHandle
+  // support covers only the sandboxed Origin Private File System, which is
+  // invisible to the user's filesystem, so there is no equivalent. Export /
+  // Import remain the way to move state to a real file there.
+  const linkBtn = document.getElementById('btn-link');
+  linkBtn.disabled = true;
+  linkBtn.title = 'File linking is only available on Chromium (Chrome, Edge, Orion Blink). '
+    + 'Use Export / Import instead.';
+  // No save dialog here — say where the export actually goes.
+  document.getElementById('btn-export').title =
+    'Saves status.json to your downloads folder (this browser has no save dialog). '
+    + 'Turn on "Always ask you where to save files" in Settings → General → Downloads '
+    + 'to pick the location and paste the copied path.';
+}
+
+// ── boot ─────────────────────────────────────────────────────────────────────
+
+// Keep the floating Unsaved Changes tag pinned under the header whatever
+// height the header ends up at (it wraps on narrow windows).
+{
+  const ro = new ResizeObserver(syncChromeHeight);
+  ro.observe(document.querySelector('header'));
+  ro.observe(totalsEl);
+  syncChromeHeight();
+}
+
+updateDirtyTag();   // reflect a pending state left over from an earlier session
+render();
+
+// The backdrop follows whichever modal panel is open. A MutationObserver
+// keeps it in sync without every show/hide site having to remember it.
+// Clicking it deliberately does nothing: the conflict panel needs a real
+// choice, and the others all have explicit buttons.
+{
+  const panels = ['note-panel', 'link-panel', 'conflict-panel', 'download-panel', 'intro-panel']
+    .map(id => document.getElementById(id));
+  const backdrop = document.getElementById('backdrop');
+  const sync = () => backdrop.classList.toggle(
+    'visible', panels.some(p => p.classList.contains('visible')));
+  const observer = new MutationObserver(sync);
+  for (const panel of panels) observer.observe(panel, { attributes: true, attributeFilter: ['class'] });
+  sync();
+}
+
+// ── first-run help ───────────────────────────────────────────────────────────
+// Shown once, when this browser has never stored anything for the tracker, so
+// the file-linking / import-export model is explained before any work is done.
+// The ? button reopens it at any time.
+{
+  const INTRO_KEY = 'wx-api-tracker-intro-shown';
+  const introPanel = document.getElementById('intro-panel');
+  const closeIntro = () => {
+    introPanel.classList.remove('visible');
+    try { localStorage.setItem(INTRO_KEY, '1'); } catch (e) { /* quota */ }
+  };
+  const openIntro = () => {
+    // Linking is Chromium-only; mirror the header button's availability.
+    document.getElementById('intro-link').disabled =
+      document.getElementById('btn-link').disabled;
+    introPanel.classList.add('visible');
+  };
+
+  document.getElementById('intro-close').addEventListener('click', closeIntro);
+  document.getElementById('intro-import').addEventListener('click', () => {
+    closeIntro();
+    document.getElementById('btn-import').click();
+  });
+  document.getElementById('intro-link').addEventListener('click', () => {
+    closeIntro();
+    document.getElementById('btn-link').click();
+  });
+  document.getElementById('btn-help').addEventListener('click', openIntro);
+
+  let firstRun = false;
+  try {
+    firstRun = !localStorage.getItem(INTRO_KEY) && !localStorage.getItem(STORAGE_KEY);
+  } catch (e) { /* storage unavailable: don't nag */ }
+  if (firstRun) openIntro();
+}
+</script>
+</body>
+</html>

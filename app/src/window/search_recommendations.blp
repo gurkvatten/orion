@@ -1,0 +1,628 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $SearchRecommendations: 
+
+Box{
+  Overlay{
+    ScrolledWindow{
+      hscrollbar-policy: never;
+      Box {
+        halign: fill;
+        valign: fill;
+        hexpand: true;
+        vexpand: true;
+        name:"search-recommendations";
+        margin-top:20;
+        margin-start:50;
+        margin-end:50;
+        margin-bottom:20;
+        spacing:15;
+        orientation: vertical;
+        
+        Box private_browsing_info_box {
+          visible: false; // not visible by default, only in Private Windows
+          hexpand: true;
+          halign: center;
+          valign: start;
+          vexpand: false;
+          orientation: vertical;
+          spacing: 16;
+          styles ["pill-label"]
+          margin-top: 32;
+          Box {
+            orientation: vertical;
+            halign: center;
+            hexpand: true;
+            spacing: 16;
+            margin-top: 16;
+            margin-bottom: 16;
+            margin-start: 16;
+            margin-end: 16;
+            Label {
+              label: _("Private Browsing Enabled");
+              halign: center;
+              hexpand: true;
+              styles ["title-4"]
+            }
+            Label {
+              label: _("Orion will keep your browsing history and data private for all tabs in this window. After you close this window, Orion won’t remember the pages you visited.");
+              halign: center;
+              hexpand: true;
+            }
+          }
+        }
+        Adw.Clamp {
+          tightening-threshold:350;
+          maximum-size:500;
+          orientation:horizontal;
+          halign: center;
+          hexpand: true;
+          valign: center;
+          vexpand: true;
+          child:Box {
+            orientation: vertical;
+            spacing:15;
+            Label {
+              halign:start;
+              valign:start;
+              styles [ 
+                "heading",
+              ]
+              label:_("Favorites");
+            }
+            FlowBox {
+              styles [
+                "website-logo-flowbox",
+              ]
+              column-spacing:15;
+              hexpand:false;
+              halign:start;
+              selection-mode: none;
+              Button test_web_button_1 {
+                clicked => $on_test_web_button_1_clicked();
+                styles [
+                  "website-button",
+                ]
+                child: Box {
+                  orientation:vertical;
+                  Image {
+                    width-request: 85;
+                    height-request: 85;
+                    name:"button-label";
+                    pixel-size:64;
+                    icon-name:"orion-logo";
+                  }
+                  Label {
+                    justify:center;
+                    halign:center;
+                    wrap:true;
+                    lines:2;
+                    ellipsize:end;
+                    max-width-chars:10;
+                    width-chars:10;
+                    label: "Orion Feedback";
+                  }
+                };
+              }
+              Button test_web_button_2 {
+                clicked => $on_test_web_button_2_clicked();
+                styles [
+                  "website-button",
+                ]
+                child: Box {
+                  orientation:vertical;
+                  Image {
+                    width-request: 85;
+                    height-request: 85;
+                    name:"button-label";
+                    pixel-size:64;
+                    icon-name:"kagi-logo";
+                  }
+                  Label {
+                    justify:center;
+                    halign:center;
+                    wrap:true;
+                    lines:2;
+                    ellipsize:end;
+                    max-width-chars:10;
+                    width-chars:10;
+                    label: "Orion User Guide";
+                  }
+                };
+              }
+            }
+            Label {
+              visible: false; // TODO: show when implemented
+              halign:start;
+              valign:start;
+              styles [ 
+                "heading",
+              ]
+              label:_("Frequently visited");
+            }
+            FlowBox {
+              visible: false; // TODO: show when implemented
+              styles [
+                "website-logo-flowbox",
+              ]
+              column-spacing:15;
+              hexpand:false;
+              halign:start;
+              selection-mode: none;
+              Button testingWebsiteButton3{
+                styles [
+                  "website-button",
+                ]
+                child: Box {
+                  orientation:vertical;
+                  Image {
+                    width-request: 85;
+                    height-request: 85;
+                    name:"button-label";
+                    pixel-size:64;
+                    icon-name:"orion-logo";
+                  }
+                  Label {
+                    justify:center;
+                    halign:center;
+                    wrap:true;
+                    lines:2;
+                    ellipsize:end;
+                    max-width-chars:10;
+                    width-chars:10;
+                    label:_("Other Text Too");
+                  }
+                };
+              }
+              Button testingWebsiteButton4{
+                styles [
+                  "website-button",
+                ]
+                child: Box {
+                  orientation:vertical;
+                  Image {
+                    width-request: 85;
+                    height-request: 85;
+                    name:"button-label";
+                    pixel-size:64;
+                    icon-name:"orion-logo";
+                  }
+                  Label {
+                    justify:center;
+                    halign:center;
+                    wrap:true;
+                    lines:2;
+                    ellipsize:end;
+                    max-width-chars:10;
+                    width-chars:10;
+                    label:_("Orion Feedback But It\'s never enough text");
+                  }
+                };
+              }
+            }
+            Label {
+              visible: false; // TODO: show when implemented
+              halign:start;
+              valign:start;
+              styles [ 
+                "heading",
+              ]
+              label:_("Suggestions");
+            }
+            Box {
+              visible: false; // TODO: show when implemented
+              styles [
+                "box-with-bground",
+              ]
+              hexpand:true;
+              height-request:100;
+              halign:fill;
+              valign:fill;
+              Box {
+                orientation:vertical;
+                hexpand:true;
+                valign:center;
+                halign:center;
+                Image {
+                  margin-bottom:10;
+                  icon-name:"magic-wand-symbolic";
+                  pixel-size:20;
+                  halign:center;
+                }
+                Label {
+                  label:_("Recommendations will appear here when available.");
+                  halign:center;
+                }
+                Label {
+                  label:_("This section may be hidden if there is no content to display.");
+                  halign:center;
+                }
+              }
+            }
+            Label {
+              visible: false; // TODO: show when implemented
+              halign:start;
+              valign:start;
+              styles [ 
+                "heading",
+              ]
+              label:_("Reading List");
+            }
+            FlowBox {
+              visible: false; // TODO: show when implemented
+              selection-mode:none;
+              homogeneous:true;
+              row-spacing:15;
+              column-spacing:15;
+              max-children-per-line:4;
+              min-children-per-line:4;
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+              Adw.Clamp {
+                orientation:horizontal;
+                maximum-size:120;
+                Box {
+                  halign:fill;
+                  styles [
+                    "box-with-bground"
+                  ]
+                  hexpand:true;
+                  Box {
+                    margin-start:15;
+                    margin-top:15;
+                    margin-bottom:15;
+                    orientation:vertical;
+                    hexpand:true;
+                    Label {
+                      styles [
+                        "small-heading"
+                      ]
+                      halign:start;
+                      label:_("Example | a lot of words to write, just need something here so that there is a lot of text that I can wrap and elipsize");
+                      wrap:true;
+                      lines:2;
+                      ellipsize:end;
+                    }
+                    Label {
+                      halign:start;
+                      label:_("www.example.com");
+                    }
+                  }
+                  Image {
+                    margin-end:15;
+                    halign:end;
+                    icon-name:"orion-logo";
+                    pixel-size:35;
+                  }
+                }
+              }
+            }
+          };
+        }
+      }
+    }
+
+    [overlay]
+    Box overlay_box {
+      halign: fill;
+      valign: end;
+      hexpand: true;
+      margin-start: 15;
+      margin-end: 15;
+      margin-bottom: 15;
+      orientation: horizontal;
+      Label beta_disclaimer_label {
+        styles [
+          "pill-label"
+        ]
+        // Change this disclaimer text when releasing Alpha/Beta versions
+        label: _("<span size='12288' weight='bold'>Disclaimer: This software is in active development (beta stage). Expect incomplete features and potential application instability (e.g., coredumps, crashes, or data loss may occur).\nThis is potentially an unstable beta build intended for limited external testing only to gather early feedback.\nSome features, like WebKit Extensions, Data synchronisations are not implemented yet.</span>");
+        wrap: true;
+        wrap-mode: word_char;
+        use-markup: true;
+        justify: left;
+        visible: false; // Enabled programmatically in Alpha/Beta versions
+      }
+      Box {
+        halign: fill;
+        valign: end;
+        hexpand: true;
+        orientation: horizontal;
+      }
+      Box {
+        halign: end;
+        valign: end;
+        Button {
+          halign: end;
+          child: Image {
+            icon-name: "sliders-horizontal-symbolic";
+            pixel-size: 20;
+          };
+          clicked => $on_show_preferences_popover_button_clicked();
+        }
+      }
+    }
+  }
+
+  GestureClick {
+    button: 3;
+    released => $on_search_recommendations_secondary_released() swapped;
+  }
+
+  PopoverMenu context_menu {
+    menu-model: context_menu_model;
+  }
+}
+
+menu context_menu_model {
+  section {
+    item {
+      label: "Test";
+    }
+  }
+}

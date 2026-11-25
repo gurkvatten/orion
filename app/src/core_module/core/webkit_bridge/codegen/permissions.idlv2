@@ -1,0 +1,65 @@
+[AdditionalProperties=false]
+dictionary PermissionSet {
+    optional sequence<string> permissions = [];
+    optional sequence<string> origins = [];
+
+    [Tags=Firefox]
+    optional sequence<string> data_collection = [];
+};
+
+[AdditionalProperties=false]
+[Tags=Chrome]
+dictionary HostAccessRequest {
+    optional string documentId;
+    optional number tabId;
+    optional string pattern;
+};
+
+callback PermissionsSetCallback = void(PermissionSet permissions);
+callback PermissionsBooleanCallback = void(boolean result);
+callback PermissionsVoidCallback = void();
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage,DevToolsPage,OffscreenDocument]
+[Global="permissions"]
+interface Permissions {
+    function Promise<PermissionSet> getAll();
+
+    [Tags=Chrome]
+    function void getAll(PermissionsSetCallback callback);
+
+    function Promise<boolean> contains(PermissionSet permissions);
+
+    [Tags=Chrome]
+    function void contains(PermissionSet permissions, PermissionsBooleanCallback callback);
+
+    function Promise<boolean> request(PermissionSet permissions);
+
+    [Tags=Chrome]
+    function void request(PermissionSet permissions, PermissionsBooleanCallback callback);
+
+    function Promise<boolean> remove(PermissionSet permissions);
+
+    [Tags=Chrome]
+    function void remove(PermissionSet permissions, PermissionsBooleanCallback callback);
+
+    [Tags=Chrome]
+    function Promise<void> addHostAccessRequest(HostAccessRequest request);
+
+    [Tags=Chrome]
+    function void addHostAccessRequest(
+        HostAccessRequest request,
+        PermissionsVoidCallback callback
+    );
+
+    [Tags=Chrome]
+    function Promise<void> removeHostAccessRequest(HostAccessRequest request);
+
+    [Tags=Chrome]
+    function void removeHostAccessRequest(
+        HostAccessRequest request,
+        PermissionsVoidCallback callback
+    );
+
+    event onAdded(PermissionSet permissions);
+    event onRemoved(PermissionSet permissions);
+};

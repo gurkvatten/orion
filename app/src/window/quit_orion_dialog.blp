@@ -1,0 +1,62 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $QuitOrionDialog: Adw.Dialog {
+  title: _("Quit Orion");
+  name: "quit-orion-dialog";
+
+  Box {
+    orientation: vertical;
+    halign: fill;
+    margin-top: 16;
+    margin-start: 16;
+    margin-end: 16;
+    margin-bottom: 16;
+    hexpand: true;
+    vexpand: true;
+    spacing: 10;
+
+    Image {
+      name: "orion-logo";
+      icon-name: "orion-logo";
+      pixel-size: 60;
+    }
+
+    Label {
+      label: _("Are you sure you want to quit Orion?");
+      styles ["bold-text"]
+    }
+
+    Label body_label {
+      label: _("<dynamic>");
+      max-width-chars: 40;
+      wrap: true;
+    }
+
+    CheckButton show_warning_check_button {
+      label: _("Show warning before quitting");
+      active: true;
+    }
+
+    Box {
+      halign: center;
+      spacing: 8;
+
+      Button cancel_button {
+        label: _("Cancel");
+        clicked => $on_cancel_clicked();
+      }
+
+      Button quit_button {
+        label: _("Quit");
+        styles ["suggested-action"]
+        clicked => $on_quit_clicked();
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, quit_button]
+}

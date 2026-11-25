@@ -1,0 +1,382 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $CustomizeToolbarDialog: Adw.Dialog {
+  name: "customize-toolbar-dialog";
+  
+  Box all_box {
+    orientation: vertical;
+    margin-top: 16;
+    margin-end: 16;
+    margin-bottom: 16;
+    margin-start: 16;
+    hexpand: true;
+
+    Label {
+      label: _("Drag your favorite items into the toolbar…");
+      halign: start;
+      styles ["title-6"]
+    }
+
+    Adw.Clamp {
+      tightening-threshold: 1000;
+      maximum-size: 1000;
+
+      Label {
+        margin-top: 16;
+        label: _("Here belongs AdwWrapBox, removed for compatibility reasons because your libadwaita is older than 1.7");
+      }
+    }
+
+    Label {
+      label: _("…or drag the default set into the toolbar.");
+      halign: start;
+      margin-top: 32;
+      styles ["title-6"]
+    }
+
+    ListBox {
+      styles ["navigation-sidebar"] // because we want rounded border
+
+      ListBoxRow {
+        Box {
+          margin-top: 8;
+          margin-bottom: 8;
+          halign: start;
+          name: "toolbar-preview";
+          spacing: 8;
+
+          Box {
+            orientation: vertical;
+            Box {
+              halign: center;
+
+              Button {
+                name: "show-sidebar";
+                icon-name: "dock-left-symbolic";
+                tooltip-text: _("Show Sidebar");
+              }
+
+              Button {
+                name: "n-tabs";
+                label: _("1 Tab");
+                margin-start: 2;
+              }
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Sidebar");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+
+            Box {
+              halign: center;
+              Button {
+                icon-name: "left-symbolic";
+              }
+              Button {
+                margin-start: 2;
+                icon-name: "right-symbolic";
+              }
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Back/Forward");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "size-horizontally-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Flexible Space");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+          
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "shield-half-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Privacy");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "brush-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Page Tweaks");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "cogged-wheel-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Website Settings");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "big-dot-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Profile");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Entry {
+              sensitive: false;
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Address Input");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "star-outline-thick-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Bookmark");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "plus-large-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("New Tab");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "size-horizontally-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Flexible Space");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "arrow3-down-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Downloads");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "share-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Share");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "grid-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Tab Overview");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+
+          Box {
+            orientation: vertical;
+            Button {
+              icon-name: "more-small-symbolic";
+              hexpand: false;
+              halign: center;
+            }
+
+            Label {
+              margin-top: 4;
+              label: _("Overflow Menu");
+              wrap: true;
+              xalign: 0.5;
+              max-width-chars: 8;
+              justify: center;
+            }
+          }
+        }
+      }
+    }
+
+    Separator {
+      orientation: horizontal;
+      hexpand: true;
+      halign: fill;
+      margin-top: 8;
+    }
+
+    Box {
+      margin-top: 8;
+      hexpand: true;
+      vexpand: false;
+
+      Label {
+        label: _("Show");
+      }
+
+      Box {
+        vexpand: false;
+        valign: center;
+
+        DropDown {
+          margin-start: 8;
+          model: StringList {
+            strings [
+              "Icon and Text",
+              "Icon Only",
+            ]
+          };
+        }
+      }
+      
+      Box {
+        hexpand: true;
+        halign: end;
+
+        Button done_button {
+          label: _("Done");
+          styles ["suggested-action"]
+          clicked => $on_done_button_clicked();
+          margin-top: 16;
+        }
+      }
+    }
+  }
+}

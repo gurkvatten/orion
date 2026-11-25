@@ -1,0 +1,71 @@
+using Gtk 4.0;
+using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+template $PrivacyPopover: Popover {
+  width-request:450;
+  autohide:true;
+  name:"privacy-popover";
+
+  Box {
+    margin-top:15;
+    margin-start:15;
+    margin-end:15;
+    margin-bottom:10;
+    orientation:vertical;
+    spacing:15;
+    Box {
+      hexpand:true;
+      orientation:horizontal;
+      spacing:10;
+      Image website_icon {
+        icon-name:"globe-alt2-symbolic";
+        pixel-size:32;
+        halign:start;
+      }
+      Box {
+        orientation:vertical;
+        hexpand:true;
+        halign:start;
+        Label website_label {
+          styles [
+            "heading"
+          ]
+          halign:start;
+          label:"";
+        }
+        Label {
+          halign:start;
+          label:_("Privacy Report");
+        }
+      }
+      Image {
+        halign:end;
+        icon-name:"shield-safe-symbolic";
+      }
+    }
+    Adw.ToggleGroup content_toggle_group {
+      hexpand:true;
+      height-request:45;
+      notify::active => $on_content_toggle_group_active_changed();
+      Adw.Toggle requests_toggle {
+        label:_("Blocked Requests: –"); // TODO: wire after implementation
+      }
+      Adw.Toggle trackers_toggle {
+        label:_("Blocked Trackers: 0"); // updated dynamically
+      }
+    }
+    ScrolledWindow {
+      hexpand:true;
+      vexpand:true;
+      height-request:150;
+      max-content-height:150;
+      ListBox content_list_box {
+        hexpand:true;
+        selection-mode:none;
+        styles ["bg-inherit"]
+      }
+    }
+  }
+}

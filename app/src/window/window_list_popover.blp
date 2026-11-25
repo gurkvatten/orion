@@ -1,0 +1,90 @@
+using Gtk 4.0;
+using Adw 1;
+
+
+//TODO: change the view_stack to vhomogeneous: false and find a way for it not to break everything
+Box window_page {
+  orientation: vertical;
+
+  $WindowListBox {}
+}
+
+Box sync_page {
+  orientation: vertical;
+  margin-top:8;
+  margin-bottom:8;
+  spacing:8;
+  Label {
+    styles [
+      "dim-label"
+    ]
+    label:_("Synced devices");
+    margin-start:10;
+    halign:start;
+  }
+  Label {
+    label: _("Your synced devices will show here.");
+    wrap: true;
+    max-width-chars: 30;
+    valign: center;
+    vexpand: true;
+    visible: false;
+  }
+
+  ScrolledWindow
+  {
+    max-content-height:400;
+    propagate-natural-height:true;
+    //height-request: 400;
+    ListView synced_devices_list_view {
+      margin-start:10;
+      margin-end:10;
+      styles [
+       "synced-devices-listview",
+      ]
+    }
+  }
+}
+
+template $WindowListPopover: Adw.Dialog {
+  width-request: 300;
+  height-request: 500;
+  name:"window-list-popover";
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Box {
+      margin-start: 8;
+      margin-end: 8;
+      margin-bottom: 8;
+
+      orientation: vertical;
+
+      Adw.ViewSwitcher {
+        policy: wide;
+        stack: view_stack;
+        // margin-start: 64;
+        // margin-end: 64;
+        hexpand: false;
+      }
+
+      Adw.ViewStack view_stack {
+        vhomogeneous: true;
+        enable-transitions: false;
+        height-request: 300;
+        Adw.ViewStackPage {
+          icon-name: "window-symbolic";
+          child: window_page;
+        }
+
+        Adw.ViewStackPage {
+          icon-name: "phonelink-symbolic";
+          child: sync_page;
+        }
+        notify::visible-child => $on_view_stack_notify_visible_child();
+      }
+    }
+  }
+}

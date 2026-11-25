@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>corpus runner</title>
+</head>
+<body>
+  <!--
+    Minimal runner used inside the aggregate page's hidden iframes. It loads
+    only what a corpus suite needs to run and stream results: the polyfill and
+    runner.js (which dynamically loads chrome_test_shim.js + the suite scripts).
+    No env/results_view/highlight/catalog and no table — results go to the
+    parent via postMessage, so rendering here is skipped. Keeping this lean
+    matters because every suite is its own iframe and each script load goes
+    through the single-threaded extension scheme handler.
+  -->
+  <script src="runner.js"></script>
+</body>
+</html>

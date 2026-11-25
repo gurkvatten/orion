@@ -1,0 +1,77 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $VisitUnsecureWebsiteDialog: Adw.Dialog {
+  content-width: 320;
+  content-height: 250;
+  title: _("Visit Unsecure Website");
+  //TODO nastav jmeno
+
+  Adw.ToolbarView {
+    //[top]
+   // Adw.HeaderBar {}
+
+    Box {
+      orientation: vertical;
+      Box {
+        margin-top: 20;
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 49;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+
+      Box {
+        orientation: vertical;
+        margin-top: 20;
+        margin-bottom: 20;
+        margin-end: 20;
+        margin-start: 20;
+        spacing: 10;
+
+        Label perm_label{
+          wrap: true;
+          max-width-chars: 60;
+          width-chars:15;
+          justify: center;
+          styles [
+            "bold-text"
+          ]
+          label: _("Are you sure you want to visit this website on a connection that is not private?");
+        }
+
+        Button allow_once_button {
+          label: _("Allow Once");
+          margin-top: 10;
+          hexpand: true;
+          halign: fill;
+          clicked => $on_allow_once_button_clicked();
+        }
+
+        Button allow_always_button {
+          label: _("Always Allow for This Website");
+          hexpand: true;
+          halign: fill;
+          clicked => $on_allow_always_button_clicked();
+        }
+
+        Button dont_allow_button {
+          label: _("Cancel");
+          styles ["suggested-action"]
+          margin-top: 10;
+          hexpand: true;
+          halign: fill;
+          clicked => $on_cancel_button_clicked();
+        }
+      }
+    }
+  }
+}
+SizeGroup {
+  mode: horizontal;
+  widgets [allow_once_button, allow_always_button, dont_allow_button]
+}

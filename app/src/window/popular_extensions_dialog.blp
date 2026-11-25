@@ -1,0 +1,611 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PopularExtensionsDialog: Adw.Dialog {
+  width-request:1000;
+  height-request:700;
+  title: _("Popular Extensions"); //TODO: maybe give this a proper title but unnecessary
+  name: "popular-extensions-dialog";
+
+  Adw.NavigationSplitView {
+    sidebar: Adw.NavigationPage navigation_sidebar{
+      title:_("sidebar");
+      Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar left_side_header_bar{
+          show-title:false;
+        } //TODO: fix header bars, what about closing button, keep normal location instead? where to put search?
+
+        content: Box {
+          orientation:vertical;
+          margin-top:20;
+          margin-start:20;
+          margin-end:20;
+          margin-bottom:20;
+            ListBox sidebar_list_box{
+            vexpand:true;
+            show-separators:false;
+            activate-on-single-click:true;
+            selection-mode: single;
+            row-activated => $on_sidebar_row_activated();
+            ListBoxRow debug_sidebar_row {
+              child: Box {
+                Image {
+                  margin-top:7;
+                  margin-start:7;
+                  margin-end:9;
+                  margin-bottom:7;
+                  icon-name:"applications-engineering-symbolic";
+                  pixel-size:24;
+                }
+                Label {
+                  margin-end:20;
+                  label:_("Debug");
+                }
+              };
+            }
+            Box password_managers_box {
+              Image {
+                margin-top:7;
+                margin-start:7;
+                margin-end:9;
+                margin-bottom:7;
+                icon-name:"key4-symbolic";
+                pixel-size:24;
+              }
+              Label {
+                margin-end:20;
+                label:_("Password Managers");
+              }
+            }
+            Box ads_and_tracking_box{
+              Image {
+                margin-top:7;
+                margin-start:7;
+                margin-end:9;
+                margin-bottom:7;
+                icon-name:"megaphone-symbolic";
+                pixel-size:24;
+              }
+              Label {
+                margin-end:20;
+                label:_("Ads & Tracking");
+              }
+            }
+            Box vpns_box {
+              Image {
+                margin-top:7;
+                margin-start:7;
+                margin-end:9;
+                margin-bottom:7;
+                icon-name:"shield-safe-symbolic";
+                pixel-size:24;
+              }
+              Label {
+                margin-end:20;
+                label:_("VPNs");
+              }
+            }
+            Box browse_better_box{
+              Image {
+                margin-top:7;
+                margin-start:7;
+                margin-end:9;
+                margin-bottom:7;
+                icon-name:"window-flat-symbolic";
+                pixel-size:24;
+              }
+              Label {
+                margin-end:20;
+                label:_("Browse Better");
+              }
+            }
+          }
+          LinkButton { //TODO: make these links open in orion (in code probably)
+            margin-bottom:20;
+            valign:end;
+            uri:"https://chromewebstore.google.com/";
+            activate-link => $on_store_activate_link();
+            child: Box {
+              spacing:5;
+              Image {
+                icon-name:"chrome-logo";
+                pixel-size:20;
+              }
+              Label {
+                label:_("Chrome Web Store");
+              }
+              Image {
+                icon-name:"arrow1-top-right-symbolic";
+              }
+            };
+          }
+          LinkButton {
+            valign:end;
+            uri:"https://addons.mozilla.org/en-US/firefox/";
+            activate-link => $on_store_activate_link();
+            child: Box {
+              spacing:5;
+              Image {
+                icon-name:"firefox-logo";
+                pixel-size:20;
+              }
+              Label {
+                label:_("Firefox Add-Ons");
+              }
+              Image {
+                icon-name:"arrow1-top-right-symbolic";
+              }
+            };
+          }
+        };
+      }
+    };
+
+
+    content: Adw.NavigationPage {
+      title:_("content");
+      Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {
+          show-title:false;
+          [end] //TODO: maybe top left looks better?
+          Button {
+            Adw.ButtonContent {
+              icon-name: "sliders-horizontal-symbolic";
+              label:_("Manage Extensions");
+            }
+            clicked => $on_manage_extensions_button_clicked();
+          }
+        }
+        content: ScrolledWindow content_scrolled_window {
+          hexpand:true;
+          vexpand:true;
+          //this is just a signal binding, ignore the warnings, scrolled window will correctly update this adjustment's properties
+          vadjustment: Adjustment content_vadjustment{
+            changed => $on_vadjustment_changed();
+            value-changed => $on_vadjustment_value_changed(); //just directly calls on_vadjustment_changed, here for maintainability if this signature changes
+          };
+          Box scrolling_box {
+            margin-start:40;
+            margin-end:30;
+            margin-top:10;
+            margin-bottom:10;
+            orientation:vertical;
+            spacing:30;
+            Label {
+              styles [ 
+                "headingA",
+              ]
+              halign:start;
+              label:_("Popular Extensions");
+            }
+            Box {
+              Label {
+                wrap:true;
+                max-width-chars:50;
+                width-chars:50;
+                xalign:0;
+                halign:start;
+                label:_("Orion supports both Chrome and Firefox extensions. We made a selection of a few popular ones below. To add an extension, just click “Get” to install and enable the extension");
+              }
+            }
+            Box {
+              Label {
+                wrap:true;
+                max-width-chars:50;
+                width-chars:50;
+                xalign:0;
+                halign:start;
+                label:_("You can install any other extensions directly from the store website.");
+              }
+            }
+
+            Box debug_section {
+              orientation: vertical;
+              spacing: 10;
+
+              Label {
+                styles [
+                  "headingB",
+                ]
+                halign:start;
+                label:_("Debug");
+              }
+              GridView debug_grid_view {
+                styles [
+                  "gridview-no-hover",
+                  "bg-inherit",
+                ]
+                max-columns: 2;
+                min-columns: 2;
+                factory: BuilderListItemFactory {
+                  template ListItem {
+                    child: Box {
+                      styles [
+                        "columnview-item",
+                        "frame"
+                      ]
+                      orientation:horizontal;
+                      margin-top:5;
+                      margin-start:5;
+                      margin-bottom:5;
+                      hexpand:true;
+                      spacing:10;
+                      $UrlImage {
+                        styles [
+                          "extension-icon",
+                        ]
+                        margin-top:10;
+                        margin-start:10;
+                        margin-bottom:10;
+                        url: bind ($get_extension_icon_url(template.item)) as <string>;
+                        pixel-size: 45;
+                      }
+                      Box {
+                        halign:start;
+                        valign:center;
+                        hexpand:true;
+                        orientation:vertical;
+                        spacing:4;
+                        margin-top:10;
+                        margin-bottom:10;
+                        Label {
+                          styles [
+                              "heading",
+                          ]
+                          ellipsize:end;
+                          halign:start;
+                          label: bind ($get_extension_name(template.item)) as <string>;
+                        }
+                        Label {
+                          ellipsize:end;
+                          halign:start;
+                          label: bind ($get_extension_description(template.item)) as <string>;
+                        }
+                        Label {
+                          ellipsize:end;
+                          halign:start;
+                          label: bind ($get_extension_type_string(template.item)) as <string>;
+                        }
+                      }
+                      Button {
+                        halign:end;
+                        valign:center;
+                        margin-end:10;
+                        label: bind ($get_extension_action_string(template.item)) as <string>;
+                        sensitive: bind ($get_extension_action_sensitive(template.item)) as <bool>;
+                        clicked => $on_action_clicked();
+                      }
+                    };
+                  }
+                };
+              }
+            }
+
+            Label password_managers_label{
+              styles [
+                "headingB",
+              ]
+              halign:start;
+              label:_("Password Managers");
+            }
+            GridView password_managers_grid_view {
+              styles [
+                "gridview-no-hover",
+                "bg-inherit",
+              ]
+              max-columns: 2;
+              min-columns: 2;
+              factory: BuilderListItemFactory {
+                template ListItem {
+                  child: Box {
+                    styles [
+                      "columnview-item",
+                      "frame"
+                    ]
+                    orientation:horizontal;
+                    margin-top:5;
+                    margin-start:5;
+                    margin-bottom:5;
+                    hexpand:true;
+                    spacing:10;
+                    $UrlImage {
+                      styles [
+                        "extension-icon",
+                      ]
+                      margin-top:10;
+                      margin-start:10;
+                      margin-bottom:10;
+                      url: bind ($get_extension_icon_url(template.item)) as <string>;
+                      pixel-size: 45;
+                    }
+                    Box {
+                      halign:start;
+                      valign:center;
+                      hexpand:true;
+                      orientation:vertical;
+                      spacing:4;
+                      margin-top:10;
+                      margin-bottom:10;
+                      Label {
+                        styles [ 
+                            "heading",
+                        ]
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_name(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_description(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_type_string(template.item)) as <string>;
+                      }
+                    }
+                    Button {
+                      styles [
+                        //TODO: to be done in the code loading column views, also needs the data in item.css
+                      ]
+                      halign:end;
+                      valign:center;
+                      margin-end:10;
+                      label: bind ($get_extension_action_string(template.item)) as <string>;
+                      sensitive: bind ($get_extension_action_sensitive(template.item)) as <bool>;
+                      clicked => $on_action_clicked();
+                    }
+                  };
+                }
+              };
+            }
+
+
+            Label ads_and_tracking_label {
+              styles [
+                "headingB",
+              ]
+              halign:start;
+              label:_("Ads & Tracking");
+            }
+            GridView ads_and_tracking_grid_view {
+              styles [
+                "gridview-no-hover",
+                "bg-inherit",
+              ]
+              max-columns: 2;
+              min-columns: 2;
+              factory: BuilderListItemFactory {
+                template ListItem {
+                  child: Box {
+                    styles [
+                      "columnview-item",
+                      "frame"
+                    ]
+                    orientation:horizontal;
+                    margin-top:5;
+                    margin-start:5;
+                    margin-bottom:5;
+                    hexpand:true;
+                    spacing:10;
+                    $UrlImage {
+                      styles [
+                        "extension-icon",
+                      ]
+                      margin-top:10;
+                      margin-start:10;
+                      margin-bottom:10;
+                      url: bind ($get_extension_icon_url(template.item)) as <string>;
+                      pixel-size:45;
+                    }
+                    Box {
+                      halign:start;
+                      valign:center;
+                      hexpand:true;
+                      orientation:vertical;
+                      spacing:4;
+                      margin-top:10;
+                      margin-bottom:10;
+                      Label {
+                        styles [ 
+                            "heading",
+                        ]
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_name(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_description(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_type_string(template.item)) as <string>;
+                      }
+                    }
+                    Button {
+                      styles [
+                        //TODO: to be done in the code loading column views, also needs the data in item.css
+                      ]
+                      halign:end;
+                      valign:center;
+                      margin-end:10;
+                      label: bind ($get_extension_action_string(template.item)) as <string>;
+                      sensitive: bind ($get_extension_action_sensitive(template.item)) as <bool>;
+                      clicked => $on_action_clicked();
+                    }
+                  };
+                }
+              };
+            }
+
+
+
+            Label vpns_label {
+              styles [
+                "headingB",
+              ]
+              halign:start;
+              label:_("VPNs");
+            }
+            GridView vpns_grid_view {
+              styles [
+                "gridview-no-hover",
+                "bg-inherit",
+              ]
+              max-columns: 2;
+              min-columns: 2;
+              factory: BuilderListItemFactory {
+                template ListItem {
+                  child: Box {
+                    styles [
+                      "columnview-item",
+                      "frame"
+                    ]
+                    orientation:horizontal;
+                    margin-top:5;
+                    margin-start:5;
+                    margin-bottom:5;
+                    hexpand:true;
+                    spacing:10;
+                    $UrlImage {
+                      styles [
+                        "extension-icon",
+                      ]
+                      margin-top:10;
+                      margin-start:10;
+                      margin-bottom:10;
+                      url: bind ($get_extension_icon_url(template.item)) as <string>;
+                      pixel-size:45;
+                    }
+                    Box {
+                      halign:start;
+                      valign:center;
+                      hexpand:true;
+                      orientation:vertical;
+                      spacing:4;
+                      margin-top:10;
+                      margin-bottom:10;
+                      Label {
+                        styles [
+                            "heading",
+                        ]
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_name(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_description(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_type_string(template.item)) as <string>;
+                      }
+                    }
+                    Button {
+                      halign:end;
+                      valign:center;
+                      margin-end:10;
+                      label: bind ($get_extension_action_string(template.item)) as <string>;
+                      sensitive: bind ($get_extension_action_sensitive(template.item)) as <bool>;
+                      clicked => $on_action_clicked();
+                    }
+                  };
+                }
+              };
+            }
+
+
+            Label browse_better_label {
+              styles [
+                "headingB",
+              ]
+              halign:start;
+              label:_("Browse Better");
+            }
+            GridView browse_better_grid_view {
+              styles [
+                "gridview-no-hover",
+                "bg-inherit",
+              ]
+              max-columns: 2;
+              min-columns: 2;
+              factory: BuilderListItemFactory {
+                template ListItem {
+                  child: Box {
+                    styles [
+                      "columnview-item",
+                      "frame"
+                    ]
+                    orientation:horizontal;
+                    margin-top:5;
+                    margin-start:5;
+                    margin-bottom:5;
+                    hexpand:true;
+                    spacing:10;
+                    $UrlImage {
+                      styles [
+                        "extension-icon",
+                      ]
+                      margin-top:10;
+                      margin-start:10;
+                      margin-bottom:10;
+                      url: bind ($get_extension_icon_url(template.item)) as <string>;
+                      pixel-size:45;
+                    }
+                    Box {
+                      halign:start;
+                      valign:center;
+                      hexpand:true;
+                      orientation:vertical;
+                      spacing:4;
+                      margin-top:10;
+                      margin-bottom:10;
+                      Label {
+                        styles [ 
+                            "heading",
+                        ]
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_name(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_description(template.item)) as <string>;
+                      }
+                      Label {
+                        ellipsize:end;
+                        halign:start;
+                        label: bind ($get_extension_type_string(template.item)) as <string>;
+                      }
+                    }
+                    Button {
+                      styles [
+                        //TODO: to be done in the code loading column views, also needs the data in item.css
+                      ]
+                      halign:end;
+                      valign:center;
+                      margin-end:10;
+                      label: bind ($get_extension_action_string(template.item)) as <string>;
+                      sensitive: bind ($get_extension_action_sensitive(template.item)) as <bool>;
+                      clicked => $on_action_clicked();
+                    }
+                  };
+                }
+              };
+            }
+          }
+        };
+      }
+    };
+  }
+}

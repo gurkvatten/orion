@@ -1,0 +1,92 @@
+using Gtk 4.0;
+using Adw 1;
+
+menu find_bar_option_menu {
+  section {
+    item {
+      label: _("Ignore Case");
+      action: "win.find-ignore-case";
+    }
+    item {
+      label: _("Wrap Around");
+      action: "win.find-wrap-around";
+    }
+  }
+
+  section {
+    item {
+      label: _("Contains");
+      action: "win.find-match-mode";
+      target: "contains";
+      role: "radio";
+    }
+    item {
+      label: _("Starts With");
+      action: "win.find-match-mode";
+      target: "starts-with";
+      role: "radio";
+    }
+  }
+}
+
+template $FindBar: Adw.Bin {
+  name: "find-bar";
+  visible: false;
+
+  Box {
+    orientation: horizontal;
+    halign: fill;
+    hexpand: true;
+    margin-start: 10;
+    margin-end: 10;
+    margin-top: 6;
+    margin-bottom: 6;
+    spacing: 6;
+
+    Box {
+      hexpand: true;
+    }
+
+    MenuButton find_bar_option_button {
+      icon-name: "more-small-symbolic";
+      tooltip-text: _("Find Options");
+      menu-model: find_bar_option_menu;
+    }
+
+    SearchEntry find_bar_entry {
+      placeholder-text: _("Find in Page");
+      width-chars: 24;
+      search-changed => $on_find_bar_entry_search_changed();
+      activate => $on_find_bar_entry_activate();
+      stop-search => $on_find_bar_entry_stop_search();
+
+      EventControllerKey {
+        key-pressed => $on_find_bar_entry_key_pressed();
+      }
+    }
+
+    Label find_bar_count_label {
+      label: "";
+      styles ["dim-label"]
+      margin-start: 4;
+      margin-end: 4;
+    }
+
+    Button find_bar_previous_button {
+      icon-name: "go-up-symbolic";
+      tooltip-text: _("Previous Match");
+      clicked => $on_find_bar_previous_button_clicked();
+    }
+
+    Button find_bar_next_button {
+      icon-name: "go-down-symbolic";
+      tooltip-text: _("Next Match");
+      clicked => $on_find_bar_next_button_clicked();
+    }
+
+    Button find_bar_done_button {
+      label: _("Done");
+      clicked => $on_find_bar_done_button_clicked();
+    }
+  }
+}

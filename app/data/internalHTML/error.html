@@ -1,0 +1,181 @@
+<!-- LOCALIZERS: Each localizable piece of the page is marked with a comment -->
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="data:,">
+	<!-- LOCALIZERS: You might want to change the font family. You can also add styles to override sizes, etc. -->
+	<style>
+	body {
+		background: rgb(246, 246, 246);
+		cursor: default;
+		display: -webkit-box;
+		font-family: '-apple-system-font';
+		text-align: left;
+		-webkit-box-align: center;
+		-webkit-box-pack: center;
+		-webkit-user-select: none;
+		--appkit-accent-color: {{appkit-accent-color}};
+		--inset-shadow-opacity: 0.085;
+		--main-title-color: #444444;
+		--second-button-border: rgba(0, 0, 0, 0.15);
+		--second-button-text: #434343;
+		--second-button-active: rgba(0, 0, 0, 0.03);
+		--orion-logo-opacity: 1;
+	}
+	
+	p {
+		margin: 0;
+		padding: 0;
+	}
+	
+	.content-container {
+		min-width: 120px;
+		max-width: 400px;
+		margin: 0 auto;
+		position: relative;
+		width: 80%;
+	}
+	
+	.main-title {
+		font-size: 30px;
+		font-weight: 600;
+		color: var(--main-title-color);
+		line-height: 34px;
+	}
+	
+	.main-title:before {
+		content: '';
+		position: absolute;
+		width: 26px;
+		height: 26px;
+		background-repeat: no-repeat;
+		background-position: 0 0;
+		left: -38px;
+		top: 5px;
+		background-image: url("data:image/svg+xml,%3Csvg width='26' height='26' viewBox='0 0 26 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='13' cy='13' r='11.8' stroke='%23ABABAB' stroke-width='1.6'/%3E%3Cpath d='M13.5465 6.13841C13.41 5.32529 12.5906 5.32496 12.4539 6.13806C12.1689 7.83364 11.7529 9.54091 10.6469 10.6469C9.54027 11.755 7.83169 12.1714 6.13517 12.4561C5.32224 12.5926 5.32192 13.4115 6.13481 13.5482C7.83032 13.8333 9.53822 14.2491 10.6445 15.3555C11.7523 16.4618 12.1687 18.1697 12.454 19.8652C12.5908 20.6781 13.4102 20.6778 13.5469 19.8649C13.8319 18.1691 14.248 16.461 15.3531 15.3531C16.4611 14.2451 18.1691 13.8296 19.865 13.545C20.678 13.4086 20.6779 12.5895 19.865 12.4528C18.1695 12.1676 16.4617 11.7508 15.3554 10.6445C14.2477 9.54115 13.8313 7.83446 13.5465 6.13841Z' fill='%23ABABAB'/%3E%3C/svg%3E%0A");
+		opacity: var(--orion-logo-opacity);
+	}
+	
+	.error-message {
+		font-size: 15px;
+		color: #747474;
+		line-height: 1.2;
+		margin: 8px 0 25px 0;
+	}
+	
+	.text-container {
+		color: #444;
+		position: relative;
+		width: 100%;
+		word-wrap: break-word;
+	}
+	
+	.logo {
+		position: absolute;
+		left: -40px;
+	}
+	
+	._hidden {
+		display: none;
+	}
+	
+	a {
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		padding: 6px 18px;
+		border-radius: 6px;
+		gap: 5px;
+		font-size: 13px;
+		cursor: default;
+	}
+	
+	.accent-button {
+		background: var(--appkit-accent-color) -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.2)), to(rgba(0, 0, 0, 0.08)));
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, var(--inset-shadow-opacity)), 0 1px 2px 0 rgba(0, 0, 0, 0.08);
+		color: #fff;
+	}
+	
+	.accent-button:active {
+		background: var(--appkit-accent-color) -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.12)), to(rgba(0, 0, 0, 0.08)));
+	}
+	
+	.second-button {
+		box-shadow: inset 0 0 0 1px var(--second-button-border);
+		color: var(--second-button-text);
+	}
+	
+	.second-button:active {
+		background: var(--second-button-active);
+	}
+	
+	.small-container {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 10px;
+	}
+	
+	@supports (-webkit-touch-callout: none) {
+		a {
+			padding: 8px 20px;
+		}
+		.error-message {
+			font-size: 15px;
+			line-height: 1.4;
+		}
+		.main-title:before {
+			left: 0;
+			top: -50px;
+		}
+		.main-title {
+			font-size: 22px;
+			line-height: 1.1;
+		}
+	}
+	
+	@media (max-width: 400px) {
+		.main-title:before {
+			left: 0px;
+			top: -50px;
+		}
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		body {
+			background: rgb(28, 28, 30);
+			--inset-shadow-opacity: 0;
+			--main-title-color: #E6E6E6;
+			--main-title-color: #E6E6E6;
+			--second-button-border: rgba(255, 255, 255, 0.12);
+			--second-button-text: #8C8C8C;
+			--second-button-active: rgba(255, 255, 255, 0.03);
+			--orion-logo-opacity: 0.7;
+		}
+		.text-container {
+			color: rgb(133, 133, 133);
+		}
+	}
+	</style>
+	<!-- LOCALIZERS: The next line contains the page title that appears in the window's title bar -->
+	<title>Failed to open page</title>
+</head>
+
+<body>
+	<div class="content-container">
+		<div class="error-container">
+			<div class="text-container">
+				<!-- Main title -->
+				<p class="main-title">{{Title}}</p>
+			</div>
+			<div class="text-container">
+				<!-- Error detail message -->
+				<p class="error-message">{{Description}}</p>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+</html>

@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Chrome Runtime Messaging Test",
+  "version": "1.0.0",
+  "description": "Exercises chrome.runtime one-off messages and long-lived ports.",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": {
+      "64": "icon.png"
+    },
+    "default_title": "Chrome Runtime Messaging Test",
+    "default_popup": "popup.html"
+  }
+}

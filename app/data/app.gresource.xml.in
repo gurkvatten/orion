@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="${GRESOURCE_PREFIX}">
+    <!-- App Metainfo -->
+    <file alias="app.metainfo.xml" compressed="true">app.metainfo.xml</file>
+
+    <!-- CSS files -->
+    <file compressed="true">data/themes.css</file>
+    <file alias="css/reader_mode_fonts.css" compressed="true">data/css/reader_mode_fonts.css</file>
+    
+    <!-- Icons -->
+    <file alias="icons/orion-logo.png" compressed="true">data/icons/orion-logo.png</file>
+    <file alias="icons/kagi-logo.png" compressed="true">data/icons/kagi-logo.png</file>
+    <file alias="icons/scalable/actions/shield-half-symbolic.svg" compressed="true">data/icons/scalable/actions/shield-half-symbolic.svg</file>
+    <file alias="icons/scalable/actions/brush-symbolic.svg" compressed="true">data/icons/scalable/actions/brush-symbolic.svg</file>
+    <file alias="icons/scalable/actions/cogged-wheel-symbolic.svg" compressed="true">data/icons/scalable/actions/cogged-wheel-symbolic.svg</file>
+    <file alias="icons/scalable/actions/dot-symbolic.svg" compressed="true">data/icons/scalable/actions/dot-symbolic.svg</file>
+    <file alias="icons/scalable/actions/big-dot-symbolic.svg" compressed="true">data/icons/scalable/actions/big-dot-symbolic.svg</file>
+    <file alias="icons/scalable/actions/circle-anchor-center-symbolic.svg" compressed="true">data/icons/scalable/actions/circle-anchor-center-symbolic.svg</file>
+    <file alias="icons/scalable/actions/notepad-symbolic.svg" compressed="true">data/icons/scalable/actions/notepad-symbolic.svg</file>
+    <file alias="icons/scalable/actions/padlock2-symbolic.svg" compressed="true">data/icons/scalable/actions/padlock2-symbolic.svg</file>
+    <!-- Modified version padlock2-symbolic.svg icon -->
+    <file alias="icons/scalable/actions/padlock2-slash-symbolic.svg" compressed="true">data/icons/scalable/actions/padlock2-slash-symbolic.svg</file>
+    <file alias="icons/scalable/actions/arrow-circular-top-right-symbolic.svg" compressed="true">data/icons/scalable/actions/arrow-circular-top-right-symbolic.svg</file>
+    <file alias="icons/scalable/actions/star-outline-thick-symbolic.svg" compressed="true">data/icons/scalable/actions/star-outline-thick-symbolic.svg</file>
+    <file alias="icons/scalable/actions/star-outline-thin-symbolic.svg" compressed="true">data/icons/scalable/actions/star-outline-thin-symbolic.svg</file>
+    <file alias="icons/scalable/actions/star-filled-symbolic.svg" compressed="true">data/icons/scalable/actions/star-filled-symbolic.svg</file>
+    <file alias="icons/scalable/actions/star-large-symbolic.svg" compressed="true">data/icons/scalable/actions/star-large-symbolic.svg</file>
+    <file alias="icons/scalable/actions/plus-large-symbolic.svg" compressed="true">data/icons/scalable/actions/plus-large-symbolic.svg</file>
+    <file alias="icons/scalable/actions/clock-alt-symbolic.svg" compressed="true">data/icons/scalable/actions/clock-alt-symbolic.svg</file>
+    <file alias="icons/scalable/actions/cd-symbolic.svg" compressed="true">data/icons/scalable/actions/cd-symbolic.svg</file>
+    <file alias="icons/scalable/actions/share-symbolic.svg" compressed="true">data/icons/scalable/actions/share-symbolic.svg</file>
+    <file alias="icons/scalable/actions/table-symbolic.svg" compressed="true">data/icons/scalable/actions/table-symbolic.svg</file>
+    <file alias="icons/scalable/actions/dock-left-symbolic.svg" compressed="true">data/icons/scalable/actions/dock-left-symbolic.svg</file>
+    <file alias="icons/scalable/actions/left-symbolic.svg" compressed="true">data/icons/scalable/actions/left-symbolic.svg</file>
+    <file alias="icons/scalable/actions/right-symbolic.svg" compressed="true">data/icons/scalable/actions/right-symbolic.svg</file>
+    <file alias="icons/scalable/actions/check-plain-symbolic.svg" compressed="true">data/icons/scalable/actions/check-plain-symbolic.svg</file>
+    <file alias="icons/scalable/actions/check-plain-white-symbolic.svg" compressed="true">data/icons/scalable/actions/check-plain-white-symbolic.svg</file>
+    <file alias="icons/scalable/actions/chain-link-symbolic.svg" compressed="true">data/icons/scalable/actions/chain-link-symbolic.svg</file>
+    <file alias="icons/scalable/actions/sliders-horizontal-symbolic.svg" compressed="true">data/icons/scalable/actions/sliders-horizontal-symbolic.svg</file>
+    <file alias="icons/scalable/actions/application-rss+xml-symbolic.svg" compressed="true">data/icons/scalable/actions/application-rss+xml-symbolic.svg</file>
+    <file alias="icons/scalable/actions/question-round-outline-symbolic.svg" compressed="true">data/icons/scalable/actions/question-round-outline-symbolic.svg</file>
+    <file alias="icons/scalable/actions/open-book-symbolic.svg" compressed="true">data/icons/scalable/actions/open-book-symbolic.svg</file>
+    <!-- modified icon from the one above --><file alias="icons/scalable/actions/open-book-slash-symbolic.svg" compressed="true">data/icons/scalable/actions/open-book-slash-symbolic.svg</file>
+    <file alias="icons/scalable/actions/arrow3-down-symbolic.svg" compressed="true">data/icons/scalable/actions/arrow3-down-symbolic.svg</file>
+    <file alias="icons/scalable/actions/search-folder-symbolic.svg" compressed="true">data/icons/scalable/actions/search-folder-symbolic.svg</file>
+    <file alias="icons/scalable/actions/loupe-large-symbolic.svg" compressed="true">data/icons/scalable/actions/loupe-large-symbolic.svg</file>
+    <file alias="icons/scalable/actions/window-symbolic.svg" compressed="true">data/icons/scalable/actions/window-symbolic.svg</file>
+    <file alias="icons/scalable/actions/phonelink-symbolic.svg" compressed="true">data/icons/scalable/actions/phonelink-symbolic.svg</file>
+    <file alias="icons/scalable/actions/more-small-symbolic.svg" compressed="true">data/icons/scalable/actions/more-small-symbolic.svg</file>
+    <file alias="icons/scalable/actions/list-compact-symbolic.svg" compressed="true">data/icons/scalable/actions/list-compact-symbolic.svg</file>
+    <file alias="icons/scalable/actions/key4-symbolic.svg" compressed="true">data/icons/scalable/actions/key4-symbolic.svg</file>
+    <file alias="icons/scalable/actions/arrow1-top-right-symbolic.svg" compressed="true">data/icons/scalable/actions/arrow1-top-right-symbolic.svg</file>
+    <file alias="icons/scalable/actions/megaphone-symbolic.svg" compressed="true">data/icons/scalable/actions/megaphone-symbolic.svg</file>
+    <file alias="icons/scalable/actions/window-flat-symbolic.svg" compressed="true">data/icons/scalable/actions/window-flat-symbolic.svg</file>
+    <file alias="icons/scalable/actions/speaker-3-symbolic.svg" compressed="true">data/icons/scalable/actions/speaker-3-symbolic.svg</file>
+    <file alias="icons/scalable/actions/speaker-0-symbolic.svg" compressed="true">data/icons/scalable/actions/speaker-0-symbolic.svg</file>
+    <file alias="icons/scalable/actions/puzzle-piece-symbolic.svg" compressed="true">data/icons/scalable/actions/puzzle-piece-symbolic.svg</file>
+    <file alias="icons/scalable/actions/person-symbolic.svg" compressed="true">data/icons/scalable/actions/person-symbolic.svg</file>
+    <file alias="icons/scalable/actions/bookmark-filled-symbolic.svg" compressed="true">data/icons/scalable/actions/bookmark-filled-symbolic.svg</file>
+    <file alias="icons/scalable/actions/library-symbolic.svg" compressed="true">data/icons/scalable/actions/library-symbolic.svg</file>
+    <file alias="icons/scalable/actions/keyboard3-symbolic.svg" compressed="true">data/icons/scalable/actions/keyboard3-symbolic.svg</file>
+    <file alias="icons/scalable/actions/application-certificate-symbolic.svg" compressed="true">data/icons/scalable/actions/application-certificate-symbolic.svg</file>
+    <file alias="icons/scalable/actions/arrow-turn-down-right-symbolic.svg" compressed="true">data/icons/scalable/actions/arrow-turn-down-right-symbolic.svg</file>
+    <file alias="icons/scalable/actions/size-horizontally-symbolic.svg" compressed="true">data/icons/scalable/actions/size-horizontally-symbolic.svg</file>
+    <file alias="icons/scalable/actions/go-home-symbolic.svg" compressed="true">data/icons/scalable/actions/go-home-symbolic.svg</file>
+    <file alias="icons/scalable/actions/up-arrow-in-a-star-symbolic.svg" compressed="true">data/icons/scalable/actions/up-arrow-in-a-star-symbolic.svg</file>
+    <file alias="icons/scalable/actions/clipboard-symbolic.svg" compressed="true">data/icons/scalable/actions/clipboard-symbolic.svg</file>
+    <file alias="icons/scalable/actions/loupe-plus-large-symbolic.svg" compressed="true">data/icons/scalable/actions/loupe-plus-large-symbolic.svg</file>
+    <file alias="icons/scalable/actions/loupe-minus-large-symbolic.svg" compressed="true">data/icons/scalable/actions/loupe-minus-large-symbolic.svg</file>
+    <file alias="icons/scalable/actions/printer2-symbolic.svg" compressed="true">data/icons/scalable/actions/printer2-symbolic.svg</file>
+    <file alias="icons/scalable/actions/input-dialpad-symbolic.svg" compressed="true">data/icons/scalable/actions/input-dialpad-symbolic.svg</file>
+    <file alias="icons/scalable/actions/grid-symbolic.svg" compressed="true">data/icons/scalable/actions/grid-symbolic.svg</file>
+    <file alias="icons/scalable/actions/format-text-direction-ltr-symbolic.svg" compressed="true">data/icons/scalable/actions/format-text-direction-ltr-symbolic.svg</file>
+    <file alias="icons/scalable/actions/rich-text-symbolic.svg" compressed="true">data/icons/scalable/actions/rich-text-symbolic.svg</file>
+    <file alias="icons/scalable/actions/play-symbolic.svg" compressed="true">data/icons/scalable/actions/play-symbolic.svg</file>
+    <file alias="icons/scalable/actions/overlapping-windows-symbolic.svg" compressed="true">data/icons/scalable/actions/overlapping-windows-symbolic.svg</file>
+    <file alias="icons/scalable/actions/bell-outline-symbolic.svg" compressed="true">data/icons/scalable/actions/bell-outline-symbolic.svg</file>
+    <file alias="icons/scalable/actions/film-camera-symbolic.svg" compressed="true">data/icons/scalable/actions/film-camera-symbolic.svg</file>
+    <file alias="icons/scalable/actions/mic-1-symbolic.svg" compressed="true">data/icons/scalable/actions/mic-1-symbolic.svg</file>
+    <file alias="icons/scalable/actions/screencast-recorded-symbolic.svg" compressed="true">data/icons/scalable/actions/screencast-recorded-symbolic.svg</file>
+    <file alias="icons/scalable/actions/navigate-symbolic.svg" compressed="true">data/icons/scalable/actions/navigate-symbolic.svg</file>
+    <file alias="icons/scalable/actions/shield-safe-symbolic.svg" compressed="true">data/icons/scalable/actions/shield-safe-symbolic.svg</file>
+    <file alias="icons/scalable/actions/hand-openyay-symbolic.svg" compressed="true">data/icons/scalable/actions/hand-openyay-symbolic.svg</file>
+    <file alias="icons/scalable/actions/cake-symbolic.svg" compressed="true">data/icons/scalable/actions/cake-symbolic.svg</file>
+    <file alias="icons/scalable/actions/code-symbolic.svg" compressed="true">data/icons/scalable/actions/code-symbolic.svg</file>
+    <file alias="icons/scalable/actions/font-x-generic-symbolic.svg" compressed="true">data/icons/scalable/actions/font-x-generic-symbolic.svg</file>
+    <file alias="icons/scalable/actions/font-size-symbolic.svg" compressed="true">data/icons/scalable/actions/font-size-symbolic.svg</file>
+    <file alias="icons/scalable/actions/verified-checkmark-symbolic.svg" compressed="true">data/icons/scalable/actions/verified-checkmark-symbolic.svg</file>
+    <file alias="icons/scalable/actions/web-browser-symbolic.svg" compressed="true">data/icons/scalable/actions/web-browser-symbolic.svg</file>
+    <file alias="icons/scalable/actions/pip-in-symbolic.svg" compressed="true">data/icons/scalable/actions/pip-in-symbolic.svg</file>
+    <file alias="icons/scalable/actions/baseball-symbolic.svg" compressed="true">data/icons/scalable/actions/baseball-symbolic.svg</file>
+    <file alias="icons/scalable/actions/software-store-symbolic.svg" compressed="true">data/icons/scalable/actions/software-store-symbolic.svg</file>
+    <file alias="icons/scalable/actions/reaction-add-symbolic.svg" compressed="true">data/icons/scalable/actions/reaction-add-symbolic.svg</file>
+    <file alias="icons/scalable/actions/folder-visiting-symbolic.svg" compressed="true">data/icons/scalable/actions/folder-visiting-symbolic.svg</file>
+    <file alias="icons/scalable/actions/flag-outline-thick-symbolic.svg" compressed="true">data/icons/scalable/actions/flag-outline-thick-symbolic.svg</file>
+    <file alias="icons/scalable/actions/heart-outline-thick-symbolic.svg" compressed="true">data/icons/scalable/actions/heart-outline-thick-symbolic.svg</file>
+    <file alias="icons/scalable/actions/diamond-outline-thick-symbolic.svg" compressed="true">data/icons/scalable/actions/diamond-outline-thick-symbolic.svg</file>
+    <file alias="icons/scalable/actions/multitasking-symbolic.svg" compressed="true">data/icons/scalable/actions/multitasking-symbolic.svg</file>
+    <file alias="icons/scalable/actions/brain-symbolic.svg" compressed="true">data/icons/scalable/actions/brain-symbolic.svg</file>
+    <file alias="icons/scalable/actions/archive-nonsystem-symbolic.svg" compressed="true">data/icons/scalable/actions/archive-nonsystem-symbolic.svg</file>
+    <file alias="icons/scalable/actions/running-symbolic.svg" compressed="true">data/icons/scalable/actions/running-symbolic.svg</file>
+    <file alias="icons/scalable/actions/shoe-box-symbolic.svg" compressed="true">data/icons/scalable/actions/shoe-box-symbolic.svg</file>
+    <file alias="icons/scalable/actions/compass-symbolic.svg" compressed="true">data/icons/scalable/actions/compass-symbolic.svg</file>
+    <file alias="icons/scalable/actions/globe-alt2-symbolic.svg" compressed="true">data/icons/scalable/actions/globe-alt2-symbolic.svg</file>
+    <!-- https://github.com/mozilla-firefox/firefox/commit/83b2c00a829bad5584e0dc9ce412ce6a18215c93 about-logo.svg mpl v2 --><file alias="icons/firefox-logo.svg" compressed="true">data/icons/firefox-logo.svg</file>
+    <!-- https://www.google.com/chrome/static/images/chrome-logo.svg, from 2022, no license? --><file alias="icons/chrome-logo.svg" compressed="true">data/icons/chrome-logo.svg</file>
+    <file alias="icons/scalable/actions/magic-wand-symbolic.svg" compressed="true">data/icons/scalable/actions/magic-wand-symbolic.svg</file>
+    <file alias="icons/scalable/actions/image-round-symbolic.svg" compressed="true">data/icons/scalable/actions/image-round-symbolic.svg</file>
+    <file alias="mockImages/mi1.png" compressed="true">data/mockImages/mi1.png</file>
+    <file alias="mockImages/mi2.png" compressed="true">data/mockImages/mi2.png</file>
+    <file alias="mockImages/mi3.png" compressed="true">data/mockImages/mi3.png</file>
+    <file alias="icons/scalable/actions/cross-large-circle-outline-symbolic.svg" compressed="true">data/icons/scalable/actions/cross-large-circle-outline-symbolic.svg</file>
+    <file alias="icons/scalable/actions/cross-large-circle-filled-symbolic.svg" compressed="true">data/icons/scalable/actions/cross-large-circle-filled-symbolic.svg</file>
+    <file alias="icons/scalable/actions/down-symbolic.svg" compressed="true">data/icons/scalable/actions/down-symbolic.svg</file>
+    <file alias="icons/scalable/actions/down-smaller-symbolic.svg" compressed="true">data/icons/scalable/actions/down-smaller-symbolic.svg</file>
+    <file alias="icons/scalable/actions/adw-expander-arrow-symbolic.svg" compressed="true">data/icons/scalable/actions/adw-expander-arrow-symbolic.svg</file>
+    <file alias="icons/scalable/actions/cross-large-symbolic.svg" compressed="true">data/icons/scalable/actions/cross-large-symbolic.svg</file>
+    <file alias="icons/scalable/actions/cross-small-symbolic.svg" compressed="true">data/icons/scalable/actions/cross-small-symbolic.svg</file>
+    <file alias="icons/scalable/actions/minus-large-symbolic.svg" compressed="true">data/icons/scalable/actions/minus-large-symbolic.svg</file>
+    <file alias="icons/scalable/actions/computer-symbolic.svg" compressed="true">data/icons/scalable/actions/computer-symbolic.svg</file>
+    <file alias="icons/scalable/actions/smartphone2-symbolic.svg" compressed="true">data/icons/scalable/actions/smartphone2-symbolic.svg</file>
+    <file alias="icons/scalable/actions/tablet-symbolic.svg" compressed="true">data/icons/scalable/actions/tablet-symbolic.svg</file>
+    <file alias="icons/scalable/actions/scale-symbolic.svg" compressed="true">data/icons/scalable/actions/scale-symbolic.svg</file>
+    <file alias="icons/scalable/actions/arrow-pointing-at-line-down-symbolic.svg" compressed="true">data/icons/scalable/actions/arrow-pointing-at-line-down-symbolic.svg</file>
+    <file alias="icons/scalable/actions/text-justify-left-symbolic.svg" compressed="true">data/icons/scalable/actions/text-justify-left-symbolic.svg</file>
+    <file alias="icons/scalable/actions/text-justify-fill-symbolic.svg" compressed="true">data/icons/scalable/actions/text-justify-fill-symbolic.svg</file>
+    <file alias="icons/scalable/actions/box-outline-symbolic.svg" compressed="true">data/icons/scalable/actions/box-outline-symbolic.svg</file>
+    <file alias="icons/scalable/actions/box-outline-filled-symbolic.svg" compressed="true">data/icons/scalable/actions/box-outline-filled-symbolic.svg</file>
+    <file alias="icons/scalable/actions/arrow-hook-left-horizontal2-symbolic.svg" compressed="true">data/icons/scalable/actions/arrow-hook-left-horizontal2-symbolic.svg</file>
+    <file alias="icons/1password.png" compressed="true">data/icons/popular_extensions/1password.png</file>
+    <file alias="icons/adguard-adblocker.png" compressed="true">data/icons/popular_extensions/adguard-adblocker.png</file>
+    <file alias="icons/auto-scroll.png" compressed="true">data/icons/popular_extensions/auto-scroll.png</file>
+    <file alias="icons/better-twitter.png" compressed="true">data/icons/popular_extensions/better-twitter.png</file>
+    <file alias="icons/bitwarden.png" compressed="true">data/icons/popular_extensions/bitwarden.png</file>
+    <file alias="icons/bonjourr.png" compressed="true">data/icons/popular_extensions/bonjourr.png</file>
+    <file alias="icons/consent-o-matic.png" compressed="true">data/icons/popular_extensions/consent-o-matic.png</file>
+    <file alias="icons/dark-reader.png" compressed="true">data/icons/popular_extensions/dark-reader.png</file>
+    <file alias="icons/dashlane.png" compressed="true">data/icons/popular_extensions/dashlane.png</file>
+    <file alias="icons/grammarly.png" compressed="true">data/icons/popular_extensions/grammarly.png</file>
+    <file alias="icons/google-translate.png" compressed="true">data/icons/popular_extensions/google-translate.png</file>
+    <file alias="icons/keeper.png" compressed="true">data/icons/popular_extensions/keeper.png</file>
+    <file alias="icons/language-tool.png" compressed="true">data/icons/popular_extensions/language-tool.png</file>
+    <file alias="icons/lastpass.png" compressed="true">data/icons/popular_extensions/lastpass.png</file>
+    <file alias="icons/meta-mask.png" compressed="true">data/icons/popular_extensions/meta-mask.png</file>
+    <file alias="icons/momentum.png" compressed="true">data/icons/popular_extensions/momentum.png</file>
+    <file alias="icons/proton-pass.png" compressed="true">data/icons/popular_extensions/proton-pass.png</file>
+    <file alias="icons/rabby.png" compressed="true">data/icons/popular_extensions/rabby.png</file>
+    <file alias="icons/reddit-enhancement.png" compressed="true">data/icons/popular_extensions/reddit-enhancement.png</file>
+    <file alias="icons/speechify.png" compressed="true">data/icons/popular_extensions/speechify.png</file>
+    <file alias="icons/sponsor-block.png" compressed="true">data/icons/popular_extensions/sponsor-block.png</file>
+    <file alias="icons/ublock-origin.png" compressed="true">data/icons/popular_extensions/ublock-origin.png</file>
+    <file alias="icons/violent-monkey.png" compressed="true">data/icons/popular_extensions/violent-monkey.png</file>
+
+
+    <!-- HTML -->
+
+    <file alias="internalHTML/error.html" compressed="true">data/internalHTML/error.html</file>
+    <file alias="internalHTML/resource.html" compressed="true">data/internalHTML/resource.html</file>
+    <file alias="internalHTML/loading.html" compressed="true">data/internalHTML/loading.html</file>
+    <file alias="internalHTML/reader_template.html" compressed="true">data/internalHTML/reader_template.html</file>
+    <file alias="internalHTML/certificate_error.html" compressed="true">data/internalHTML/certificate_error.html</file>
+
+
+    <!-- JavaScript -->
+
+    <!-- WORLD: READABILITY_SCRIPT_WORLD -->
+    <!-- taken from orion mac, commented out immediate checkReadability call, check auto_reader.js for how we use that instead -->
+    <file alias="scripts/readability.js" compressed="true">data/scripts/readability.js</file>
+    <!-- taken from orion mac -->
+    <file alias="scripts/desktop_scroller.js" compressed="true">data/scripts/desktop_scroller.js</file>
+    <!-- extracted from orion mac's reader_template.html, last script tag, edited -->
+    <file alias="scripts/reader_template_script.js" compressed="true">data/scripts/reader_template_script.js</file>
+    <!-- custom scripts -->
+    <file alias="scripts/auto_reader.js" compressed="true">data/scripts/auto_reader.js</file>
+    <file alias="scripts/is_probably_readerable.js" compressed="true">data/scripts/is_probably_readerable.js</file>
+    <!-- ENDWORLD: READABILITY_SCRIPT_WORLD -->
+
+    <!-- WORLD: PAGE_TWEAKS_SCRIPT_WORLD -->
+    <!-- custom scripts -->
+    <file alias="scripts/element_picker.js" compressed="true">data/scripts/element_picker.js</file>
+    <!-- ENDWORLD: PAGE_TWEAKS_SCRIPT_WORLD -->
+
+
+    <!-- Filter lists -->
+    <file alias="filter_lists/easylist.txt" compressed="true">data/filter_lists/easylist.txt</file>
+    <file alias="filter_lists/easyprivacy.txt" compressed="true">data/filter_lists/easyprivacy.txt</file>
+    <file alias="filter_lists/specific.txt" compressed="true">data/filter_lists/specific.txt</file><!-- AdGuard -->
+
+
+    <!-- Fonts -->
+
+    <!-- OpenDyslexic3 - source: orion mac source, SIL OFL 1.1? -->
+    <file alias="fonts/OpenDyslexic3-Regular.ttf" compressed="true">data/fonts/OpenDyslexic3-Regular.ttf</file>
+
+    <!-- Bitstream Charter - source: https://practicaltypography.com/charter.html (17.7.2026), custom license -->
+    <file alias="fonts/Charter-Bold-Italic.otf" compressed="true">data/fonts/Charter-Bold-Italic.otf</file>
+    <file alias="fonts/Charter-Bold.otf" compressed="true">data/fonts/Charter-Bold.otf</file>
+    <file alias="fonts/Charter-Italic.otf" compressed="true">data/fonts/Charter-Italic.otf</file>
+    <file alias="fonts/Charter-Regular.otf" compressed="true">data/fonts/Charter-Regular.otf</file>
+    <!-- Gelasio - source: https://fonts.google.com/specimen/Gelasio/license, SIL OFL 1.1 -->
+    <file alias="fonts/Gelasio-Italic-VariableFont_wght.ttf" compressed="true">data/fonts/Gelasio-Italic-VariableFont_wght.ttf</file>
+    <file alias="fonts/Gelasio-VariableFont_wght.ttf" compressed="true">data/fonts/Gelasio-VariableFont_wght.ttf</file>
+    <!-- Liberation Serif - source: https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5, SIL OFL 1.1 -->
+    <file alias="fonts/LiberationSerif-BoldItalic.ttf" compressed="true">data/fonts/LiberationSerif-BoldItalic.ttf</file>
+    <file alias="fonts/LiberationSerif-Bold.ttf" compressed="true">data/fonts/LiberationSerif-Bold.ttf</file>
+    <file alias="fonts/LiberationSerif-Italic.ttf" compressed="true">data/fonts/LiberationSerif-Italic.ttf</file>
+    <file alias="fonts/LiberationSerif-Regular.ttf" compressed="true">data/fonts/LiberationSerif-Regular.ttf</file>
+    <!-- Merriweather - source: https://fonts.google.com/specimen/Merriweather/license, SIL OFL 1.1 -->
+    <file alias="fonts/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf" compressed="true">data/fonts/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf</file>
+    <file alias="fonts/Merriweather-VariableFont_opsz,wdth,wght.ttf" compressed="true">data/fonts/Merriweather-VariableFont_opsz,wdth,wght.ttf</file>
+    <!-- TeX Gyre Pagella - source: https://www.ctan.org/tex-archive/fonts/tex-gyre/opentype, GUST Font License -->
+    <file alias="fonts/texgyrepagella-bolditalic.otf" compressed="true">data/fonts/texgyrepagella-bolditalic.otf</file>
+    <file alias="fonts/texgyrepagella-bold.otf" compressed="true">data/fonts/texgyrepagella-bold.otf</file>
+    <file alias="fonts/texgyrepagella-italic.otf" compressed="true">data/fonts/texgyrepagella-italic.otf</file>
+    <file alias="fonts/texgyrepagella-regular.otf" compressed="true">data/fonts/texgyrepagella-regular.otf</file>
+    <!-- TeX Gyre Pagella - source: https://fonts.google.com/specimen/Vollkorn/license, SIL OFL 1.1 -->
+    <file alias="fonts/Vollkorn-Italic-VariableFont_wght.ttf" compressed="true">data/fonts/Vollkorn-Italic-VariableFont_wght.ttf</file>
+    <file alias="fonts/Vollkorn-VariableFont_wght.ttf" compressed="true">data/fonts/Vollkorn-VariableFont_wght.ttf</file>
+
+  </gresource>
+</gresources>

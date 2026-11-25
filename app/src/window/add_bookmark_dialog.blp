@@ -1,0 +1,170 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $AddBookmarkDialog: Adw.Dialog {
+  content-width: 600;
+  content-height: 200;
+  name: "add-bookmark-dialog";
+
+  Box {
+    orientation: vertical;
+    halign: fill;
+    margin-top: 16;
+    margin-start: 16;
+    margin-end: 16;
+    margin-bottom: 16;
+    hexpand: true;
+    vexpand: true;
+
+    Box {
+      Label {
+        label: _("Add this page to:");
+      }
+    }
+
+    Box {
+      hexpand: true;
+
+      DropDown location_dropdown {
+        styles [
+          "dropdown-section-separators"
+        ]
+        margin-top: 8;
+        hexpand:true;
+        halign:fill;
+        /*
+        list-factory: BuilderListItemFactory {
+          template ListItem {
+            child: Box {
+              spacing:5;
+              Image {
+                pixel-size: 16;
+                gicon: bind ($get_checkmark_icon(template.item)) as <Gio.Icon>;
+              }
+              TreeExpander {
+                //hide-expander: true;
+                list-row: bind template.item as <TreeListRow>;
+                child: Box {
+                  orientation:horizontal;
+                  spacing:5;
+                  Image {
+                    pixel-size: 16;
+                    icon-name: bind ($get_icon_name(template.item)) as <string>;
+                  }
+
+                  Label {
+                    ellipsize: end;
+                    hexpand: true;
+                    halign:start;
+                    xalign:0;
+                    label: bind ($get_label(template.item)) as <string>;
+                  }
+                };
+              }
+            };
+          }
+        };
+        */
+        factory: BuilderListItemFactory {
+          template ListItem {
+            child: Box {
+              orientation:horizontal;
+              spacing:5;
+              Image {
+                pixel-size: 16;
+                icon-name: bind ($get_icon_name(template.item)) as <string>;
+              }
+
+              Label {
+                ellipsize: end;
+                hexpand: true;
+                halign:start;
+                xalign:0;
+                label: bind ($get_label(template.item)) as <string>;
+              }
+            };
+          }
+        };
+        header-factory: BuilderListItemFactory {
+          template ListHeader {
+            child: Separator {
+              visible: bind ($get_separator_visibility(template.item)) as <bool>;
+            };
+          }
+        };
+      }
+    }
+
+    Entry name_entry {
+      hexpand: true;
+      halign: fill;
+      margin-top: 8;
+      text: _("Example Page Name");
+    }
+
+    // Maybe hide this section using More Options button
+    Expander {
+      margin-top: 12;
+      label-widget: Label {
+        label: _("More Options");
+        margin-start: 8;
+      };
+
+      Box {
+        orientation: vertical;
+
+        Box {
+          Label {
+            margin-top: 16;
+            label: _("Address (use %s to expand with extra user input at invocation)");
+          }
+        }
+
+        Entry address_entry {
+          margin-top: 8;
+          text: _("https://example.com/");
+        }
+
+        Entry invocation_keyword_entry {
+          margin-top: 8;
+          placeholder-text: _("Invocation character or keyword");
+        }
+        
+        Box {
+          Button {
+            margin-top: 12;
+            label: _("New Folder");
+          }
+        }
+      }
+    }
+
+    Box {
+      margin-top: 4;
+      halign: fill;
+      hexpand: true;
+
+      Box {
+        halign: end;
+        hexpand: true;
+
+        Button cancel_button {
+          label: _("Cancel");
+          clicked => $on_cancel_button_clicked();
+        }
+
+        Button add_button {
+          label: _("Add");
+          margin-start: 8;
+          styles ["suggested-action"]
+          clicked => $on_add_button_clicked();
+        }
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, add_button]
+}

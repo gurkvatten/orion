@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "Firefox Runtime Messaging Test",
+  "version": "1.0.0",
+  "description": "Exercises browser.runtime one-off messages and long-lived ports.",
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": {
+      "64": "icon.png"
+    },
+    "default_title": "Firefox Runtime Messaging Test",
+    "default_popup": "popup.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "runtime-messaging@orion.test"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ErrorUrlDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 200;
+  title: _("Error Url");
+  name: "error-url-dialog";
+
+  Adw.ToolbarView {
+    
+    Box {
+      orientation: vertical;
+      valign: start;
+        
+      Box {    
+        margin-top: 20;
+        margin-bottom: 10;
+        halign: center;
+        Image {
+          name: "orion-logo"; //the right symbol needed here
+          icon-name: "orion-logo";
+          pixel-size: 49;          
+        }
+      }
+      Box {
+        margin-top: 10;
+        margin-bottom: 10;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          styles [
+            "bold-text"
+          ]
+          label: _("Error");
+        }
+      }      
+      Box {        
+        margin-top: 10;
+        margin-bottom: 10;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          label: _("Invalid URL");         
+        }
+      }               
+      Box {
+        margin-top: 10;
+        margin-bottom: 20;
+        margin-start: 20;
+        margin-end: 20;
+        hexpand: true;
+        halign: fill; 
+        homogeneous: true;             
+        Button {
+          label: _("OK"); 
+          hexpand: true;
+          halign: fill; 
+          styles ["suggested-action"]     
+        }
+      }
+    }
+  }
+}
+
+

@@ -1,0 +1,179 @@
+enum ContextType {
+    BACKGROUND = "BACKGROUND";
+    POPUP = "POPUP";
+    SIDE_PANEL = "SIDE_PANEL";
+    TAB: "TAB";
+}
+
+enum RequestUpdateCheckStatus {
+    THROTTLED = "throttled";
+    NO_UPDATE = "no_update";
+    UPDATE_AVAILABLE = "update_available";
+}
+
+enum PlatformOs {
+    MAC = "mac";
+    IOS = "ios";
+    WIN = "win";
+    ANDROID = "android";
+    CROS = "cros";
+    LINUX = "linux";
+    OPENBSD = "openbsd";
+}
+
+enum PlatformArch {
+    ARM = "arm";
+    X86_32 = "x86-32";
+    X86_64 = "x86-64";
+}
+
+enum PlatformNaclArch {
+    ARM = "arm";
+    X86_32 = "x86-32";
+    X86_64 = "x86-64";
+}
+
+enum OnInstalledReason {
+    INSTALL = "install";
+    UPDATE = "update";
+    BROWSER_UPDATE = "browser_update";
+    SHARED_MODULE_UPDATE = "shared_module_update";
+}
+
+message Window {
+}
+
+message RuntimeContextFilter {
+    repeatable string contextIds;
+    repeatable ContextType contextTypes;
+    repeatable string documentIds;
+    repeatable string documentOrigins;
+    repeatable string documentUrls;
+    repeatable int32 frameIds;
+    bool incognito;
+    repeatable int32 tabIds;
+    repeatable int32 windowIds;
+}
+
+message RuntimeContext {
+    string contextId;
+    ContextType contextType;
+    string documentId;
+    string documentOrigin;
+    string documentUrl;
+    int32 frameId;
+    bool incognito;
+    int32 tabId;
+    int32 windowId;
+}
+
+message RuntimeUpdateCheckResult {
+    RequestUpdateCheckStatus status;
+    string version;
+}
+
+message RuntimeSendMessageOptions {
+    bool includeTlsChannelId;
+}
+
+message RuntimePlatformInfo {
+    PlatformOs os;
+    PlatformArch arch;
+    PlatformNaclArch nacl_arch;
+}
+
+message RuntimeBrowserInfo {
+    string name;
+    string vendor;
+    string version;
+    string buildID;
+}
+
+message RuntimeDirectoryEntry {
+}
+
+message RuntimeConnectInfo {
+    string name;
+    bool includeTlsChannelId;
+}
+
+message RuntimeInstallDetails {
+    string id;
+    string previousVersion;
+    OnInstalledReason reason;
+    bool temporary;
+}
+
+message RuntimeUpdateAvailableDetails {
+    string version;
+}
+
+message RuntimeMessageSender {
+    string socket;
+    string requestId;
+    string name;
+    string id;
+    string url;
+}
+
+service Runtime [global=browser.runtime] {
+    using ContextType;
+    using RequestUpdateCheckStatus;
+    using PlatformOs;
+    using PlatformArch;
+    using PlatformNaclArch;
+    using OnInstalledReason;
+
+    extern id;
+    extern lastError;
+    rpc getBackgroundPage () returns (Window) {}
+    rpc openOptionsPage () returns () {}
+    rpc getContexts (RuntimeContextFilter filter) returns (repeatable RuntimeContext) {}
+    extern getManifest;
+    extern getFrameId;
+    extern getURL;
+    rpc setUninstallURL (string url) returns () {}
+    rpc reload () returns () {}
+    rpc requestUpdateCheck() returns (RuntimeUpdateCheckResult) {}
+    extern connect;
+    extern connectNative;
+    extern sendMessage;
+    rpc __sendMessage (any message, RuntimeSendMessageOptions options) returns (any) {}
+    rpc __sendMessage (string extensionId, any message, RuntimeSendMessageOptions options) returns (any) {}
+    rpc __sendMessageResponse (string requestId, bool responded, any response, string error) returns () {}
+    rpc sendNativeMessage (string application, any message) returns(any) {}
+    rpc getPlatformInfo () returns (RuntimePlatformInfo) {}
+    rpc getBrowserInfo () returns (RuntimeBrowserInfo) {}
+    rpc getPackageDirectoryEntry () returns () {}
+
+    listener onStartup ();
+    listener onInstalled (RuntimeInstallDetails details);
+    listener onSuspend ();
+    listener onSuspendCanceled ();
+    listener onUpdateAvailable (RuntimeUpdateAvailableDetails details);
+    listener onBrowserUpdateAvailable ();
+    extern onConnect;
+    listener __onConnect (RuntimeMessageSender sender);
+    extern onConnectExternal;
+    listener __onConnectExternal (RuntimeMessageSender sender);
+    extern onUserScriptConnect;
+    listener __onUserScriptConnect (RuntimeMessageSender sender);
+    extern onMessage;
+    listener __onMessage (any message, RuntimeMessageSender sender);
+    extern onMessageExternal;
+    listener __onMessageExternal (any message, RuntimeMessageSender sender);
+    listener onUserScriptMessage ();
+    listener onPerformanceWarning ();
+    listener onRestartRequired ();
+}
+
+service RuntimePort [global=browser.runtime.__port] {
+    rpc connect (string socket) returns () {}
+    rpc connect (string socket, RuntimeConnectInfo connectInfo) returns () {}
+    rpc connect (string socket, string extensionId, RuntimeConnectInfo connectInfo) returns () {}
+    rpc connectNative (string socket, string application) returns () {}
+    rpc disconnect (string socket) returns() {}
+    rpc postMessage (string socket, any message) returns() {}
+    listener onDisconnect (RuntimeMessageSender sender);
+    listener onMessage (RuntimeMessageSender sender, any message);
+}

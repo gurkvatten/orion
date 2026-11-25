@@ -1,0 +1,8 @@
+[Desktop Entry]
+Comment=${APPLICATION_SUMMARY}
+Exec=${APPLICATION_COMMAND}
+Icon=${APPLICATION_ID}
+Name=${APPLICATION_NAME}
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;

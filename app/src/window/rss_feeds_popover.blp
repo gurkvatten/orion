@@ -1,0 +1,165 @@
+using Gtk 4.0;
+
+template $RssFeedsPopover: Popover {
+  width-request: 400;
+  autohide:true;
+
+  ScrolledWindow {
+    name:"rss-popover";
+    margin-top:15;
+    margin-bottom:5; //TODO: slight hack for sizing purposes, idk how bad this is
+    margin-start:15;
+    margin-end:15;
+    max-content-height:500;
+    propagate-natural-height:true;
+    propagate-natural-width:true;
+    ColumnView {
+      show-row-separators:false;
+      //TODO: implement this whole thing in code - template for row item is in item.blp
+    }
+
+    //TODO: remove this listbox, only here as a ui showcase
+    ListBox {
+      Box {
+        orientation:horizontal;
+        margin-top:5;
+        margin-start:5;
+        margin-end:5;
+        margin-bottom:15;
+        Box {
+          halign:start;
+          hexpand:true;
+          orientation:vertical;
+          Label {
+            styles [
+              "heading",
+            ]
+            halign:start;
+            xalign:0;
+            width-chars:30;
+            ellipsize:end;
+            label:"Forum activity";
+          }
+          Label  {
+            styles [ 
+              "small-text",
+            ]
+            halign:start;
+            xalign:0;
+            width-chars:50;
+            ellipsize:end;
+            label:"https://orionfeedback.ord/atom";
+          }
+        }
+        Box {
+          orientation:horizontal;
+          spacing:5;
+          Button {
+            vexpand:false;
+            hexpand:false;
+            icon-name:"chain-link-symbolic";
+          }
+          Button {
+            vexpand:false;
+            hexpand:false;
+            icon-name:"plus-large-symbolic";
+          }
+        }
+      }
+      
+      Box {
+        orientation:horizontal;
+        margin-top:5;
+        margin-start:5;
+        margin-end:5;
+        margin-bottom:15;
+        Box {
+          halign:start;
+          hexpand:true;
+          orientation:vertical;
+          Label title_label {
+            styles [
+              "heading",
+            ]
+            halign:start;
+            xalign:0;
+            width-chars:30;
+            ellipsize:end;
+            label:"Forum's new discussions";
+          }
+          Label address_label {
+            styles [ 
+              "small-text",
+            ]
+            halign:start;
+            xalign:0;
+            width-chars:50;
+            ellipsize:end;
+            label:"https://orionfeedback.org/atom/discussions";
+          }
+        }
+        Box {
+          orientation:horizontal;
+          spacing:5;
+          Button {
+            vexpand:false;
+            hexpand:false;
+            icon-name:"chain-link-symbolic";
+          }
+          Button {
+            vexpand:false;
+            hexpand:false;
+            icon-name:"plus-large-symbolic";
+          }
+        }
+      }
+
+      Box {
+        orientation:horizontal;
+        margin-top:5;
+        margin-start:5;
+        margin-end:5;
+        margin-bottom:15;
+        Box {
+          halign:start;
+          hexpand:true;
+          orientation:vertical;
+          Label {
+            styles [
+              "heading",
+            ]
+            halign:start;
+            xalign:0;
+            width-chars:30;
+            ellipsize:end;
+            label:"This discussion";
+          }
+          Label {
+            styles [ 
+              "small-text",
+            ]
+            halign:start;
+            xalign:0;
+            width-chars:50;
+            ellipsize:end;
+            label:"https://orionfeedback.org/texttoolong";
+          }
+        }
+        Box {
+          orientation:horizontal;
+          spacing:5;
+          Button {
+            vexpand:false;
+            hexpand:false;
+            icon-name:"chain-link-symbolic";
+          }
+          Button {
+            vexpand:false;
+            hexpand:false;
+            icon-name:"plus-large-symbolic";
+          }
+        }
+      }
+    }
+  }
+}

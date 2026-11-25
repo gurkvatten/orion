@@ -1,0 +1,21 @@
+using Gtk 4.0;
+
+template $ProfilesIconSelectionBox : Box {
+  orientation:horizontal;
+  spacing:5;
+  /*
+  Adw.ToggleGroup icon_toggle_group{
+    hexpand:true;
+    homogeneous:true;
+  }
+  */
+  Label {
+    label:_("Missing Adw.ToggleGroup");
+  }
+  MenuButton {
+    icon-name:"reaction-add-symbolic";
+    popover: EmojiChooser { //TODO: this breaks the higher level popover, can't close in normal fashion
+
+    };
+  }
+}

@@ -1,0 +1,723 @@
+using Gtk 4.0;
+using Gio 2.0;
+using Adw 1;
+
+
+
+template $Sidebar: Box {
+  name: "sidebar";
+  orientation: vertical;
+  hexpand: true;
+  margin-start: 6;
+  margin-top: 6;
+  margin-end: 6;
+  margin-bottom: 6;
+
+  Box {
+    WindowControls window_controls_start {
+      name: "window-controls";
+      halign:end;
+      side: start;
+      valign: center;
+      vexpand: false;
+    }
+
+    Box {
+      orientation: vertical;
+
+      Box {
+        Button sidebar_button {
+          name: "hide-sidebar";
+          icon-name: "dock-left-symbolic";
+          tooltip-text: _("Hide Sidebar");
+          clicked => $on_sidebar_button_clicked();
+        }
+
+        MenuButton sidebar_menu_button {
+          margin-start: 2;
+          menu-model: sidebar_menu;
+        }
+      }
+
+      Label sidebar_label {
+        label: _("Sidebar");
+        styles ["toolbar-item-label"]
+      }
+    }
+  }
+  Stack page_stack {
+    StackPage {
+      name: "windows";
+      child: Box {
+        orientation: vertical;
+        vexpand: true;
+
+        Box windows_page {
+          hexpand: false;
+          
+          $WindowListBox {}
+        }
+      };
+    }
+
+    StackPage {
+      name: "tabs";
+      child: Box tabs_page {
+        orientation: vertical;
+        hexpand: false;
+
+        Separator {
+          margin-top: 8;
+        }
+
+        Box {
+          margin-top: 8;
+
+          Box {
+            halign: fill;
+            hexpand: true;
+
+            ScrolledWindow {
+              halign:center;
+              vscrollbar-policy: never;
+              propagate-natural-width: true;
+              /*
+              Adw.ViewSwitcher {
+                stack: tabs_view_stack;
+                hexpand: false;
+                halign: center;
+                policy: wide;
+                styles ["view-switcher"]
+              }*/
+              ListView windows_list_view {
+                styles [
+                  "navigation-sidebar",
+                  //"no-spacing-listview"
+                ]
+                orientation:horizontal;
+                factory: SignalListItemFactory {
+                  setup => $window_item_factory_setup();
+                  bind => $window_item_factory_bind();
+                };
+              }
+            }
+
+            Button {
+              icon-name: "plus-large-symbolic";
+              valign: center;
+              height-request: 36;
+              margin-end: 5;
+              tooltip-text: _("New Tab Group");
+              clicked => $on_new_window_button_clicked();
+            }
+          }
+            
+          Button tabs_menu_button {
+            valign: center;
+            halign: end;
+            height-request: 36;
+            icon-name: "adw-expander-arrow-symbolic";
+            clicked => $on_tabs_menu_button_clicked();
+          }
+        }
+
+        Separator {
+          margin-top: 3;
+        }
+
+        Box window_page_1 {
+          margin-top: 8;
+          orientation: vertical;
+          margin-end: 4;
+
+          Box {
+            styles ["hover-container"]
+            Label tabs_label{
+              styles ["dim-label"]
+              halign: start;
+              margin-start: 8;
+              label: bind $bind_object_with_label_to_window(tabs_label, template.root as <$MainWindow>.window-id) as <string>;
+              ellipsize: end;
+            }
+            
+            MenuButton current_window_menu_button {
+              halign: end;
+              hexpand: true;
+              // TODO: this button should be smaller (but .small-padding class does not work for some reason)
+              styles ["small-padding"/*, "show-on-hover"*/]
+
+              Image {
+                icon-name: "more-small-symbolic";
+                pixel-size: 16;
+              }
+            }
+          }
+
+          // Box pinned_tabs_box {
+          //   hexpand: false;
+          //   vexpand: false;
+          //   homogeneous: false;
+          //   orientation: vertical;
+
+            //TODO: hide if no pinned tabs
+            // for pinned tabs, we want grid view instead of list view because we want horizontal
+            // flow of items that can wrap to multiple rows if needed
+            GridView pinned_tabs_grid_view {
+              hexpand: false;
+
+              // Setting both min and max columns fixes an issue with empty space (empty
+              // row) at the end of the grid view when there are few items. This can be
+              // improved in the future using dynamic calculation.
+              min-columns: 6;
+              max-columns: 6;
+
+              styles [
+                "navigation-sidebar"
+              ]
+              factory: BuilderListItemFactory {
+                template ListItem {
+                  child: Box {
+                    DragSource {
+                      prepare => $on_pinned_tab_drag_source_prepare();
+                      drag-begin => $on_pinned_tab_drag_source_drag_begin();
+                      drag-end => $on_pinned_tab_drag_source_drag_end();
+                      actions: move;
+                    }
+                    DropTarget {
+                      drop => $on_pinned_tab_drop_target_drop();
+                      motion => $on_tab_drop_target_motion(); // use same handler as for unpinned tabs
+                      leave => $on_tab_drop_target_leave(); // use same handler as for unpinned tabs
+                      formats: "AdwTabPage";
+                      actions: move;
+                    }
+                    hexpand:false;
+                    spacing: 0;
+                    orientation: vertical;
+                    margin-start: 0; // fixes alignment issue of icon image
+                    Overlay {
+                      Image {
+                        gicon: bind (template.item as <Adw.TabPage>).icon as <Gio.Icon>;
+                        pixel-size: 16;
+                      }
+                      [overlay]
+                      Button {
+                        styles ["pinned-tab-audio-button"]
+                        icon-name: bind $audio_indicator_icon_name(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-muted) as <string>;
+                        visible: bind $is_audio_indicator_visible(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-playing-audio, template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-muted) as <bool>;
+                        tooltip-text: bind $audio_indicator_tooltip(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-muted) as <string>;
+                        halign: end;
+                        valign: end;
+                        clicked => $on_sidebar_tab_audio_button_clicked();
+                      }
+                    }
+                    GestureClick {
+                      button: 3; // corresponds to GDK_BUTTON_SECONDARY
+                      pressed => $on_pinned_tabs_list_view_item_secondary_pressed();
+                    }
+                    // pinned tabs must not be able to be closed with middle button
+                    
+                    
+                    Popover tab_preview {
+                      //NOTE: this structure needs to stay same or on_tab_event_controller_motion_enter() needs to be modified to accomodate the change
+                      styles [
+                        "tab-preview",
+                      ]
+                      autohide: false;
+                      has-arrow:false;
+                      position: bottom;
+                      Box {
+                        orientation: vertical;
+                        Adw.Clamp {
+                          visible: bind $invert_bool(template.item as <Adw.TabPage>.selected) as <bool>;
+                          Picture {
+                            styles [
+                              "gray-background",
+                            ]
+                            can-shrink: true;
+                            keep-aspect-ratio: true;
+                          }
+                          maximum-size: 250;
+                        }
+                        Separator {
+                          visible: bind $invert_bool(template.item as <Adw.TabPage>.selected) as <bool>;
+                          hexpand: true;
+                          orientation: horizontal;
+                        }
+                        Label {
+                          styles [
+                            "title-6",
+                          ]
+                          halign: start;
+                          margin-top: 8;
+                          margin-start: 8;
+                          margin-end : 8;
+                          ellipsize: end;
+                          label: bind template.item as <Adw.TabPage>.title as <string>;
+                        }
+                        Label {
+                          halign: start;
+                          margin-start: 8;
+                          margin-bottom: 8;
+                          margin-end:8;
+                          ellipsize: end;
+                          label: bind $get_uri_authority(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.uri) as <string>;
+                        }
+                      }
+                    }
+                    PopoverMenu context_menu {}
+                    EventControllerMotion {
+                      enter => $on_tab_event_controller_motion_enter(template);
+                      leave => $gtk_popover_popdown(tab_preview);
+                    }
+                    unmap => $gtk_popover_popdown(tab_preview);
+                    state-flags-changed => $on_tab_state_flags_changed(tab_preview);
+                  };
+                }
+              };
+            }
+          //}
+
+          ScrolledWindow {
+            vexpand:true;
+            propagate-natural-height:true;
+            Box {
+              hexpand: true;
+              vexpand: true;
+              halign: fill;
+              orientation: vertical;
+
+              ListView tabs_list_view {
+                name: "tabs-list-view";
+                vexpand:true;
+                styles [
+                  "navigation-sidebar"
+                ]
+                factory: BuilderListItemFactory {
+                  template ListItem {
+                    child: Box {
+                      //FIXME: drag and drop is not aware of tab grouping
+                      DragSource {
+                        prepare => $on_unpinned_tab_drag_source_prepare();
+                        drag-begin => $on_unpinned_tab_drag_source_drag_begin();
+                        drag-end => $on_unpinned_tab_drag_source_drag_end();
+                        actions: move;
+                      }
+                      DropTarget {
+                        drop => $on_unpinned_tab_drop_target_drop();
+                        motion => $on_tab_drop_target_motion();
+                        leave => $on_tab_drop_target_leave();
+                        formats: "AdwTabPage";
+                        actions: move;
+                      }
+                      hexpand:true;
+                      spacing: 6;
+                      Expander {
+                        margin-start: bind ($indent_to_margin(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.indent)) as <int>;
+                        expanded: bind ($get_tab_expander_expanded(template.item)) as <bool>;
+                        //visible: bind ($get_tab_expander_visible(template.child as <Widget>.root as <$MainWindow>.profile-id as <int>)) as <bool>;
+                        opacity: bind ($bool_to_float(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.nested-tabs-expandable)) as <float>;
+                        sensitive: bind template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.nested-tabs-expandable;
+                        notify::expanded => $on_tab_expander_notify_expanded();
+                        notify::root => $on_tab_expander_notify_root();
+                        resize-toplevel: false;
+                        valign:center;
+                      }
+                      Image {
+                        gicon: bind (template.item as <Adw.TabPage>).icon as <Gio.Icon>;
+                        pixel-size: 16;
+                        //visible: bind ($get_tab_icon_visible(template.item)) as <bool>;
+                        notify::root => $on_tab_favicon_notify_root();
+                      }
+                      Label {
+                        ellipsize: end;
+                        hexpand: true;
+                        halign: start;
+                        // we cannot bind label property (of type string) to AdwTabPage title
+                        // property directly because we need to hide (set to NULL) AdwTabPage
+                        // title in certain cases to hide it in Standard and Compact Tabs modes
+                        notify::root => $on_tab_title_notify_root();
+                      }
+                      //debug labels
+                      Label {
+                        label: bind ($double_to_string(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.seq-num)) as <string>;
+                        visible: false;
+                      }
+                      Label {
+                        label: bind ($int64_to_string(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.id)) as <string>;
+                        visible: false;
+                      }
+                      /*
+                      Label {
+                        label: bind ($bool_to_string(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.nested-tabs-expandable)) as <string>;
+                      }
+                      */
+                      // Label {
+                      //   halign:end;
+                      //   label: bind $id_to_string(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.id) as <string>;
+                      // }
+                      // Label {
+                      //   halign:end;
+                      //   label: bind $seq_num_to_string(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.seq_num) as <string>;
+                      // }
+                      // Label {
+                      //   halign:end;
+                      //   label: bind $id_to_string(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.parent-id) as <string>;
+                      // }
+                      Button {
+                        styles ["small-padding", "hover-only"]
+                        vexpand: false;
+                        valign: center;
+                        visible: bind $is_audio_indicator_visible(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-playing-audio, template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-muted) as <bool>;
+                        tooltip-text: bind $audio_indicator_tooltip(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-muted) as <string>;
+                        Image {
+                          icon-name: bind $audio_indicator_icon_name(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.is-muted) as <string>;
+                          pixel-size: 10;
+                        }
+                        clicked => $on_sidebar_tab_audio_button_clicked();
+                      }
+                      Button {
+                        styles ["small-padding", "hover-only", "show-on-hover"]
+                        vexpand: false;
+                        valign: center;
+                        Image {
+                          icon-name: "cross-large-symbolic";
+                          pixel-size: 10;
+                        }
+                        clicked => $on_close_page_button_clicked();
+                      }
+                      GestureClick {
+                        button: 3; // corresponds to GDK_BUTTON_SECONDARY
+                        pressed => $on_tabs_list_view_row_secondary_pressed();
+                        released => $on_tabs_list_view_row_secondary_released();
+                      }
+                      GestureClick {
+                        button: 2; // corresponds to GDK_BUTTON_MIDDLE
+                        released => $on_tabs_list_view_row_middle_released();
+                      }
+
+                      
+                      Popover tab_preview {
+                        //NOTE: this structure needs to stay same or on_tab_event_controller_motion_enter() needs to be modified to accomodate the change
+                        styles [
+                          "tab-preview",
+                        ]
+                        autohide: false;
+                        has-arrow:false;
+                        position: right;
+                        Box {
+                          orientation: vertical;
+                          Adw.Clamp {
+                            visible: bind $invert_bool(template.item as <Adw.TabPage>.selected) as <bool>;
+                            Picture {
+                              styles [
+                                "gray-background",
+                              ]
+                              can-shrink: true;
+                              keep-aspect-ratio: true;
+                            }
+                            maximum-size: 250;
+                          }
+                          Separator {
+                            visible: bind $invert_bool(template.item as <Adw.TabPage>.selected) as <bool>;
+                            hexpand: true;
+                            orientation: horizontal;
+                          }
+                          Label {
+                            styles [
+                              "title-6",
+                            ]
+                            halign: start;
+                            margin-start: 8;
+                            margin-top: 8;
+                            margin-end:8;
+                            ellipsize: end;
+                            label: bind template.item as <Adw.TabPage>.title as <string>;
+                          }
+                          Label {
+                            halign: start;
+                            margin-start: 8;
+                            margin-bottom: 8;
+                            margin-end:8;
+                            ellipsize: end;
+                            label: bind $get_uri_authority(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.uri) as <string>;
+                          }
+                        }
+                      }
+                      //please do not place any widgets after this PopoverMenu unless also modifying tab_list_item_right_click_cb() to accomodate
+                      PopoverMenu context_menu {}
+                      EventControllerMotion {
+                        enter => $on_tab_event_controller_motion_enter(template);
+                        leave => $gtk_popover_popdown(tab_preview);
+                      }
+                      unmap => $gtk_popover_popdown(tab_preview);
+                      state-flags-changed => $on_tab_state_flags_changed(tab_preview);
+                    };
+                  }
+                };
+              }
+
+              PopoverMenu tabs_list_view_popover_menu {          
+              }
+            }
+            DropTarget {
+              drop => $on_tabs_list_view_drop_target_drop();
+              motion => $on_tabs_list_view_drop_target_motion();
+              leave => $on_tabs_list_view_drop_target_leave();
+              formats: "AdwTabPage";
+              actions: move;
+              propagation-phase: bubble;
+            }
+            GestureClick {
+              propagation-phase: bubble;
+              button: 3; //corresponds to GTK_BUTTON_SECONDARY
+              released => $on_tabs_list_view_secondary_released(template);
+            }
+          }
+
+          Button new_tab_button {
+            hexpand: true;
+            styles ["hover-only"]
+            tooltip-text: _("New Tab");
+            Box {
+              Image {
+                icon-name: "plus-large-symbolic";
+                halign: center;
+                hexpand: true;
+              }
+              PopoverMenu new_tab_button_popover_menu {
+              }
+            }
+            GestureClick {
+              button: 3; // corresponds to GDK_BUTTON_SECONDARY
+              pressed => $on_new_tab_button_secondary_pressed();
+              released => $on_new_tab_button_secondary_released();
+            }
+          }
+        }
+      };
+    }
+
+    StackPage {
+      name: "bookmarks";
+      child: Box bookmarks_page {
+        orientation: vertical;
+
+        Entry bookmarks_entry{
+          placeholder-text: "Search Bookmarks";
+          primary-icon-name: "loupe-large-symbolic";
+          margin-top: 6;
+        }
+        
+        ScrolledWindow {
+              propagate-natural-height: true;
+              hexpand:true;
+              
+              ColumnView bookmarks_columnview {
+                styles ["bg-inherit"]
+                margin-top: 10;
+                activate => $on_sidebar_bookmarks_column_view_activate();
+
+                vexpand: true;
+                single-click-activate: true;
+                hexpand:true;
+              }
+          }
+        };
+      } 
+
+    StackPage {
+      name: "reading_list";
+      child: Box reading_list_page {
+        orientation: vertical;
+
+        $ReadingListToggleGroup reading_list_toggle_group {
+          margin-top: 16;
+        }
+
+        Entry reading_list_entry{
+          placeholder-text: "Search Reading List";
+          primary-icon-name: "loupe-large-symbolic";
+          margin-top: 6;
+        }
+
+        ScrolledWindow {
+          propagate-natural-height: true;
+          vexpand:true;
+          ListView reading_list_list_view {
+            styles ["navigation-sidebar"] // because we want rounded border
+            //map => $on_reading_list_list_view_map();
+            GestureClick {
+              button: 3;
+              released => $on_reading_list_list_view_secondary_released();
+            }
+            // TODO: fill dynamically
+            factory: BuilderListItemFactory {
+              template ListItem {
+                child: Box {
+                  margin-top: 10;
+                  margin-end: 5;
+                  margin-bottom: 10;
+                  margin-start: 5;
+                  Image {
+                    icon-name: "orion-logo";
+                    pixel-size: 64;
+                    valign: start;
+                    map => $load_image_from_reading_list_item();
+                  }
+                  Box {
+                    margin-start: 8;
+                    orientation: vertical;
+                    Label {
+                      label: bind ($get_reading_list_title_from_item(template.item)) as <string>;
+                      styles ["title-5"]
+                      ellipsize: end;
+                      //NOTE: this is the only way I could find to make these stay as single line
+                      wrap: true;
+                      wrap-mode: none;
+                      lines: 2;
+                      max-width-chars: 40;
+                      width-chars: 12;
+                      xalign: 0;
+                    }
+                    Label {
+                      label: bind ($get_reading_list_address_from_item(template.item)) as <string>;
+                      styles ["title-6"]
+                      ellipsize: end;
+                      wrap: true;
+                      wrap-mode: none;
+                      lines: 2;
+                      max-width-chars: 40;
+                      width-chars: 12;
+                      xalign: 0;
+                    }
+                    Label {
+                      label: bind($get_reading_list_description_from_item(template.item)) as <string>;
+                      ellipsize: end;
+                      wrap: true;
+                      lines: 2;
+                      max-width-chars: 40;
+                      width-chars: 12;
+                      xalign: 0;
+                    }
+                  }
+                  GestureClick {
+                    button: 3;
+                    released => $on_reading_list_list_view_row_secondary_released();
+                  }
+                };
+              }
+            };
+          }
+        }
+      };
+    }
+  }
+}
+
+menu sidebar_menu {
+  section {
+    item {
+      label: _("Tab Groups");
+      action: "win.sidebar-type";
+      target: "windows";
+      role: "radio";
+    }
+    item {
+      label: _("Tabs");
+      action: "win.sidebar-type";
+      target: "tabs";
+      role: "radio";
+    }
+    item {
+      label: _("Bookmarks");
+      action: "win.sidebar-type";
+      target: "bookmarks";
+      role: "radio";
+    }
+    item {
+      label: _("Reading List");
+      action: "win.sidebar-type";
+      target: "reading_list";
+      role: "radio";
+    }
+  }
+
+  section {
+    item {
+      label: _("Use Standard Tabs");
+      action: "win.tab-layout-setting";
+      target: "standard";
+      role: "radio";
+    }
+    item {
+      label: _("Use Compact Tabs");
+      action: "win.tab-layout-setting";
+      target: "compact";
+      role: "radio";
+    }
+    item {
+      label: _("Use Vertical Tabs");
+      action: "win.tab-layout-setting";
+      target: "vertical";
+      role: "radio";
+    }
+  }
+
+  section {
+    item {
+      label: _("Auto-show Sidebar");
+      action: "win.auto-show-sidebar";
+    }
+  }
+}
+
+// not used
+menu window_menu {
+  section {
+    item {
+      label: _("Open in Separate Window"); // TODO: hide this dynamically
+    }
+  }
+
+  section {
+    item {
+      label: _("Edit…");
+      action: "win.edit-current-window-group";
+    }
+    item {
+      label: _("Duplicate");
+    }
+  }
+
+  section {
+    item {
+      label: _("Suspend");
+    }
+    item {
+      label: _("Delete");
+      action: "win.delete-stored-window-menu";
+    }
+  }
+
+  section {
+    submenu {
+      label: _("3 Tabs"); // TODO: this should be the number of tabs in the window
+
+      section {
+        item {
+          label: _("Copy Tab Links");
+        }
+        item {
+          label: _("Bookmark 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+        item {
+          label: _("Suspend 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+      }
+
+      section {
+        // TODO: fill this dynamically with the tabs in the window
+      }
+    }
+  }
+}

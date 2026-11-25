@@ -1,0 +1,115 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $SoftwareUpdateDialog: Adw.Dialog {
+  content-width: 700;
+  content-height: 716;
+  title: _("Software Update");
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Grid {
+      margin-top: 16;
+
+      Box {
+        layout {
+          row: 0;
+          column: 0;
+        }
+
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 64;
+          margin-start: 16;
+          margin-end: 16;
+        }
+      }
+
+      Box {
+        layout {
+          row: 0;
+          column: 1;
+        }
+        orientation: vertical;
+
+        Box {
+          Label {
+            label: _("A new version of Orion is available!");
+            styles ["bold-text"]
+          }
+        }
+        Box {
+          margin-top: 8;
+          margin-end: 16;
+          Label {
+            label: _("Orion <NEW_VERSION> is now available—you have <OLD_VERSION>. Would you like to download it now?"); // TODO: replace with actual versions
+            styles ["small-text"]
+          }
+        }
+        Box {
+          margin-top: 14;
+          Label {
+            label: _("Release Notes:");
+          }
+        }
+      }
+
+      Box {
+        layout {
+          row: 1;
+          column: 1;
+        }
+        margin-end: 16;
+        ScrolledWindow {
+          styles ["gray-background"]
+          // TODO: load page with actual release notes (WebKit view)
+          min-content-height: 480;
+          min-content-width: 640;
+          Label {
+            label: _("WebKit web page with release notes");
+          }
+        }
+      }
+
+      Box {
+        layout {
+          row: 2;
+          column: 1;
+        }
+        CheckButton {
+          styles ["small-text"]
+          label: _("Automatically check for updates");
+          margin-top: 8;
+          margin-end: 16;
+        }
+      }
+      Box {
+        layout {
+          row: 3;
+          column: 1;
+        }
+        Button {
+          label: _("Skip This Version");
+          margin-top: 8;
+        }
+      }
+      Box {
+        layout {
+          row: 3;
+          column: 1;
+        }
+        halign: end;
+        margin-end: 16;
+        Button {
+          label: _("Install Update");
+          styles ["suggested-action"]
+          margin-top: 8;
+          clicked => $on_install_update_clicked();
+        }
+      }
+    }
+  }
+}

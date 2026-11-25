@@ -1,0 +1,58 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $BookmarksBar : Adw.Bin {
+  name:"bookmarks-bar";
+  Box {
+    margin-start:10;
+    margin-end:10;
+    orientation:horizontal;
+    hexpand:true;
+    halign:fill;
+    Button bookmarks_bar_bookmarks_button {
+      styles [
+        "bg-inherit",
+        "bookmarks-button",
+      ]
+      halign:start;
+      icon-name:"bookmark-filled-symbolic";
+      clicked => $on_bookmarks_bar_bookmarks_button_clicked();
+      tooltip-text: _("Manage Bookmarks");
+    }
+    ScrolledWindow scrolled_window
+    {
+      margin-top:5;
+      margin-bottom:5;
+      halign:fill;
+      hexpand:true;
+      vscrollbar-policy:never;
+      propagate-natural-width:true;
+      
+      ListView bookmarks_button_list_view {
+        styles [
+          "bg-inherit",
+          "listview-no-hover",
+        ]
+        orientation:horizontal;
+        halign:center;
+        hexpand:true;
+      }
+    }
+  }
+}
+
+menu temp_menu {
+  section {
+    item {
+      label: "Kagi Blog";
+    }
+    item {
+      label: "Start Page";
+    }
+  }
+  section {
+    item {
+      label: _("Open in New Tabs");
+    }
+  }
+}

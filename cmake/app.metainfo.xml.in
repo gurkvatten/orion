@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+	<id>${APPLICATION_ID}</id>
+	<name>${APPLICATION_NAME}</name>
+	<summary>${APPLICATION_SUMMARY}</summary>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>Commercial - Third party EULA</project_license>
+	<description>
+		<p>Disclaimer: This software is in active development (beta stage). Expect incomplete features and potential application instability (e.g., coredumps, crashes, or data loss may occur).</p>
+        <p>This is potentially an unstable beta build intended for limited external testing only to gather early feedback.</p>
+        <p>Some features, like WebKit Extensions, Data synchronisations are not implemented yet.</p>
+	</description>
+	<developer id="${DEVELOPER_ID}">
+		<name>${DEVELOPER_NAME}</name>
+	</developer>
+    <launchable type="desktop-id">${APPLICATION_ID}.desktop</launchable>
+	<url type="homepage">${APPLICATION_HOMEPAGE}</url>
+	<url type="bugtracker">${APPLICATION_BUGTRACKER}</url>
+	<screenshots>
+		${APPICATION_SCREENSHOTS_RESULT}
+	</screenshots>
+	<categories>
+		<category>Network</category>
+		<category>WebBrowser</category>
+	</categories>
+	<releases>
+		<release version="${APPLICATION_VERSION}" date="${APPLICATION_BUILD_DATE}">
+			<description>
+<p>1       Beta build</p>
+<p>1.1     Major functionality delivered since Alpha</p>
+<ul>
+    <li>Tab management completed</li>
+    <li>Password management</li>
+    <li>History management</li>
+    <li>Dark mode</li>
+    <li>Focus mode</li>
+    <li>Custom search engines: User defined search engine can be specified in Settings -&gt; Search</li>
+    <li>Custom search engines: Search enabled from address bar</li>
+    <li>Download functionality (done except Pause/Resume option)</li>
+    <li>Sync to local files: Profile data (bookmarks, windows, tabs, reading list) can be exported to and imported from local file bundle</li>
+</ul>
+
+<p>1.2     Stability improvement</p>
+<ul>
+    <li>fix for SQL errors (duplicate inserts into tab-back-forward list) - reported from Alpha</li>
+    <li>Website settings: browser completely freezes – reported from Alpha</li>
+    <li>crash after closing pinned tab (Sidebar -&gt; context menu -&gt; Close Tab)</li>
+    <li>after new installation, it wasn't possible to open new tab</li>
+</ul>
+
+<p>1.3     Minor improvements and fixes</p>
+<ul>
+    <li>Ctrl+R: to refresh current tab (standard for most browsers)</li>
+    <li>Ctrl+click on link: will open link in new tab</li>
+    <li>F5 key will reload active tab</li>
+    <li>"Windows" renamed to "Tab Groups" in Sidebar as done on Mac</li>
+    <li>fix for Nested Tabs in Sidebar</li>
+</ul>
+
+<p>1.4     Misc</p>
+<ul>
+    <li>enable ITP (Intelligent Tracking Prevention) on all WebKit network sessions by default</li>
+    <li>converting some popovers from GtkPopover to AdwDialog (e.g. Website Settings, Page Tweaks, Window List)</li>
+    <li>Various fixes and additions to UI functionality</li>
+    <li>Fixed issues found in early Beta version</li>
+</ul>
+			</description>
+		</release>
+	</releases>
+	<content_rating type="oars-1.1" />
+</component>

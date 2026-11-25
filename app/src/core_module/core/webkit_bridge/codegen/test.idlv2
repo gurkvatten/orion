@@ -1,0 +1,104 @@
+// Chromium: extensions/common/api/test.json
+// Firefox:  toolkit/components/extensions/schemas/test.json
+
+[Tags=Chrome,Firefox,Everywhere]
+[Permissions=debug]
+[Global="test"]
+interface Test {
+    function void sendMessage(optional any message, optional any argument);
+
+    [Implementation=JavaScript("Test.notifyPass")]
+    function void notifyPass(optional string message);
+
+    [Implementation=JavaScript("Test.notifyFail")]
+    function void notifyFail(optional string message);
+
+    [Implementation=JavaScript("Test.log")]
+    function void log(string message);
+
+    [Implementation=JavaScript("Test.runTests")]
+    function Promise<void> runTests(sequence<any> tests);
+
+    [Implementation=JavaScript("Test.addTest")]
+    function Promise<void> addTest(any test);
+
+    [Implementation=JavaScript("Test.succeed")]
+    function void succeed(optional any message);
+
+    [Implementation=JavaScript("Test.fail")]
+    function void fail(optional any message);
+
+    [Implementation=JavaScript("Test.assertEq")]
+    function any assertEq(any expected, any actual, optional any message);
+
+    [Implementation=JavaScript("Test.assertNe")]
+    function any assertNe(any expected, any actual, optional any message);
+
+    [Implementation=JavaScript("Test.assertTrue")]
+    function any assertTrue(optional any condition, optional any message);
+
+    [Implementation=JavaScript("Test.assertFalse")]
+    function any assertFalse(optional any condition, optional any message);
+
+    [Implementation=JavaScript("Test.assertDeepEq")]
+    function any assertDeepEq(any expected, any actual, optional any message);
+
+    [Implementation=JavaScript("Test.assertThrows")]
+    function any assertThrows(
+        any test,
+        optional any argument1,
+        optional any argument2,
+        optional any argument3
+    );
+
+    [Implementation=JavaScript("Test.assertRejects")]
+    function Promise<void> assertRejects(
+        any promise,
+        optional any expected,
+        optional any message
+    );
+
+    [Implementation=JavaScript("Test.assertResolves")]
+    function Promise<void> assertResolves(any promise, optional any message);
+
+    [Implementation=JavaScript("Test.assertSafe")]
+    function any assertSafe(any test, optional any message);
+
+    [Implementation=JavaScript("Test.assertSafeResolve")]
+    function Promise<void> assertSafeResolve(any test, optional any message);
+
+    [Implementation=JavaScript("Test.assertNoLastError")]
+    function any assertNoLastError();
+
+    [Implementation=JavaScript("Test.assertLastError")]
+    function any assertLastError(any expected);
+
+    [Implementation=JavaScript("Test.callbackPass")]
+    function any callbackPass(optional any callback);
+
+    [Implementation=JavaScript("Test.callbackFail")]
+    function any callbackFail(optional any expectedError, optional any callback);
+
+    [Implementation=JavaScript("Test.listenOnce")]
+    function any listenOnce(any event, optional any callback);
+
+    [Implementation=JavaScript("Test.getConfig")]
+    function void getConfig(any callback);
+
+    [Implementation=JavaScript("Test.testCallback")]
+    function void testCallback(optional any callback);
+
+    [Implementation=JavaScript("Test.checkDeepEq")]
+    function boolean checkDeepEq(any expected, any actual);
+
+    event onMessage(any message, any argument);
+
+    [Internal]
+    function Promise<void> __notifyPass(optional string message);
+
+    [Internal]
+    function Promise<void> __notifyFail(optional string message);
+
+    [Internal]
+    function Promise<void> __log(string message);
+};

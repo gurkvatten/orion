@@ -1,0 +1,91 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ImportFromBrowserDialog: Adw.Dialog {
+  content-width: 400;
+  content-height: 200;
+  name: "import-from-browser-dialog";
+  title: _("Import from Mozilla Firefox"); // TODO: fill the name dynamically
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Box {
+      orientation: vertical;
+      spacing: 8;
+      margin-top: 8;
+      margin-end: 16;
+      margin-bottom: 16;
+      margin-start: 16;
+
+      Box {
+        spacing: 8;
+        Image {
+          icon-name: "orion-logo";
+          pixel-size: 32;
+        }
+        Label {
+          label: _("Mozilla Firefox");
+          styles ["title-4"]
+        }
+      }
+
+      Separator {}
+
+      Label {
+        label: _("Select profile:");
+        halign: start;
+        margin-top: 8;
+      }
+
+      DropDown {
+        model: StringList {
+          strings [
+            "default-release", // no localization
+          ]
+        };
+      }
+
+      Label {
+        label: _("Select the items to import:");
+        halign: start;
+        margin-top: 8;
+      }
+
+      Box {
+        orientation: vertical;
+        spacing: 0;
+
+        CheckButton {
+          label: _("Bookmarks");
+        }
+
+        CheckButton {
+          label: _("History");
+        }
+
+        CheckButton {
+          label: _("Passwords");
+        }
+      }
+
+      Box {
+        halign: end;
+        hexpand: true;
+        homogeneous: true;
+
+        Button {
+          label: _("Cancel");
+          clicked => $on_cancel_clicked();
+        }
+        Button {
+          label: _("Import");
+          clicked => $on_import_clicked();
+          styles ["suggested-action"]
+          margin-start: 8;
+        }
+      }
+    }
+  }
+}

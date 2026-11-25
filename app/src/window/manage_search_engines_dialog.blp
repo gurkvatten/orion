@@ -1,0 +1,64 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ManageSearchEnginesDialog: Adw.Dialog {
+  content-width: 900;
+  content-height: 300;
+  title: _("Manage Search Engines");
+  //TODO: set name
+
+  Adw.ToolbarView {
+    content: Box { //inner table  
+      vexpand:true;
+      hexpand:true;
+      ScrolledWindow {
+        hexpand:true;
+        vexpand:true;
+        ColumnView search_engines_column_view {
+          margin-top:10;
+          margin-start:20;
+          margin-end:20;
+          styles ["frame"]
+        }
+      }
+    };
+    [bottom]
+    Box {
+      valign:end;
+      hexpand:true;
+      Box {
+        margin-top:20;
+        margin-bottom:20;
+        margin-start:20;
+        margin-end:20;
+        spacing:0;
+        hexpand:true;
+        halign:start;
+        Button  {
+          valign:center;
+          icon-name: "plus-large-symbolic";
+          clicked => $on_plus_button_clicked();
+        }
+        Button  {
+          margin-start: 4;
+          valign:center;
+          icon-name: "minus-large-symbolic";
+          clicked => $on_minus_button_clicked();
+        }
+      }
+      Box {
+        margin-top:20;
+        margin-bottom:20;
+        margin-start:20;
+        margin-end:20;
+        halign:end;
+        Button doneButton {
+          valign:center;
+          styles ["suggested-action"]
+          label:_("Done");
+          clicked => $on_done_button_clicked();
+        }
+      }
+    }
+  }
+}

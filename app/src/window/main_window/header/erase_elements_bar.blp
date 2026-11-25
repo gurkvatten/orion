@@ -1,0 +1,129 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $EraseElementsBar : Box {
+  name: "erase-elements-bar";
+  spacing: 8;
+  MenuButton text_view_menu_button {
+    halign: center;
+    icon-name: "shield-half-symbolic";
+    label: _("0 elements erased"); //mostly handled in code
+    always-show-arrow: true;
+    popover: Popover {
+      styles [
+        "flush-popover"
+      ]
+      default-widget: apply_button;
+      
+      closed => $on_text_view_popover_closed();
+      EventControllerKey {
+        key-pressed => $on_text_view_popover_key_pressed();
+      }
+
+      child: Adw.ToolbarView {
+        height-request: 350;
+        width-request: 280;
+        bottom-bar-style: raised_border;
+
+        content: ScrolledWindow {
+          max-content-height: 350;
+          max-content-width: 400;
+          child: TextView element_blockers_text_view {
+            styles [
+              "monospace-font",
+            ]
+            hexpand:true;
+            vexpand:true;
+            width-request: 400;
+            height-request: 350;
+            halign:fill;
+            valign:fill;
+            margin-top: 8;
+            margin-start: 8;
+            margin-end: 8;
+            input-purpose: terminal;
+            input-hints: no_emoji | no_spellcheck;
+            buffer: TextBuffer element_blockers_text_buffer {
+              text: ""; //blueprint langauge server really does not wish for an empty TextBuffer, wants this marked as translatable
+              changed => $element_blockers_changed();
+              insert-text => $element_blockers_insert_text();
+            };
+          };
+        };
+
+        [bottom]
+        ActionBar saved_bar {
+          //margin-top: 8;
+          halign:fill;
+          hexpand: true;
+
+          [start]
+          Button {
+            //hexpand:true;
+            label: _("Reset All");
+            clicked => $erase_elements_bar_reset_selectors() swapped;
+          }
+
+          [end]
+          CheckButton preview_erased_check_button {
+            label: _("Preview Erased");
+            active: false;
+            toggled => $on_preview_erased_toggled();
+          }
+          //add some logic for apply/cancel after this changes
+        }
+
+        [bottom]
+        ActionBar unsaved_bar {
+          visible: false;
+          //margin-top: 8;
+          halign:fill;
+          hexpand: true;
+
+          [end]
+          Button {
+            //hexpand:true;
+            label: _("Cancel");
+            clicked => $cancel() swapped;
+          }
+
+          [end]
+          Button apply_button {
+            styles [
+              "suggested-action",
+            ]
+            label: _("Apply");
+            clicked => $apply() swapped;
+          }
+        }
+      };
+    };
+  }
+  Button undo_button {
+    accessibility {
+      labelled-by: undo_button_content;
+    }
+    halign: center;
+    Adw.ButtonContent undo_button_content {
+      icon-name: "arrow-hook-left-horizontal2";
+      label: _("Undo");
+    }
+    clicked => $undo() swapped;
+    sensitive: false;
+  }
+  Button {
+    styles [
+      "suggested-action",
+    ]
+    halign: center;
+    label: _("Done");
+    clicked => $done() swapped;
+  }
+}
+
+SizeGroup action_bar_size_group { //id is technically unnecessary, but blueprint language server complains without
+  widgets [
+    saved_bar,
+    unsaved_bar
+  ]
+}

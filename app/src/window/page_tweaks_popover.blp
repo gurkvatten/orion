@@ -1,0 +1,207 @@
+using Gtk 4.0;
+using Adw 1;
+using Pango 1.0;
+
+//TODO: fix the styles to actually look good
+
+template $PageTweaksPopover: Adw.Dialog {
+  width-request: 100;
+  name: "page-tweaks-popover";
+  title: _("Page Tweaks");
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Box {
+      orientation:vertical;
+      Box {
+        spacing:10;
+        orientation:vertical;
+        margin-start:15;
+        margin-end:15;
+        margin-top:15;
+        margin-bottom:10;
+        Grid {
+          column-spacing:75;
+          Label {
+            layout {
+              row:0;
+              column:0;
+            }
+            halign:start;
+            hexpand:true;
+            label:_("Font size:");
+          }
+          Box {
+            layout {
+              row:1;
+              column:0;
+            }
+            spacing: 8;
+
+            Box {
+              styles [
+                "font-size-box"
+              ]
+              Button {
+                styles [
+                  "flat",
+                  "decrease-font-size",
+                  "linked"
+                ]
+                width-request: 32;
+                height-request: 24;
+                label: "A";
+                //hexpand:true;
+                clicked => $on_decrease_font_size_clicked();
+              }
+              Separator {
+                orientation: vertical;
+                vexpand:true;
+              }
+              Button {
+                styles [
+                  "flat",
+                  "increase-font-size",
+                  "linked"
+                ]
+                width-request: 32;
+                height-request: 24;
+                label: "A";
+                //hexpand:true;
+                clicked => $on_increase_font_size_clicked();
+              }
+            }
+
+            Label {
+              width-chars:5;
+              wrap-mode: none;
+              label: bind $get_font_size_percentage_string(
+                template.root as <$MainWindow>.tab-view as <$OrionWebviewTabView>.uri,
+                template.root as <$MainWindow>.profile-data-holder as <$ProfileDataHolder>.page-tweaks-font-size-map
+              ) as <string>;
+            }
+          }
+          Label {
+            layout {
+              row:0;
+              column:1;
+            }
+            halign:start;
+            label:_("Theme:");
+          }
+          Box {
+            layout {
+              row:1;
+              column:1;
+            }
+            orientation:horizontal;
+            spacing:5;
+            //excuse the horrible hack, these buttons emulate toggle buttons with their GTK_STATE_FLAG_CHECKED controlled from code
+            //this is done because setting this is asynchronous, but I cannot actually show that well using ToggleButtons
+            Button light_mode_toggle_button {
+              styles [
+                "light_mode_toggle_button",
+                "toggle"
+              ]
+              icon-name:"check-plain-symbolic";
+              clicked => $on_light_mode_clicked();
+              accessibility {
+                label: _("Light Mode");
+              }
+            }
+            Button dark_mode_toggle_button {
+              styles [
+                "dark_mode_toggle_button",
+                "toggle"
+              ]
+              icon-name:"check-plain-white-symbolic";
+              clicked => $on_dark_mode_clicked();
+              accessibility {
+                label: _("Light Mode");
+              }
+            }
+          }
+        }
+        Box {
+          hexpand:true;
+          orientation:vertical;
+          spacing:5;
+          Label {
+            halign:start;
+            label:_("Font:");
+          }
+          DropDown font_drop_down {
+            //NOTE: if setting the expression property gets moved after the factories, it will override the visual output
+            enable-search: true;
+            //NOTE: in specifically expression literals (prefixed with expr), item corresponds to the this_ argument of watch/evaluate/bind
+            expression: expr $get_font_label_for_string_list_item(item as <StringObject>.string) as <string>; 
+            list-factory: BuilderListItemFactory font_list_factory {
+              template ListItem {
+                child: Label {
+                  label: bind $get_font_label_for_string_list_item(template.item as <StringObject>.string) as <string>;
+                  attributes: bind $get_font_attributes_for_string_list_item(template.item as <StringObject>.string) as <Pango.AttrList>;
+                };
+              }
+            };
+            factory: font_list_factory;
+            notify::selected => $on_font_drop_down_notify_selected();
+          }
+        }
+        Box {
+          spacing: 8;
+          Label {
+            label: _("Disable sticky headers");
+          }
+          Switch disable_sticky_switch {
+            state-set => $on_disable_sticky_switch_state_set();
+          }
+        }
+      }
+      Separator {
+        hexpand:true;
+      }
+      Box {
+        margin-start:15;
+        margin-end:15;
+        margin-top:10;
+        margin-bottom:15;
+        orientation:vertical;
+        spacing:5;
+        Box {
+          orientation:horizontal;
+          spacing:5;
+          Image {
+            accessibility {
+              labelled-by: erase_elements_label;
+            }
+            icon-name:"shield-half-symbolic";
+            pixel-size:20;
+          }
+          Label erase_elements_label {
+            label:_("Erase elements");
+          }
+        }
+        Box {
+          orientation:horizontal;
+          spacing:5;
+          Button erase_button {
+            Adw.ButtonContent {
+              icon-name:"plus-large-symbolic";
+              label:_("Erase");
+            }
+            accessibility {
+              label: _("Erase Element");
+            }
+            clicked => $on_erase_clicked();
+          }
+          Button reset_button {
+            label:_("Reset");
+            clicked => $on_reset_clicked();
+          }
+        }
+      }
+    }
+  }
+}

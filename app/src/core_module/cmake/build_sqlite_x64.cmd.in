@@ -1,0 +1,12 @@
+@echo off
+setlocal
+if not defined VCINSTALLDIR (
+    call "${_vcvarsall_native}" x64
+)
+cd /d "${_sqlite_dir}"
+rem Ensure current dir is in PATH so nmake can find jimsh0.exe after building it
+set PATH=%cd%;%PATH%
+nmake /f "${_makefile}" clean FOR_WINRT=0 USE_CRT_DLL=0 DEBUG=0
+if errorlevel 1 exit /b %errorlevel%
+nmake /f "${_makefile}" sqlite3.c FOR_WINRT=0 USE_CRT_DLL=0 DEBUG=0
+exit /b %errorlevel%

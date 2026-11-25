@@ -1,0 +1,94 @@
+using Gtk 4.0;
+//using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+template $SaveWindowPopover: Popover {
+  //TODO: replace button8 with a composite widget including a custom size allocator to make the emoji chooser work correctly
+  default-widget:saveButton;
+
+
+  Box {
+    spacing:10;
+    orientation:vertical;
+    halign:start;
+
+    Entry name_entry {}
+    Box {//TODO: fix the resizing issues here
+      orientation:horizontal;
+      spacing:3;
+      margin-start:3;
+      margin-end:3;
+      /*
+      Adw.ToggleGroup icon_toggle_group{
+        hexpand:true;
+        Adw.Toggle {
+          icon-name:"orion-logo";
+        }
+        Adw.Toggle {
+          icon-name:"orion-logo";
+        }
+        Adw.Toggle {
+          icon-name:"orion-logo";
+        }
+        Adw.Toggle {
+          icon-name:"orion-logo";
+        }
+        Adw.Toggle {
+          icon-name:"orion-logo";
+        }
+        Adw.Toggle {
+          icon-name:"orion-logo";
+        }
+        Adw.Toggle {
+          icon-name:"orion-logo";
+        }
+        Adw.Toggle toggle8 {
+          icon-name:"orion-logo";
+        }
+      }
+      */
+      Label {
+        label:_("Here belongs an AdwToggleGroup, removed for compatibility reasons because your libadwaita is older than 1.7");
+        wrap: true;
+        max-width-chars: 50;
+      }
+    }
+
+    Box {
+      orientation:vertical;
+      hexpand:true;
+      halign:start;
+      spacing:5;
+      Box {
+        hexpand:true;
+        orientation:horizontal;
+        Label {
+          hexpand:true;
+          halign:start;
+          label: _("Keyboard shortcut:");
+        }
+        MenuButton {
+          icon-name:"notepad-symbolic";
+          halign:end;
+          hexpand:true;
+          popover: EmojiChooser menu_button_emoji_chooser{};
+        }
+      }
+      $OrionAcceleratorEntry shortcut_entry {
+        valign:start;
+      }
+    }
+    Box {
+      orientation:horizontal;
+      halign:end;
+      spacing:5;
+      Button cancelButton {
+        label:_("Cancel");
+      }
+      Button saveButton {
+        label:_("Save");
+      }
+    }
+  }
+}

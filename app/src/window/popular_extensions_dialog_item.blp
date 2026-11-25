@@ -1,0 +1,52 @@
+using Gtk 4.0;
+
+template $ExtensionItem: Box {
+  styles [
+    "columnview-item",
+  ]
+  orientation:horizontal;
+  margin-top:10;
+  margin-start:10;
+  margin-end:10;
+  margin-bottom:10;
+  spacing:10;
+  Image {
+    halign:start;
+    valign:start;
+    margin-top:5;
+    margin-start:5;
+    pixel-size:45;
+  }
+  Box {
+    halign:start;
+    valign:center;
+    hexpand:true;
+    orientation:vertical;
+    spacing:4;
+    margin-top:5;
+    margin-bottom:5;
+    Label title_label {
+      styles [ 
+          "heading",
+      ]
+      ellipsize:end;
+      halign:start;
+    }
+    Label description_label {
+      ellipsize:end;
+      halign:start;
+    }
+    Label technical_label {
+      ellipsize:end;
+      halign:start;
+    }
+  }
+  Button get_button {
+    styles [
+        //TODO: to be done in the code loading column views, also needs the data in item.css
+    ]
+    halign:end;
+    valign:center;
+    margin-end:10;
+  }
+}

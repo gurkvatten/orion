@@ -1,0 +1,50 @@
+using Gtk 4.0;
+
+template $RssFeedRow : Box { //TODO: is this useful in any way? Likely too slow
+  name: "rss-feed-item";
+
+  Box {
+    orientation:horizontal;
+    margin-top:5;
+    margin-start:5;
+    margin-end:5;
+    margin-bottom:15;
+    Box {
+      halign:start;
+      hexpand:true;
+      orientation:vertical;
+      Label title_label {
+        styles [
+          "heading",
+        ]
+        halign:start;
+        xalign:0;
+        width-chars:30;
+        ellipsize:end;
+      }
+      Label address_label {
+        styles [ 
+          "small-text",
+        ]
+        halign:start;
+        xalign:0;
+        width-chars:50;
+        ellipsize:end;
+      }
+    }
+    Box {
+      orientation:horizontal;
+      spacing:5;
+      Button link_button {
+        vexpand:false;
+        hexpand:false;
+        icon-name:"chain-link-symbolic";
+      }
+      Button plus_button {
+        vexpand:false;
+        hexpand:false;
+        icon-name:"plus-large-symbolic";
+      }
+    }
+  }
+}

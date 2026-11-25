@@ -1,0 +1,92 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PermissionsRequestDialog: Adw.Dialog {
+  content-width: 320;
+  content-height: 250;
+  title: _("Permissions Request");
+  //TODO nastav jmeno
+
+  Adw.ToolbarView {
+    //[top]
+   // Adw.HeaderBar {}
+
+    Box {
+      orientation: vertical;
+      Box {
+        margin-top: 20;
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 49;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+
+      Box {
+        orientation: vertical;
+        margin-top: 20;
+        margin-bottom: 20;
+        margin-end: 20;
+        margin-start: 20;
+        spacing: 10;
+
+        Label perm_label{
+          wrap: true;
+          max-width-chars: 60;
+          width-chars:15;
+          justify: center;
+          styles [
+            "bold-text"
+          ]
+          label: _("The website “https://kagi.com/” would like to use your current location.");
+        }
+
+        Label change_label{
+          wrap: true;
+          max-width-chars: 60;
+          width-chars:15;
+          justify: center;
+          label: _("You can change this setting in Orion Websites preferences.");
+        }
+
+        Button allow_once_button {
+          label: _("Allow Once");
+          styles ["suggested-action"]
+          margin-top: 10;
+          hexpand: true;
+          halign: fill;
+          clicked => $on_allow_once_button_clicked();
+        }
+
+        Button allow_always_button {
+          label: _("Always Allow for This Website");
+          hexpand: true;
+          halign: fill;
+          clicked => $on_allow_always_button_clicked();
+        }
+
+        Button never_allow_button {
+          label: _("Never for This Website");
+          hexpand: true;
+          halign: fill;
+          clicked => $on_never_allow_button_clicked();
+        }
+
+        Button dont_allow_button {
+          label: _("Don't Allow");
+          margin-top: 10;
+          hexpand: true;
+          halign: fill;
+          clicked => $on_dont_allow_button_clicked();
+        }
+      }
+    }
+  }
+}
+SizeGroup {
+  mode: horizontal;
+  widgets [allow_once_button, allow_always_button, never_allow_button, dont_allow_button]
+}

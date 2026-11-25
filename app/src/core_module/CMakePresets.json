@@ -1,0 +1,81 @@
+﻿{
+  "version": 8,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "hidden": true,
+      "name": "common-config",
+      "environment": {
+        "VCPKG_ROOT": "${sourceDir}/third_party/vcpkg"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "hidden": true,
+      "name": "optional-windows-host-config",
+      "binaryDir": "${sourceDir}/build/windows",
+      "installDir": "${sourceDir}/install/windows",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "hidden": true,
+      "name": "optional-linux-host-config",
+      "binaryDir": "${sourceDir}/build/linux",
+      "installDir": "${sourceDir}/install/linux",
+      "generator": "Ninja Multi-Config",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "comment": "When adding new variables here, also check if they need to be added to flatpak.cmake.",
+        "ORION_COMMON_USE_GLIB": "ON"
+      }
+    },
+    {
+      "inherits": [ "common-config", "optional-windows-host-config" ],
+      "name": "windows"
+    },
+    {
+      "inherits": [ "common-config", "optional-linux-host-config" ],
+      "name": "linux"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux-debug",
+      "displayName": "Debug",
+      "configurePreset": "linux",
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Release",
+      "configurePreset": "linux",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Debug",
+      "configurePreset": "windows",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-release",
+      "displayName": "Release",
+      "configurePreset": "windows",
+      "configuration": "Release"
+    }
+  ]
+}

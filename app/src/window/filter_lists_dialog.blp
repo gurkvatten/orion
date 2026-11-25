@@ -1,0 +1,96 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FilterListsDialog: Adw.Dialog {
+  name:"filter-lists-dialog";
+  Adw.ToolbarView {
+    margin-start:15;
+    margin-end:15;
+    margin-top:15;
+    margin-bottom:15;
+    content: Box {
+      spacing:8;
+      orientation:vertical;
+      ScrolledWindow {
+        hexpand:true;
+        width-request:450;
+        height-request:300;
+        max-content-width:400;
+        max-content-height:300;
+        child: ListBox list_box {
+          styles [
+            "frame",
+          ]
+          // Items are loaded programmatically
+        };
+      }
+      Box {
+        orientation:horizontal;
+        spacing:8;
+        Button add_button {
+          icon-name:"plus-large-symbolic";
+        }
+        Button remove_button {
+          icon-name:"minus-large-symbolic";
+          sensitive:false;
+        }
+      }
+      Separator {
+        orientation:horizontal;
+      }
+      Box {
+        orientation:vertical;
+        spacing:5;
+        halign:fill;
+        CheckButton custom_filters_check_button {
+          halign:start;
+          label:_("Custom filters");
+        }
+        Label {
+          wrap:true;
+          halign:start;
+          use-markup:true;
+          label:_("Add custom filters you’ve created, one per line, in the field below. Be sure to use the <a href=\"https://help.kagi.com/orion/features/custom-blocklists.html#blocklist-syntax\">AdBlock filter syntax.</a>");
+        }
+        ScrolledWindow {
+          width-request:450;
+          height-request:200;
+          max-content-width:450;
+          max-content-height:200;
+          TextView {
+            styles [
+              "frame",
+              "monospace-font",
+            ]
+            hexpand: true;
+            vexpand: true;
+            buffer: TextBuffer custom_filter_buffer {
+              text: _(""); // set programmatically
+            };
+          }
+        }
+      }
+    };
+    [bottom]
+    Box {
+      margin-top:15;
+      orientation:horizontal;
+      spacing:15;
+      halign:end;
+      Button cancel_button {
+        label:_("Cancel");
+      }
+      Button done_button {
+        label:_("Done");
+        sensitive:false;
+      }
+    }
+  }    
+}
+
+SizeGroup {
+  widgets [
+    cancel_button,
+    done_button
+  ]
+}

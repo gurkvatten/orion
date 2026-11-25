@@ -1,0 +1,109 @@
+using Gtk 4.0;
+using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+template $SaveWindowPopover: Popover {
+  //TODO: replace button8 with a composite widget including a custom size allocator to make the emoji chooser work correctly
+  default-widget:saveButton;
+  name: "save-window-popover";
+
+  Box {
+    spacing:10;
+    width-request: 350;
+    orientation:vertical;
+    halign:start;
+
+    Entry name_entry {}
+    Box {//TODO: fix the resizing issues here
+      orientation:horizontal;
+      spacing:3;
+      margin-start:3;
+      margin-end:3;
+      Adw.ToggleGroup icon_toggle_group{
+        hexpand:true;
+        homogeneous:true;
+        Adw.Toggle {
+          icon-name:"window-flat-symbolic";
+        }
+        Adw.Toggle {
+          icon-name:"hand-openyay-symbolic";
+        }
+        Adw.Toggle {
+          icon-name:"bell-outline-symbolic";
+        }
+        Adw.Toggle {
+          icon-name:"search-folder-symbolic"; //TODO: folder-visiting-symbolic is the best we're getting but it looks out of place
+        }
+        Adw.Toggle {
+          icon-name:"flag-outline-thick-symbolic";
+        }
+        Adw.Toggle {
+          icon-name:"heart-outline-thick-symbolic";
+        }
+        Adw.Toggle {
+          icon-name:"diamond-outline-thick-symbolic"; //TODO: is this a good enough replacement?
+        }
+        Adw.Toggle {
+          icon-name:"star-outline-thick-symbolic";
+        }
+        Adw.Toggle emoji_toggle {
+          label:"🚀";
+        }
+      }
+    }
+
+    Grid {
+      hexpand:true;
+      Box {
+        layout {
+          row:0;
+          column:0;
+        }
+        hexpand:true;
+        orientation:horizontal;
+        Label {
+          hexpand:true;
+          halign:start;
+          label: _("Keyboard shortcut:");
+        }
+      }
+      $OrionAcceleratorEntry shortcut_entry {
+        layout {
+          row:1;
+          column:0;
+        }
+        valign:start;
+      }
+      MenuButton emoji_chooser_button {
+        layout {
+          row:0;
+          column:1;
+        }
+        icon-name:"reaction-add-symbolic";
+        halign:end;
+        valign:start;
+        hexpand:true;
+        vexpand:false;
+        sensitive: bind $get_emoji_chooser_button_sensitivity(icon_toggle_group.active) as <bool>;
+        popover: EmojiChooser menu_button_emoji_chooser{
+          emoji-picked => $on_emoji_picked(emoji_toggle);
+        };
+      }
+    }
+    Box {
+      orientation:horizontal;
+      halign:end;
+      spacing:5;
+      Button cancelButton {
+        label:_("Cancel");
+        clicked => $on_cancel_clicked();
+      }
+      Button saveButton {
+        label:_("Save");
+        styles ["suggested-action"]
+        clicked => $on_save_clicked();
+      }
+    }
+  }
+}

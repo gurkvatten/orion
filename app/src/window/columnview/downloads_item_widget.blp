@@ -1,0 +1,75 @@
+using Gtk 4.0;
+using Gio 2.0;
+
+template $DownloadsItemWidget: Box {
+  orientation: vertical;
+  spacing: 0;
+  Box {
+    margin-top: 8;
+    margin-bottom: 8;
+    orientation: horizontal;
+    
+    Image file_icon {
+      margin-top: 8;
+      gicon: bind template.item as <$DownloadsItem>.file-icon as <Gio.Icon>;
+      pixel-size: 48;
+    }
+
+    Box {
+      orientation: vertical;
+      margin-start: 10;
+
+      Label file_name_label{
+        styles [
+          "bold-text"
+        ]
+        label: bind template.item as <$DownloadsItem>.file-name as <string>;
+        halign: start;
+        margin-top: 8;
+      }
+      
+      ProgressBar progress_bar{
+        styles [
+          "no-padding"
+        ]
+        show-text: false;
+        pulse-step: 0.015;
+        visible: bind $get_progress_bar_visible(template.item as <$DownloadsItem>.operation-state) as <bool>;
+        sensitive: bind $get_progress_bar_sensitive(template.item as <$DownloadsItem>.operation-state) as <bool>;
+        fraction: bind $get_progress_bar_fraction(template.item as <$DownloadsItem>.total-size, template.item as <$DownloadsItem>.current-size,
+          template.item as <$DownloadsItem>.operation-state, progress_bar) as <double>;
+      }
+
+      Label file_size_label{
+        label: bind $get_size_label(template.item as <$DownloadsItem>.total-size, template.item as <$DownloadsItem>.current-size,
+          template.item as <$DownloadsItem>.download-speed, template.item as <$DownloadsItem>.operation-state) as <string>;
+        halign: start;
+        margin-top: 2;
+      }
+    }
+
+    Button show_in_files_button {
+      halign: end;
+      hexpand: true;
+      margin-end: 16;
+      vexpand: false;
+      valign: center;
+
+      Image {
+        icon-name: "search-folder-symbolic";
+        tooltip-text: _("Show in Files");
+      }
+      clicked => $on_show_in_files_button_clicked();
+    }
+
+    PopoverMenu context_menu {
+      closed => $downloads_item_widget_on_context_menu_closed();
+    }
+
+    GestureClick {
+      button: 3;
+      released => $downloads_item_widget_on_secondary_released();
+      //pressed => $downloads_item_widget_on_secondary_pressed();
+    }
+  }
+}

@@ -1,0 +1,58 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MoveDownloadsToTrashDialog: Adw.Dialog {
+  width-request: 300;
+  height-request: 180;
+
+  Box {
+    orientation: vertical;
+
+    Box {
+      orientation: vertical;
+
+      Image {
+        icon-name: "orion-logo";
+        pixel-size: 56;
+        halign: center;
+        hexpand: true;
+        margin-top: 16;
+      }
+
+      Label {
+        label: _("Are you sure you want to move your downloads to the Trash?");
+        styles ["bold-text"]
+        margin-top: 20;
+        max-width-chars: 10;
+        wrap: true;
+        justify: center;
+      }
+    }
+
+    Box {
+      vexpand: false;
+      valign: end;
+      margin-top: 16;
+      margin-bottom: 16;
+      margin-start: 16;
+      margin-end: 16;
+
+      Button cancel_button {
+        label: _("Cancel");
+        clicked => $on_cancel_button_clicked();
+      }
+
+      Button move_to_trash_button {
+        label: _("Move to Trash");
+        styles ["destructive-action"]
+        margin-start: 8;
+        clicked => $on_confirm_button_clicked();
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, move_to_trash_button]
+}

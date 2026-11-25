@@ -1,0 +1,66 @@
+using Gtk 4.0;
+
+// Not used anymore, the content of this popover is used directly inside CustomizeToolbarDialog
+template $OverflowMenuPopover: Popover {
+  name: "overflow-menu-popover";
+
+  Box {
+    orientation: vertical;
+
+    Label {
+      label: _("Overflow Menu");
+      styles ["title-6"]
+      wrap: true;
+      xalign: 0;
+      max-width-chars: 30;
+    }
+
+    Label {
+      margin-top: 8;
+      label: _("Drag and drop items here to keep them within reach but out of your toolbar…");
+      wrap: true;
+      xalign: 0;
+      max-width-chars: 30;
+    }
+
+    ListBox {
+      height-request: 300;
+      margin-top: 8;
+      styles ["frame"]
+      selection-mode: none;
+
+      // TODO: fill this dynamically
+      ListBoxRow {
+        margin-top: 4;
+        margin-start: 4;
+        margin-end: 4;
+
+        Box {
+          spacing: 8;
+          Image {
+            icon-name: "format-text-direction-ltr-symbolic";
+          }
+          Label {
+            label: _("Summarize Page");
+          }
+        }
+      }
+      ListBoxRow {
+        margin-top: 4;
+        margin-start: 4;
+        margin-end: 4;
+
+        Box {
+          spacing: 8;
+          Label {
+            label: _("❖"); // Super key (roughly the equivalent of Mac Command key)
+            styles ["title-2"]
+          }
+          Label {
+            label: _("Programmable Button");
+          }
+        }
+      }
+    }
+  }
+}

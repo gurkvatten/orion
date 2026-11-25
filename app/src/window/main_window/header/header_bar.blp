@@ -1,0 +1,843 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+// Use GtkBox instead of AdwBin just because of an issue with
+// disposing the template by calling gtk_widget_dispose_template
+template $HeaderBar : Box {
+  //NOTE: window handle is left in here to get proper height allocation
+  name: "header-bar";
+  valign: center;
+  vexpand: false;
+  
+  map => $on_header_bar_map();
+  unmap => $on_header_bar_unmap();
+
+  WindowHandle window_handle {
+    name: "header-window-handle";
+    hexpand:true;
+    halign:fill;
+    valign: center;
+    vexpand: false;
+
+    // Header bar contents
+    Box header_bar_box {
+      name: "header-bar-box";
+      halign:fill;
+      hexpand:true;
+      valign: center;
+      vexpand: false;
+
+      WindowControls window_controls_start {
+        name: "window-controls";
+        halign:end;
+        side: start;
+        valign: center;
+        vexpand: false;
+      }
+
+      // GtkCenterBox does work too, but it is difficult to clamp the width of the center widget (Address widget)
+      // in that case which can result in the Address widget growing disproportionately. And when it is clamped
+      // using AdwClamp, it creates ugly empty space on each side of the Address widget when the window is too wide.
+      // The current solution with 3 containers (start, center, end) that each have hexpand:true and halign:fill
+      // is probably ok but the Address widget is often narrower than it needs to be (this can be mitigated
+      // by increasing --address-entry-min-width in themes.css at the cost of higher window min width).
+      Box toolbar_box {
+        hexpand: true;
+        halign: fill;
+        ScrolledWindow {
+          vscrollbar-policy: never;
+          hexpand: true;
+          Box {
+            Box start_box { // the original HeaderBarStart
+              halign: fill;
+
+              // Sidebar Button with label
+              Box sidebar_button_box {
+                name: "sidebar";
+                orientation: vertical;
+                valign: center;
+                margin-end: 2; // separate this from Profiles Button
+
+                Button sidebar_button {
+                  name: "show-sidebar";
+                  icon-name: "dock-left-symbolic";
+                  tooltip-text: _("Show Sidebar");
+                  clicked => $on_sidebar_button_clicked();
+                  valign: center;
+                }
+
+                Label sidebar_label {
+                  label: _("Sidebar");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              // Back/Forward buttons
+              Box back_forward_box {
+                name: "back_forward";
+                orientation: vertical;
+                valign: center;
+
+                Box back_forward_buttons_box {
+                  halign: center;
+                  Button back_button {
+                    name: "back";
+                    tooltip-text: _("Show Previous Page");
+                    margin-start: 2;
+                    valign: center;
+                    styles ["toolbar-button"]
+                    icon-name: "left-symbolic";
+                    GestureClick {
+                      propagation-phase: capture;
+                      button:3; //GDK_BUTTON_SECONDARY
+                      pressed => $claim_sequence();
+                      released => $on_back_button_secondary_released(back_button);
+                    }
+                  }
+
+                  Button forward_button {
+                    name: "forward";
+                    tooltip-text: _("Show Next Page");
+                    margin-start: 2;
+                    valign: center;
+                    styles ["toolbar-button"]
+                    icon-name: "right-symbolic";
+                    GestureClick {
+                      propagation-phase: capture;
+                      button:3; //GDK_BUTTON_SECONDARY
+                      pressed => $claim_sequence();
+                      released => $on_forward_button_secondary_released(forward_button);
+                    }
+                  }
+                }
+
+                Label back_forward_label {
+                  label: _("Back/Forward");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              // Flexible space 1
+              Box {
+                name: "flexible_space";
+                hexpand: true;
+              }
+              
+              Box privacy_box {
+                name: "privacy";
+                orientation: vertical;
+                valign: center;
+
+                Button privacy_button {
+                  icon-name: "shield-half-symbolic";
+                  tooltip-text: _("Privacy");
+                  styles ["toolbar-button"]
+                }
+
+                Label privacy_label {
+                  label: _("Privacy");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              Box page_tweaks_box {
+                name: "page_tweaks";
+                orientation: vertical;
+                valign: center;
+
+                Button page_tweaks_button {
+                  tooltip-text: _("Page Tweaks");
+                  icon-name: "brush-symbolic";
+                  styles ["toolbar-button"]
+                }
+
+                Label page_tweaks_label {
+                  label: _("Page Tweaks");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              Box website_settings_box {
+                name: "website_settings";
+                orientation: vertical;
+                valign: center;
+
+                Button website_settings_button {
+                  tooltip-text: _("Website Settings");
+                  icon-name: "cogged-wheel-symbolic";
+                  action-name: "win.settings-for-current-page";
+                  styles ["toolbar-button"]
+                }
+
+                Label website_settings_label {
+                  label: _("Website Settings");
+                  styles ["toolbar-item-label"]
+                }
+              }
+            } // end of start-widget
+
+            // Address widget and related buttons.
+            // Do not use center_box name to avoid confusion with GtkCenterBox widget.
+            Box middle_box { // the original HeaderBarCenter
+              hexpand: true;
+              halign: fill;
+
+              // When AdwClamp is used instead of AdwBin here, then maximum-size in combination with
+              // tightening-threshold will clamp the Address widget's width which is needed because
+              // the center widget in GtkCenterBox can grow disproportionately otherwise. This works
+              // ok unless the parent window is too wide, in which case there will be empty space
+              // on each side of the Address widget.
+              //maximum-size: 1000;
+              //tightening-threshold: 1000;
+
+              Overlay address_entry_overlay {
+                name: "address_and_search";
+                styles ["address-entry-container"]
+                valign:center;
+                hexpand: true;
+                halign: fill;
+
+              $OrionAddressEntry address_entry {
+                //TODO: possibly implement custom widget similar to Epiphany's EphyLocationEntry
+                //(needed to properly implement focus behaviour at least)
+                hexpand: true;
+                halign: fill;
+                name: "address-entry";
+                text: "https://kagi.com/";
+                placeholder-text: _("Search or enter website name");
+                input-purpose:url;
+                xalign: 0.5;
+              }
+
+              [overlay]
+              Box {
+                styles ["overlay"]
+                halign: end;
+                valign: center;
+                Button page_zoom_button {
+                  label: "100%";
+                  visible: false; // hidden be default
+                  // This style is needed because for some reason, the background of a button becomes transparent
+                  // when used in GtkOverlay
+                  styles ["gray-background"]
+                  clicked => $on_page_zoom_button_clicked();
+                }
+                Button popup_blocked_button {
+                  tooltip-text: _("Blocked Popups");
+                  icon-name: "multitasking-symbolic";
+                  visible: false;
+                  clicked => $on_popup_blocked_button_clicked();
+                }
+                MenuButton {
+                  popover: $ReaderModeSettingsPopover {};
+                  visible: bind template.root as <$MainWindow>.tab-view as <$OrionWebviewTabView>.reader-mode-enabled;
+                  icon-name: "font-size";
+                  always-show-arrow: false;
+                  styles ["menu-button-bland-background"]
+                }
+                Button tab_audio_button {
+                  icon-name: "speaker-3-symbolic";
+                  visible: bind template.root as <$MainWindow>.tab-view as <$OrionWebviewTabView>.any-tab-playing-audio;
+                  styles ["bland-background"]
+                  clicked => $on_tab_audio_button_clicked();
+                }
+                Button reload_page_button {
+                  tooltip-text: _("Reload Page");
+                  icon-name: "arrow-circular-top-right-symbolic";
+                }
+              }
+
+              [overlay]
+              Box {
+                styles ["overlay"]
+                halign: start;
+                valign: center;
+
+                  // New policy: Profiles Button should be placed in the Window List (Tab Groups) Button
+                  spacing: 2;
+
+                  Button certificates_button {
+                    tooltip-text: _("Page Security");
+                    icon-name: bind $get_certificates_button_icon(template.root as <$OrionWindow>.tls-status) as <string>;
+	                  visible: bind $tls_status_to_certificates_button_visibility(template.root as <$OrionWindow>.tls-status) as <bool>;
+                  }
+
+                  Button address_focus_mode_button {              
+                    visible: false; // TODO: does not work properly yet
+                    styles ["hidden-button", "opaque-background"]
+                    tooltip-text: _("Enable Focus Mode");
+                    icon-name: "circle-anchor-center-symbolic";
+                  }
+
+                  Button reader_mode_button {
+                    styles ["hidden-button", "opaque-background"]
+                    tooltip-text: _("Show Reader Mode");
+                    icon-name: "open-book-slash-symbolic";
+                    // visible: bind template.root as <$MainWindow>.tab-view as <$OrionWebviewTabView>.is-readerable as <bool>;
+                    // sensitive: bind reader_mode_button.visible;
+                    action-name: "win.toggle-reader";
+                    clicked => $on_reader_button_clicked();
+                  }
+
+                  Button rss_feeds_button {
+                    visible: false; // TODO: does not work properly yet
+                    styles ["hidden-button", "opaque-background"]
+                    tooltip-text: _("Show RSS Feeds");
+                    icon-name: "application-rss+xml-symbolic";
+                  }
+                }
+
+              [overlay]
+              Label popup_blocked_message {
+                label: _("Pop-up Window Blocked");
+                visible: false;
+                can-target: false;
+                focusable: false;
+                halign: fill;
+                valign: fill;
+                styles ["popup-blocked-message"]
+              }
+              }
+            } // end of center-widget
+
+            Box end_box { // the original HeaderBarEnd
+              hexpand: true;
+
+              Box add_page_to_box {
+                name: "bookmark";
+                orientation: vertical;
+                valign: center;
+
+                Button add_page_to_button {
+                  tooltip-text: _("Add This Page to…");
+                  icon-name: "star-outline-thin-symbolic"; // or: star-large-symbolic (when current page is bookmarked)
+                  styles ["toolbar-button"]
+                }
+
+                Label add_page_to_label {
+                  label: _("Bookmark");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              Box compact_tab_bar_box {
+                name: "compact_tab_bar_box";
+                hexpand: true;
+                halign: fill;
+                // Adw.TabBar compact_tab_bar {
+                //   hexpand: true;
+                //   halign:fill;
+                //   visible: bind template.show-compact-tab-bar;
+                // }
+                $TabBar compact_tab_bar {
+                  hexpand: true;
+                  halign:fill;
+                }
+                /*
+                DropTarget tab_bar_drop_target {
+                  propagation-phase: capture;
+                  actions: move;
+                  drop => $on_tab_bar_drop_target_drop();
+                }
+                */
+              }
+              
+              Box new_tab_box {
+                name: "new_tab";
+                orientation: vertical;
+                valign: center;
+
+                Button new_tab_button {
+                  PopoverMenu new_tab_button_popover_menu {}
+                  name: "new-tab";
+                  tooltip-text: _("New Tab");
+                  icon-name: "plus-large-symbolic";
+                  action-name: "win.new-tab";
+                  styles ["toolbar-button"]
+                }
+
+                Label new_tab_label {
+                  label: _("New Tab");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              // Flexible space 2
+              Box {
+                name: "flexible_space";
+                hexpand: true;
+              }
+
+              Box extension_box { // temporary, will not be needed in the future
+                // Extensions will be filled dynamically here
+              }
+
+              Box downloads_box {
+                name: "downloads";
+                orientation: vertical;
+                valign: center;
+
+                Button downloads_button {
+                  styles ["image-button", "toolbar-button"]
+                  name: "downloads-button";
+                  tooltip-text: _("Downloads");
+                  //icon-name: "arrow3-down-symbolic";
+                  child: $DownloadsButtonContent downloads_button_content {};
+                  action-name: "win.show-downloads";
+                  margin-start: 2;
+                  clicked => $downloads_button_content_notify_click(downloads_button_content);
+                }
+
+                Label downloads_label {
+                  label: _("Downloads");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              Box share_box {
+                name: "share";
+                orientation: vertical;
+                valign: center;
+
+                Button share_button {
+                  tooltip-text: _("Share");
+                  icon-name: "share-symbolic";
+                  margin-start: 2;
+                  styles ["toolbar-button"]
+                }
+
+                Label share_label {
+                  label: _("Share");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              Box tab_overview_box {
+                name: "tab_overview";
+                orientation: vertical;
+                valign: center;
+
+                Button tab_overview_button {
+                  tooltip-text: _("Tab Overview");
+                  icon-name: "grid-symbolic";
+                  margin-start: 2;
+                  action-name: "overview.open";
+                  styles ["toolbar-button"]
+                }
+
+                Label tab_overview_label {
+                  label: _("Tab Overview");
+                  styles ["toolbar-item-label"]
+                }
+              }
+
+              Box overflow_menu_box {
+                name: "overflow_menu";
+                orientation: vertical;
+                valign: center;
+
+                MenuButton overflow_menu_button {
+                  name: "overflow-menu-button";
+                  tooltip-text: _("More Tools…");
+                  icon-name: "more-small-symbolic"; // TODO: use bigger icon if possible
+                  margin-start: 2;
+                  // Menu model is set programmatically in the C code
+                  styles ["toolbar-button"]
+                }
+
+                Label overflow_menu_label {
+                  label: _("Overflow Menu");
+                  styles ["toolbar-item-label"]
+                }
+              }
+            } // end of end-widget
+          } // child box of ScrolledWindow
+        } // ScrolledWindow
+
+        // Static box with Main Menu button and window controls (minimize, maximize, close)
+        Box static_box {
+          // Main Menu button
+          MenuButton menu_button {
+            name: "header-menu-button";
+            // 'menu-model' is defined programmatically in the C code
+            icon-name: "open-menu-symbolic";
+            primary: true;
+            valign: center;
+            styles ["toolbar-button"]
+          }
+
+          WindowControls window_controls_end {
+            name: "window-controls";
+            halign:end;
+            side: end;
+            valign: center;
+            vexpand: false;
+          }
+        }
+      }
+      
+      // This bin is not strictly necessary and can be removed from the hierarchy (leaving available_box as
+      // direct child of toolbar_box). It is kept here just to be able to conveniently move widgets from
+      // start_box, middle_box, and end_box to available_box (when needed) without having to deal with indentation.
+      Adw.Bin {
+        visible: false;
+        name: "available-toolbar-items-container";
+
+        // Available toolbar items - we define them here in Blueprint and add them programmatically
+        // to the correct toolbar box (start, middle, end) based on user customisation
+        Box available_box {
+          visible: false;
+          name: "available-toolbar-items";
+          
+          // Profiles and Tab Groups buttons.
+          // Note: When tab_groups_box would be placed in start_box by default, it would be moved to available_box
+          // then moved back conditionally to start_box, or end_box (depepending on user customisation). This would
+          // cause tab_groups_box (along with its child widgets like window_title_label) not to be destroyed
+          // sometimes (race condition) on graceful app shutdown, leaking resources (eg., observers). The issue is
+          // most probably a stray strong ref to tab_groups_box that prevents it from being destroyed.
+          // The binds bind_object_with_label_to_window and bind_window_icon are most probably not the culprit of
+          // this issue.
+          Box tab_groups_box {
+            orientation: vertical;
+            valign: center;
+
+            Box {
+              // Profiles Button
+              Box profiles_button_box { // this box can be used as parent to avoid styling issues of profiles_button
+                Box {
+                  name:"profiles-icon";
+                  Button profiles_button {
+                    name: "profiles-button";
+                    styles [
+                      "monospace-font",
+                      //"coloured-button"
+                    ]
+                    tooltip-text: _("View Profiles");
+                    child: Label {
+                      //here to allow markup based profile icon colouring
+                      use-markup:true;
+                      // set default color to ugly cyan to make it obvious when it is not being set properly
+                      // by current profile
+                      label: "<span foreground=\"#09eaf2\">⬤</span>";
+                    };
+                  }
+                }
+              }
+
+              // Tab Groups button
+              Button window_list_button {
+                name: "n-tabs";
+                margin-start: 2;
+                valign:center;
+                tooltip-text: _("View Tab Groups");
+                child: Box {
+                  spacing: 8;
+
+                  Stack window_icon_switcher_stack {
+                    Image window_icon_image {
+                      icon-name: bind $bind_window_icon(window_icon_image, window_icon_label, template.root as <$MainWindow>.window-id, window_icon_switcher_stack) as <string>;
+                    }
+                    Label window_icon_label {
+                      use-markup: true;
+                    }
+                    visible: bind $window_list_button_style_setting_to_icon_visibility($lookup_window_list_button_style_action(template.root) as <Gio.Action>.state) as <bool>;
+                  }
+                  Label window_title_label {
+                    name: "window-title-label";
+                    label: bind $bind_object_with_label_to_window(window_title_label, template.root as <$MainWindow>.window-id) as <string>;
+                    ellipsize: end;
+                    max-width-chars: 50;
+                    vexpand: true;
+                    valign: center;
+                    visible: bind $window_list_button_style_setting_to_title_visibility($lookup_window_list_button_style_action(template.root) as <Gio.Action>.state) as <bool>;
+                    styles ["window-title-label"]
+                  }
+                };
+              }
+            }
+
+            Label tab_groups_label {
+              label: _("Tab Groups");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box history_box {
+            name: "history-box";
+            orientation: vertical;
+            valign: center;
+
+            Button history_button {
+              name: "show-history";
+              tooltip-text: _("Show History");
+              icon-name: "clock-alt-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label history_label {
+              label: _("History");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box focus_mode_box {
+            name: "focus-mode-box";
+            orientation: vertical;
+            valign: center;
+
+            Button focus_mode_button {
+              tooltip-text: _("Focus Mode");
+              icon-name: "cd-symbolic";
+              clicked => $on_focus_mode_clicked();
+              styles ["toolbar-button"]
+            }
+
+            Label focus_mode_label {
+              label: _("Focus Mode");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box home_box {
+            name: "home-box";
+            orientation: vertical;
+            valign: center;
+
+            Button home_button {
+              tooltip-text: _("Home");
+              action-name: "win.home";
+              icon-name: "go-home-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label home_label {
+              label: _("Home");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box summarize_page_box {
+            name: "summarize-page-box";
+            orientation: vertical;
+            valign: center;
+
+            Button summarize_page_button {
+              tooltip-text: _("Summarize Page");
+              action-name: "win.summarize-page";
+              icon-name: "format-text-direction-ltr-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label summarize_page_label {
+              label: _("Summarize Page");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box start_page_box {
+            name: "start-page-box";
+            orientation: vertical;
+            valign: center;
+
+            Button start_page_button {
+              tooltip-text: _("Start Page");
+              action-name: "win.open-start-page";
+              icon-name: "compass-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label start_page_label {
+              label: _("Start Page");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box notes_box {
+            name: "notes-box";
+            orientation: vertical;
+            valign: center;
+
+            Button notes_button {
+              tooltip-text: _("Notes");
+              action-name: "win.notes"; // not implemented yet
+              icon-name: "notepad-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label notes_label {
+              label: _("Notes");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box new_window_box {
+            name: "new-window-box";
+            orientation: vertical;
+            valign: center;
+
+            Button new_window_button {
+              tooltip-text: _("New Window");
+              action-name: "win.new-window";
+              icon-name: "window-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label new_window_label {
+              label: _("New Window");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box new_private_window_box {
+            name: "new-private-window-box";
+            orientation: vertical;
+            valign: center;
+
+            Button new_private_window_button {
+              tooltip-text: _("New Private Window");
+              action-name: "win.new-private-window";
+              icon-name: "hand-openyay-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label new_private_window_label {
+              label: _("New Private Window");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box zoom_box {
+            name: "zoom-box";
+            orientation: vertical;
+            valign: center;
+
+            Box {
+              orientation: horizontal;
+              spacing: 2;
+              halign: center;
+              
+              Button zoom_out_button {
+                tooltip-text: _("Zoom Out");
+                action-name: "win.zoom-out";
+                icon-name: "loupe-minus-large-symbolic";
+                styles ["toolbar-button"]
+              }
+              Button zoom_in_button {
+                tooltip-text: _("Zoom In");
+                action-name: "win.zoom-in";
+                icon-name: "loupe-plus-large-symbolic";
+                styles ["toolbar-button"]
+              }
+            }
+
+            Label zoom_label {
+              label: _("Zoom");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box print_box {
+            name: "print-box";
+            orientation: vertical;
+            valign: center;
+
+            Button print_button {
+              tooltip-text: _("Print");
+              action-name: "win.print";
+              icon-name: "printer2-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label print_label {
+              label: _("Print");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box web_inspector_box {
+            name: "web-inspector-box";
+            orientation: vertical;
+            valign: center;
+
+            Button web_inspector_button {
+              tooltip-text: _("Web Inspector");
+              action-name: "win.toggle-web-inspector";
+              icon-name: "info-outline-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label web_inspector_label {
+              label: _("Web Inspector");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box manage_extensions_box {
+            name: "manage-extensions-box";
+            orientation: vertical;
+            valign: center;
+
+            Button manage_extensions_button {
+              tooltip-text: _("Manage Extensions");
+              action-name: "win.manage-extensions";
+              icon-name: "puzzle-piece-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label manage_extensions_label {
+              label: _("Extensions");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box show_reader_mode_box {
+            name: "show-reader-mode-box";
+            orientation: vertical;
+            valign: center;
+
+            Button show_reader_mode_button {
+              tooltip-text: _("Reader Mode");
+              action-name: "win.toggle-reader";
+              icon-name: "open-book-symbolic";
+              styles ["toolbar-button"]
+            }
+
+            Label show_reader_mode_label {
+              label: _("Reader Mode");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          Box kagi_privacy_pass_box {
+            name: "kagi-privacy-pass-box";
+            orientation: vertical;
+            valign: center;
+
+            Button kagi_privacy_pass_button {
+              tooltip-text: _("Kagi Privacy Pass");
+              action-name: "win.show-kagi-privacy-pass";
+              icon-name: "orion-logo"; // TODO: update this
+              styles ["toolbar-button"]
+            }
+
+            Label kagi_privacy_pass_label {
+              label: _("Kagi Privacy Pass");
+              styles ["toolbar-item-label"]
+            }
+          }
+
+          // More Toolbar Items: items that do not fit in the main toolbar.
+          // This button should be hidden if it is not needed.
+          MenuButton more_toolbar_items_button {
+            name: "more-toolbar-items-button";
+            visible: false; // TODO: finish implementation of this button
+            valign: center;
+            icon-name: "right-symbolic";
+            styles ["toolbar-button"]
+          }
+        }
+      }
+    }
+  }
+}

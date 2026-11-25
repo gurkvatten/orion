@@ -1,0 +1,22 @@
+enum LanguageCode {
+    EN_US = "en-US";
+}
+
+message I18nDetectLanguageInfo {
+    LanguageCode language;
+    int32 percentage;
+}
+
+message I18nDetectLanguageResult {
+    bool isReliable;
+    repeatable I18nDetectLanguageInfo languages;
+}
+
+service I18n [global=browser.i18n] {
+    rpc detectLanguage(string text) returns (I18nDetectLanguageResult) {}
+    extern getMessage;
+    extern getUILanguage;
+    rpc getAcceptLanguages() returns (repeatable LanguageCode) {}
+    rpc getPreferredSystemLanguages() returns (repeatable LanguageCode) {}
+    rpc getSystemUILanguage() returns (LanguageCode) {}
+}

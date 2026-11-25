@@ -1,0 +1,47 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ImportFromUrlDialog: Adw.Dialog {
+  width-request: 500;
+
+  Box {
+    orientation: vertical;
+    margin-start: 8;
+    margin-end: 8;
+    margin-top: 8;
+    margin-bottom: 8;
+
+    Label {
+      label: _("URL:");
+      halign: start;
+    }
+
+    Entry entry {
+      margin-top: 8;
+      placeholder-text: _("https://");
+    }
+
+    Box {
+      orientation: horizontal;
+      halign: end;
+      margin-top: 8;
+
+      Button cancel_button {
+        label: _("Cancel");
+        clicked => $on_cancel_button_clicked();
+      }
+
+      Button import_button {
+        label: _("Import");
+        styles ["suggested-action"]
+        margin-start: 8;
+        clicked => $on_import_button_clicked();
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, import_button]
+}

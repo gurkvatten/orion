@@ -1,0 +1,113 @@
+@font-face {
+  font-family: 'Charter';
+  src: url('gresource-font:///Charter-Bold-Italic.otf');
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Charter';
+  src: url('gresource-font:///Charter-Bold.otf');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Charter';
+  src: url('gresource-font:///Charter-Italic.otf');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Charter';
+  src: url('gresource-font:///Charter-Regular.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gelasio';
+  src: url('gresource-font:///Gelasio-Italic-VariableFont_wght.ttf');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Gelasio';
+  src: url('gresource-font:///Gelasio-VariableFont_wght.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Liberation Serif';
+  src: url('gresource-font:///LiberationSerif-BoldItalic.ttf');
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Liberation Serif';
+  src: url('gresource-font:///LiberationSerif-Bold.ttf');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Liberation Serif';
+  src: url('gresource-font:///LiberationSerif-Italic.ttf');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Liberation Serif';
+  src: url('gresource-font:///LiberationSerif-Regular.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Merriweather';
+  src: url('gresource-font:///Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Merriweather';
+  src: url('gresource-font:///Merriweather-VariableFont_opsz,wdth,wght.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TeX Gyre Pagella';
+  src: url('gresource-font:///texgyrepagella-bolditalic.otf');
+  font-weight: bold;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'TeX Gyre Pagella';
+  src: url('gresource-font:///texgyrepagella-bold.otf');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'TeX Gyre Pagella';
+  src: url('gresource-font:///texgyrepagella-italic.otf');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'TeX Gyre Pagella';
+  src: url('gresource-font:///texgyrepagella-regular.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('gresource-font:///Vollkorn-Italic-VariableFont_wght.ttf');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('gresource-font:///Vollkorn-VariableFont_wght.ttf');
+  font-weight: normal;
+  font-style: normal;
+}

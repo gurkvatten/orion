@@ -1,0 +1,1218 @@
+/* System-wide widget styles */
+* {
+  --margin-near: 6px;
+  --small-button-icon-size: 12px;
+  --address-entry-min-width: 300px;
+  --highlight-outline-color: color(from var(--accent-color) srgb r g b / 0.5);/*rgba(239, 134, 97, 0.7)*/
+  /* This should be very similar to default Adwaita's GtkButton not-hovered background color */
+  --adw-button-bg-color: color-mix(in srgb,
+    @window_bg_color 90%,
+    @window_fg_color 10%);
+  /* This should be very similar to default Adwaita's GtkButton on-hover background color */
+  --adw-button-bg-color-hover: color-mix(in srgb,
+    @window_bg_color 82%,
+    @window_fg_color 18%);
+  /* This color should be slightly darker compared to default Adwaita's GtkButton on-hover background color */
+  --adw-button-bg-color-hover-darker: color-mix(in srgb,
+    @window_bg_color 75%,
+    @window_fg_color 25%);
+  /* This color could be used to highlight inactive tabs (make them more separate from the background) */
+  --tab-background-color: color-mix(in srgb,
+    @window_bg_color 94%,
+    @window_fg_color 6%);
+}
+
+.finished-marker {
+  padding: 4px;
+  border-radius:4px;
+  background-color: var(--accent-color);
+  box-shadow: 0px 0px 2px 2px whitesmoke;
+}
+
+.failed-marker {
+  margin-top: 0px;
+  text-shadow: 0px 0px 2px whitesmoke;
+}
+
+.no-padding {
+  padding: 0 0 0 0;
+}
+
+.padding-8px {
+  padding: 8px 8px 8px 8px;
+}
+
+.padding-16px {
+  padding: 16px 16px 16px 16px;
+}
+
+.no-spacing-listview row {
+  padding: 0 0 0 0;
+}
+
+dimming {
+  background-color: color(srgb 0 0 0 / 0.25);
+}
+
+.dim-icon {
+  opacity: 0.5;
+}
+
+/* Used on Start Page when releasing Alpha/Beta versions */
+.pill-label {
+  background-color: var(--sidebar-bg-color);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.gray-background {
+  background-color: color(from var(--sidebar-bg-color) srgb calc(r*0.9) calc(g*0.9) calc(b*0.9) / alpha);
+}
+
+.window-bg-color-background {
+  background-color: var(--window-bg-color);
+}
+
+.debug {
+  background-color: aquamarine;
+}
+
+.listview-no-hover row:hover {
+  background-color: inherit;
+}
+
+.listview-no-hover row {
+  background-color: inherit;
+}
+
+.gridview-no-hover child:hover {
+  background-color: inherit;
+}
+
+.gridview-no-hover child {
+  background-color: inherit;
+}
+
+.gridview-no-child-padding child {
+  padding: 0 0 0 0;
+}
+
+.dropdown-section-separators header {
+  padding: 0;
+}
+
+.bg-inherit {
+  background-color: inherit;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.decrease-font-size {
+  font-size:medium;
+}
+
+.increase-font-size {
+  font-size:large;
+}
+
+.font-size-box {
+  --group-padding: 3px;
+
+  border-radius: 9px;
+  background-color: color-mix(in srgb, currentColor 10%, transparent);
+  padding: var(--group-padding);
+  /* border: 1px solid var(--border-color); */
+  border-spacing: 0;
+}
+
+.font-size-box button {
+  min-width: 34px;
+
+  padding: 0 11px;
+  border-radius: 0;
+  background-color: var(--active-toggle-bg-color);
+  color: var(--active-toggle-fg-color);
+
+  box-shadow:
+    0 1px 3px rgb(0 0 6 / 7%),
+    0 2px 6px rgb(0 0 6 / 3%);
+
+  transition:
+    background-color 200ms,
+    color 200ms,
+    box-shadow 200ms;
+}
+
+.font-size-box button:first-child {
+  border-top-left-radius: calc(9px - var(--group-padding));
+  border-bottom-left-radius: calc(9px - var(--group-padding));
+}
+
+.font-size-box button:last-child {
+  border-top-right-radius: calc(9px - var(--group-padding));
+  border-bottom-right-radius: calc(9px - var(--group-padding));
+}
+
+.font-size-box button:hover {
+  background-color: color-mix(in srgb, currentColor 7%, transparent);
+}
+
+.font-size-box button:active {
+  background-color: color-mix(in srgb, currentColor 16%, transparent);
+  color: inherit;
+  box-shadow: none;
+}
+
+
+.dimmed-text {
+  opacity:0.7;
+}
+
+.icon-button-white-shadow {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.icon-button-white-shadow:hover{
+  background: rgba(0,0,0, 0.1);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.icon-button-white-shadow:active{
+  background: rgba(0,0,0, 0.2);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+/* This should visually be similar to sensitive=FALSE, but still allows dragging, clicking etc. */
+.fake-disabled {
+  opacity: 0.55;
+  filter: grayscale(100%);
+}
+
+/* .title-1 to .title-4 classes are already defined in Adwaita */
+.title-5 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.title-6 {
+  font-weight: bold;
+}
+
+.tight-separator {
+  min-height: 1px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Fonts - used for specific fonts potentially shared between dialogs */
+
+.monospace-font {
+  font-family: monospace;
+}
+
+.merriweather {
+  font-family: Merriweather;
+}
+
+.charter {
+  font-family: Charter;
+}
+
+.gelasio {
+  font-family: Gelasio;
+}
+
+.texgyrepagella {
+  font-family: 'TeX Gyre Pagella';
+}
+
+.ubuntu {
+  font-family: Ubuntu, Cantarell;
+}
+
+.dyslectic {
+  font-family: OpenDyslexic3;
+}
+
+.vollkorn {
+  font-family: Vollkorn;
+}
+
+.uiserif {
+  font-family: ui-serif;
+}
+
+.liberationserif {
+  font-family: 'Liberation Serif';
+}
+
+/* Dnd highlights */
+.dnd-highlight-top {
+  background: linear-gradient(180deg, 
+        color(from var(--accent-color) srgb r g b / calc(alpha/1.5)) calc(15%), 
+        rgba(0,0,0,0) calc(15%));
+}
+
+.dnd-highlight-bottom {
+  background: linear-gradient(180deg, 
+        rgba(0,0,0,0) calc(85%),
+        color(from var(--accent-color) srgb r g b / calc(alpha/1.5)) calc(85%));
+}
+
+/* Always the same width regardless of the element's width */
+.dnd-highlight-left-static {
+  background: linear-gradient(90deg, 
+        color(from var(--accent-color) srgb r g b / calc(alpha/1.5)) 4px,
+        rgba(0,0,0,0) 4px);
+}
+
+/* Always the same width regardless of the element's width */
+.dnd-highlight-right-static {
+  background: linear-gradient(90deg, 
+        rgba(0,0,0,0) calc(100% - 4px),
+        color(from var(--accent-color) srgb r g b / calc(alpha/1.5)) calc(100% - 4px));
+}
+
+.dnd-highlight-whole {
+  /*background-color: color(from var(--accent-color) srgb r g b / calc(alpha/3));*/
+  outline: 1px var(--accent-color);
+}
+
+.tab-preview contents {
+  padding: 0 0 0 0;
+}
+
+.tab-preview separator {
+  padding: 0 0 0 0;
+}
+
+/*
+.tab-preview contents picture {
+  border-radius: inherit;
+}
+*/
+
+/* Dialog-specific styles */
+
+/* Main window */
+
+#tab-bar .unpinned-view .tab-close-button {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 50%;
+  -gtk-icon-size: 14px;
+  /*opacity:0;*/
+}
+
+#tab-bar .unpinned-view .tab-audio-button {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 50%;
+  -gtk-icon-size: 14px;
+}
+
+/* pinned tabs (both the horizontal tab bar and the vertical sidebar) overlay this badge
+   on top of the favicon, in the bottom-right corner -- same flat, hover-only look as the
+   unpinned tab's audio icon, just small enough to fit as a corner badge */
+.pinned-tab-audio-button {
+  padding: 1px;
+  border-radius: 4px;
+  min-width: 0;
+  min-height: 0;
+  -gtk-icon-size: 10px;
+  background-color: var(--window-bg-color);
+}
+
+
+/*
+#tab-bar .unpinned-view row:selected .tab-close-button {
+  opacity:1;
+}
+  */
+
+#tab-bar .unpinned-view row:selected  {
+  background-color: transparent;
+}
+
+#tab-bar .unpinned-view .tab {
+  min-height: 32px;
+  border-radius: 8px;
+  margin: 0 4px;
+  padding: 0 6px;
+  transition-property: outline, outline-width, outline-offset, outline-color;
+  transition-duration: 300ms;
+  animation-timing-function: ease-in-out;
+  outline: 0 solid transparent;
+  outline-offset: 4px;
+}
+
+#tab-bar .unpinned-view row:focus-visible:focus-within .tab {
+  outline-color: var(--highlight-outline-color);
+  outline-width: 2px;
+  outline-offset: -2px;
+}
+
+#tab-bar .unpinned-view row:focus-visible:focus-within {
+  outline: none;
+}
+
+#tab-bar .unpinned-view row:hover .tab {
+  background-color: color-mix(in srgb, var(--sidebar-bg-color) 85%,
+      color-mix(in srgb, white 50%, black 50%) 15%);
+}
+
+#tab-bar .unpinned-view row:selected .tab {
+  background-color: color-mix(in srgb, var(--sidebar-bg-color) 75%,
+      color-mix(in srgb, white 50%, black 50%) 25%);
+}
+
+#tab-bar .unpinned-view row:selected:hover .tab {
+  background-color: color-mix(in srgb, var(--sidebar-bg-color) 80%,
+      color-mix(in srgb, white 50%, black 50%) 20%);
+}
+
+#tab-bar .unpinned-view row > box {
+  /* This would not work with Compact Tab layout:*/
+  /*margin: 3px 0;*/
+  padding-left: 3px;
+  border-left: 1px solid lightgray;
+}
+
+#tab-bar .unpinned-view row:selected > box {
+  padding-left: 4px;
+  border-left: none;
+}
+
+#tab-bar .unpinned-view row:selected + row > box {
+  padding-left: 4px;
+  border-left: none;
+}
+
+#tab-bar .unpinned-view row:first-child > box {
+  padding-left: 4px;
+  border-left: none;
+}
+
+#tab-bar .unpinned-view row {
+  background-color: transparent;
+}
+
+.tab {
+  /* This would highlight inactive tabs (make them more separate from the background) */
+  /*background-color: var(--tab-background-color);*/
+}
+
+#bookmarks-bar .bookmarks-button {
+  opacity:0.5;
+}
+
+#bookmarks-bar .bookmarks-button:hover {
+  opacity:1;
+}
+
+#main-window #profiles-button {
+  padding: 0 6px 0 6px;
+}
+
+#main-window #header-bar-box .toolbar-button {
+  padding: 2px 2px 2px 2px;
+  margin: 0 0 0 0;
+}
+
+/* Needed for MenuButton widgets */
+#main-window #header-bar-box .toolbar-button button {
+  padding: 2px 2px 2px 2px;
+  margin: 0 0 0 0;
+}
+
+/* Tab Groups button */
+#main-window #n-tabs button {
+  padding: 0 8px 0 8px;
+}
+
+#main-window #header-bar-box #address-entry {
+  min-width: var(--address-entry-min-width);
+  padding-right: 32px; /* because of reload page button */
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+#main-window #header-bar-box #address-entry text {
+  padding-left: 20px; /* because of the padlock (certificate) button */
+}
+
+/* extra room reserved only while the tab audio icon is actually shown, so the text isn't
+   shortened when there's nothing playing and the icon is hidden */
+#main-window #header-bar-box #address-entry.has-audio-icon {
+  padding-right: 60px;
+}
+
+#main-window #header-bar-box .overlay {
+  margin-left: var(--margin-near);
+  margin-right: var(--margin-near);
+}
+
+#main-window #header-bar-box .address-entry-container button {
+  margin: 0;
+  padding: 8px var(--margin-near) 8px var(--margin-near);
+  min-height: 0;
+  min-width: 0;
+  -gtk-icon-size: var(--small-button-icon-size);
+}
+
+#main-window #header-bar-box .address-entry-container .hidden-button {
+  transition: 300ms ease-out;
+  opacity: 0;
+}
+
+#main-window #header-bar-box .address-entry-container:hover .hidden-button {
+  opacity: 1;
+}
+
+#main-window #header-bar-box .popup-blocked-message {
+  background-color: @view_bg_color;
+  border-radius: 8px;
+  margin: 1px;
+}
+
+/* Menu Button must cannot be handled the same way as regular buttons */
+#main-window #header-bar .menu-button-bland-background {
+  background-color: var(--adw-button-bg-color);
+}
+
+#main-window #header-bar .bland-background {
+  background-color: var(--adw-button-bg-color);
+}
+
+#main-window #header-bar .bland-background:hover {
+  background-color: var(--adw-button-bg-color-hover);
+}
+
+#main-window #header-bar .opaque-background {
+  background-color: var(--adw-button-bg-color-hover);
+}
+
+#main-window #header-bar .opaque-background:hover {
+  background-color: var(--adw-button-bg-color-hover-darker);
+}
+
+#main-window #address-entry .normal-toolbar-entry {
+  font-size: 13px;
+}
+
+#main-window .toolbar-item-label {
+  font-size: 12px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+#tab-switcher {
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgb(32 32 32);
+  background-color: rgba(0 0 0 / .5);
+  border: solid 0.5px black;
+  padding: 8px;
+}
+
+#tab-switcher gridview child {
+  background-color: rgba(224 224 224 / 1);
+  border-radius: 8px;
+}
+
+#tab-switcher gridview child:selected {
+  background-color: rgba(192 192 192 / 1);
+}
+
+#tab-switcher gridview:not(:focus-within) child:selected {
+  outline-color: var(--highlight-outline-color);
+  outline-width: 2px;
+  outline-offset: -2px;
+}
+
+#tab-switcher gridview:focus-within child:focus-within {
+  outline-color: var(--highlight-outline-color);
+  outline-width: 2px;
+  outline-offset: -2px;
+}
+
+#tab-switcher picture {
+  border-radius: 8px 8px 0 0;
+}
+
+/*
+#tab-switcher gridview child:selected {
+  background-color: color-mix(in srgb, var(--accent-bg-color), rgba(224 224 224 / 1));
+}
+
+
+#tab-switcher gridview child:selected picture {
+  background-color: rgba(192 192 192 / 1);
+}
+*/
+
+/* About dialog */
+
+#about-dialog .heading {
+  font-size: 36px;
+}
+
+#about-dialog .build {
+  font-size: 12px;
+  color: rgb(128, 128, 128);
+}
+
+/* Bookmarks dialog */
+
+#bookmarks-dialog list {
+  background-color: inherit;
+}
+
+#bookmarks-dialog list row {
+  border-radius:10px;
+}
+
+#bookmarks-dialog list row:selected {
+  background-color: color(from var(--accent-bg-color) srgb r g b / 0.25);
+}
+
+/*#bookmarks-dialog .column-view-row-style-A listview row:nth-child(even):not(:selected){
+  background-color: lightgray;
+  border-radius:5px;
+}*/
+
+#bookmarks-dialog columnview listview row:selected {
+  background-color: color(from var(--accent-bg-color) srgb r g b / 0.25);
+}
+
+#bookmarks-dialog columnview listview row {
+  border-radius:5px;
+}
+
+#bookmarks-dialog columnview {
+  background-color: inherit;
+}
+
+#bookmarks-dialog columnview listview{
+  background-color: inherit;
+}
+
+#bookmarks-dialog .headingA {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+#bookmarks-dialog .headingB {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+/* Get Orion Plus dialog */
+
+#get-orion-plus-dialog .small-text {
+  font-size: 12px;
+}
+
+/* Page Tweaks popover */
+
+#page-tweaks-popover .light_mode_toggle_button {
+  background-color:whitesmoke;
+  border-radius:25px;
+  border-spacing: 2px;
+  border: solid 2px lightgray;
+  color: rgba(0,0,0,0);
+}
+
+#page-tweaks-popover .dark_mode_toggle_button {
+  background-color:black;
+  border-radius:25px;
+  border-spacing: 2px;
+  border: solid 2px lightgray;
+  color: rgba(0,0,0,0);
+}
+
+#page-tweaks-popover .light_mode_toggle_button:checked {
+  color:black;
+}
+
+#page-tweaks-popover .dark_mode_toggle_button:checked {
+  color:white;
+}
+
+/* Popular Extensions dialog */
+
+#popular-extensions-dialog list {
+  background-color: inherit;
+}
+
+#popular-extensions-dialog list row:selected {
+  background-color: color(from var(--accent-color) srgb r g b / 0.35);
+  border-radius:10px;
+}
+
+#popular-extensions-dialog .headingA {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+#popular-extensions-dialog .headingB {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+#popular-extensions-dialog .rightside-controls {
+  background-color: rgb(208, 208, 208);
+}
+
+#popular-extensions-dialog .window-border {
+  border: 1px solid black;
+}
+
+#popular-extensions-dialog .headerbar-rightside {
+  background-color: rgb(192, 192, 192);
+}
+
+#popular-extensions-dialog .window-leftside {
+  background-color: rgb(64, 64, 64);
+}
+
+#popular-extensions-dialog .columnview-item {
+  /*background-color: color(from var(--sidebar-bg-color) srgb calc(r * 2) calc(g * 2) calc(b * 2) / alpha);*/
+  /*--inverted-bg-color: color(from @theme-bg-color srgb calc((-1 * r) + 1) calc((-1 * g) + 1) calc((-1 * b) + 1) / alpha);*/
+  background-color: var(--sidebar-bg-color);
+  border-radius:5px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 1px 3px 1px rgba(0,0,0,0.07), 0 2px 6px 2px rgba(0,0,0,0.03); 
+}
+
+#popular-extensions-dialog .extension-icon {
+  /*background-color: @theme-bg-color;*/
+  border-radius:8px;
+}
+
+/* RSS Feed item */
+
+#rss-feed-item .small-text {
+  font-size: 8px;
+}
+
+/* Search Recommendations */
+
+#search-recommendations .website-button {
+  background-color:inherit;
+  padding: 0px 0px 0px 0px;
+}
+
+#search-recommendations .website-button:hover box image {
+  background-color:color(from var(--sidebar-border-color) srgb r g b / calc(alpha*2));
+}
+
+
+#search-recommendations .website-button:active box image {
+  background-color:color(from var(--sidebar-border-color) srgb r g b / calc(alpha*3.5));
+}
+
+#search-recommendations .website-button box image {
+  background-color: var(--sidebar-border-color);
+  border-radius:15px;
+}
+
+#search-recommendations .heading {
+  font-size: 30px;
+  font-weight: bolder;
+}
+
+#search-recommendations .small-heading {
+  font-weight: bolder;
+}
+
+#search-recommendations .box-with-bground {
+  background-color:var(--sidebar-bg-color);
+  border-radius:20px;
+}
+
+#search-recommendations .website-logo-flowbox *{
+  padding: 0px 0px 0px 0px;
+}
+
+/* Profiles Icon*/
+
+#profiles-icon label .normal-toolbar-profiles-icon {
+  font-size:20px;
+}
+
+/*used in profiles_columnview.cpp*/
+.profiles-icon-label-small {
+  font-size:15px;
+}
+
+#profiles-icon .coloured-button {
+  background-color:inherit;
+}
+
+#profiles-icon .blue {
+  color: rgba(38, 72, 222, 1);
+  font-size:20px;
+}
+
+#profiles-icon .purple {
+  color: rgba(135, 26, 214, 1);
+  font-size:20px;
+}
+
+#profiles-icon .pink {
+  color: rgba(255, 117, 204, 1);
+  font-size:20px;
+}
+
+#profiles-icon .red {
+  color: rgba(255, 64, 64, 1);
+  font-size:20px;
+}
+
+#profiles-icon .orange {
+  color: rgba(255, 144, 50, 1);
+  font-size:20px;
+}
+
+#profiles-icon .yellow {
+  color: rgba(255, 227, 64, 1);
+  font-size:20px;
+}
+
+#profiles-icon .green {
+  color: rgba(89, 194, 20, 1);
+  font-size:20px;
+}
+
+#profiles-icon .gray {
+  color: rgba(133, 133, 133, 1);
+  font-size:20px;
+}
+
+/* Search Completion popover */
+
+#search-completion listview {
+  background-color: transparent;
+}
+
+#search-completion listview row {
+  background-color: transparent;
+  border-radius:5px;
+}
+
+#search-completion listview row:selected {
+  background-color: transparent;
+}
+
+#search-completion listview row:active {
+  background-color: transparent;
+}
+
+#search-completion listview row:hover {
+  background-color: color(from var(--accent-bg-color) srgb r g b / 0.25);
+}
+
+/* Orion Editable Cell entry */
+
+#editable-cell-entry {
+  background-color:transparent;
+  min-height:0px;
+  border-radius:0px;
+  padding:0px;
+}
+
+/* Save Window popover */
+
+#save-window-popover .image-toggle-button {
+  background: rgba(0,0,0,0);
+}
+
+#save-window-popover .image-toggle-button:checked {
+  border: solid 1px purple;
+  background: rgba(0,0,0,0);
+}
+
+/* Customize Theme popover */
+/* TODO: get rid of these hard coded colors */
+
+#customize-theme-popover .blue radio {
+  background: rgba(38, 72, 222, 1);
+}
+
+#customize-theme-popover .purple radio {
+  background: rgba(135, 26, 214, 1);
+}
+
+#customize-theme-popover .pink radio {
+  background: rgba(255, 117, 204, 1);
+}
+
+#customize-theme-popover .red radio {
+  background: rgba(255, 64, 64, 1);
+}
+
+#customize-theme-popover .orange radio {
+  background: rgba(255, 144, 50, 1);
+}
+
+#customize-theme-popover .yellow radio {
+  background: rgba(255, 227, 64, 1);
+}
+
+#customize-theme-popover .green radio {
+  background: rgba(89, 194, 20, 1);
+}
+
+#customize-theme-popover .gray radio {
+  background: rgba(133, 133, 133, 1);
+}
+
+#customize-theme-popover .light-blue radio {
+  background: rgba(38, 72, 222, 0.5);
+}
+
+#customize-theme-popover .light-purple radio {
+  background: rgba(135, 26, 214, 0.5);
+}
+
+#customize-theme-popover .light-pink radio {
+  background: rgba(255, 117, 204, 0.5);
+}
+
+#customize-theme-popover .light-red radio {
+  background: rgba(255, 64, 64, 0.5);
+}
+
+#customize-theme-popover .light-orange radio {
+  background: rgba(255, 144, 50, 0.5);
+}
+
+#customize-theme-popover .light-yellow radio {
+  background: rgba(255, 227, 64, 0.5);
+}
+
+#customize-theme-popover .light-green radio {
+  background: rgba(89, 194, 20, 0.5);
+}
+
+#customize-theme-popover .custom-color radio {
+  background-image:conic-gradient(red, orange, yellow, green, blue);
+  /*TODO: improve this*/
+}
+
+#customize-theme-popover .no-color radio {
+  background-image: linear-gradient(45deg, #858585 45%, #ff4040 45%, #ff4040 55%, #858585 55%);
+  background-repeat: no-repeat;
+}
+
+/* Window List Popover */
+
+#window-list-popover .synced-devices-listview row {
+  border-radius: 5px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Settings dialog */
+
+#settings-dialog notebook stack scrolledwindow {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+#settings-dialog .flat-compact-switcher > button {
+  padding: 10px 20px; 
+  min-width: 0px;
+  min-height: 0px;
+}
+
+#settings-dialog .list-header-text {
+  font-weight:lighter;
+  font-size:12px;
+}
+
+#settings-dialog .app-icon-button {
+  border:2px solid transparent;
+  background-color: inherit;
+  border-radius:10px;
+}
+
+#settings-dialog .app-icon-button:hover {
+  border: 3px solid color(from var(--accent-bg-color) srgb r g b / calc(alpha * 0.5));
+}
+
+#settings-dialog .app-icon-button:checked {
+  border: 3px solid var(--accent-bg-color);
+}
+
+#settings-dialog .tab-style-toggle-button {
+  background-color:inherit;
+}
+
+#settings-dialog .tab-style-toggle-button box image{
+  border:2px solid transparent;
+  background-color: inherit;
+  border-radius:10px;
+}
+
+#settings-dialog .tab-style-toggle-button:hover box image{
+  background-color: color(from var(--accent-color) srgb r g b / calc(0.7 * 0.6));
+}
+
+#settings-dialog .tab-style-toggle-button:checked box image{
+  background-color: color(from var(--accent-color) srgb r g b / 0.7);
+}
+
+#settings-dialog .sync-grid {
+  background-color: inherit;
+  border: 2px solid var(--sidebar-border-color);
+  border-radius: 8px;
+}
+
+#settings-dialog .websites-settings-sidebar {
+  background-color: inherit;
+}
+
+#settings-dialog .websites-settings-sidebar row:selected {
+  background-color: color(from var(--accent-bg-color) srgb r g b / 0.25);
+  border-radius:8px;
+}
+
+#settings-dialog .websites-settings-sidebar row {
+  border-radius:8px;
+}
+
+#settings-dialog .websites-settings-main-view {
+  background-color: inherit;
+}
+
+#settings-dialog .websites-settings-websites-grid {
+  background-color: inherit;
+}
+
+#settings-dialog .websites-settings-websites-list {
+  background-color: inherit;
+}
+
+#settings-dialog .websites-settings-websites-list row:selected {
+  background-color: color(from var(--accent-bg-color) srgb r g b / 0.25);
+  border-radius:10px;
+}
+
+/* Customize Toolbar dialog */
+
+#customize-toolbar-dialog .item-label {
+  font-size: 12px;
+}
+
+/* This fixes the issue with a space between each GtkListViewWidget row items that would cause 
+   awkward highlighting when dragging Overflow Menu item */
+#customize-toolbar-dialog listview row {
+  padding: 0;
+}
+
+#customize-toolbar-dialog #toolbar-items-box box {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+/* Profile Dialog */
+
+#profile-dialog .boxa {
+  border-radius:15px;
+  background-color:purple;
+}
+
+/* Filter Lists dialog */
+
+#filter-lists-dialog checkbutton {
+  font-weight:bold;
+}
+
+/* Privacy Popover */
+
+#privacy-popover .heading {
+  font-size: 16px;
+  font-weight: bolder;
+}
+
+/* RSS Feeds Popover */
+
+#rss-popover list row {
+  border-radius:5px;
+}
+
+#rss-popover .heading {
+  font-size: 20px;
+  font-weight: bolder;
+}
+
+/* Profiles - used for colour in dots used to indicate profiles */
+
+#profiles .blue {
+  color:blue;
+}
+
+/* Start page settings popover */
+#start-page-settings-popover .grey-background{
+  background-color: darkgrey;
+} 
+#start-page-settings-popover .round-corners{
+  border-radius:15px;
+} 
+
+#start-page-settings-popover .selected-item{
+  border: 3px solid color(from var(--accent-color) srgb r g b / 1);
+} 
+
+#start-page-settings-popover .no-spaces{
+  padding-top: 0;
+  padding-left: 0;
+  margin-top: -5px;/* It is required for correct centering */
+  margin-left: 0;
+}
+
+#start-page-settings-popover .plus-button{
+  padding: 0;
+  margin: 0;
+}
+
+/* Sidebar */
+#sidebar .bg-inherit {
+  background-color: inherit;
+}
+
+#sidebar .small-padding {
+  padding: 0px 4px 0px 4px;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+#sidebar .hover-only:not(:hover) {
+  background-color: inherit;
+}
+
+#sidebar .hover-container .show-on-hover {
+  opacity: 0;
+}
+
+#sidebar .hover-container:hover .show-on-hover {
+  opacity: 1;
+}
+
+/* Window List Button (Tab Groups Button) */
+#main-window .window-title-label {
+  font-size: 13px;
+  font-weight: bold; /* default for GtkButton */
+}
+
+/* Window List Box */
+#window-list-box .hover-container .show-on-hover {
+  opacity: 0;
+}
+
+#window-list-box .hover-container:hover .show-on-hover {
+  opacity: 1;
+}
+
+/* Mini Toolbar */
+
+.mini-toolbar-window-list-button {
+  padding: 0px 8px 0px 8px;
+  font-size: 14px;
+}
+
+.mini-toolbar-icon-button {
+  padding: 0px 4px 0px 4px;
+  -gtk-icon-size: 12px;
+}
+
+.mini-toolbar-entry {
+  padding: 0px 0px 0px 0px;
+  font-size: 12px;
+  min-height: 24px;
+}
+
+.mini-toolbar-profiles-icon {
+  font-size: 14px;
+}
+
+.mini-toolbar-menu-button > button {
+  min-height: 12px;
+  -gtk-icon-size: 12px;
+}
+
+.mini-toolbar-window-controls > button {
+  min-height: 14px;
+  min-width: 14px;
+  -gtk-icon-size: 14px;
+}
+
+.mini-toolbar-window-controls > button > image {
+  min-height: 14px;
+  min-width: 14px;
+  -gtk-icon-size: 14px;
+}
+
+.mini-toolbar-header-bar-containers {
+  padding: 0px;
+  margin: 0px;
+  min-height: 0;
+}
+
+.mini-toolbar-header-bar-box {
+  padding: 4px;
+  margin: 0px;
+  min-height: 0;
+}
+
+.mini-toolbar-listview button {
+  padding: 0px 4px 0px 4px;
+  -gtk-icon-size: 12px;
+}
+
+/* Header Bar */
+
+.reader-mode-enabled {
+  color: var(--accent-color);
+}
+
+/*  Reader Mode Settings Popover */
+#reader-mode-settings-popover .background-toggles box {
+  border-radius:50%;
+  min-width: 24px;
+  min-height: 24px;
+  box-shadow: 0px 0px 3px rgb(30, 30, 30);
+}
+
+#reader-mode-settings-popover .background-toggles .white {
+  background-color: rgb(230, 230, 230);
+}
+
+#reader-mode-settings-popover .background-toggles .sepia {
+  background-color: rgb(224, 216, 200);
+}
+
+#reader-mode-settings-popover .background-toggles .gray {
+  background-color: rgb(50, 50, 51);
+}
+
+#reader-mode-settings-popover .background-toggles .night {
+  background-color: black;
+}
+
+/* Erase Elements Bar */
+#erase-elements-bar popover.flush-popover > contents {
+  padding: 0 ;
+}
+
+#erase-elements-bar popover.flush-popover > contents revealer.bottom-bar {
+  padding: 8px;
+}

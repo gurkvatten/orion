@@ -1,0 +1,140 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $CustomizeThemePopover: Adw.Dialog {
+  name:"customize-theme-popover";
+  halign:fill;
+  hexpand:true;
+  title: _("Customize Theme");
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Box {
+      margin-start:14;
+      margin-end:14;
+      margin-top:14;
+      margin-bottom:14;
+      orientation:vertical;
+      spacing:5;
+      Label {
+        label:_("Tint compact and vertical tabs title bar and side bar");
+        wrap:true;
+        max-width-chars:28;
+        width-chars:28;
+      }
+
+      FlowBox {
+        halign:center;
+        hexpand:false;
+        max-children-per-line:8;
+        min-children-per-line:8;
+        selection-mode:none;
+        CheckButton blue_button {
+          styles [
+            "blue"
+          ]
+        }
+        CheckButton purple_button {
+          styles [
+            "purple"
+          ]
+          group:blue_button;
+        }
+        CheckButton pink_button {
+          styles [
+            "pink"
+          ]
+          group:blue_button;
+        }
+        CheckButton red_button {
+          styles [
+            "red"
+          ]
+          group:blue_button;
+        }
+        CheckButton orange_button {
+          styles [
+            "orange"
+          ]
+          group:blue_button;
+        }
+        CheckButton yellow_button {
+          styles [
+            "yellow"
+          ]
+          group:blue_button;
+        }
+        CheckButton green_button {
+          styles [
+            "green"
+          ]
+          group:blue_button;
+        }
+        CheckButton gray_button {
+          styles [
+            "gray"
+          ]
+          group:blue_button;
+        }
+        CheckButton light_blue_button {
+          styles [
+            "light-blue"
+          ]
+          group:blue_button;
+        }
+        CheckButton light_purple_button {
+          styles [
+            "light-purple"
+          ]
+          group:blue_button;
+        }
+        CheckButton light_pink_button {
+          styles [
+            "light-pink"
+          ]
+          group:blue_button;
+        }
+        CheckButton light_red_button {
+          styles [
+            "light-red"
+          ]
+          group:blue_button;
+        }
+        CheckButton light_orange_button {
+          styles [
+            "light-orange"
+          ]
+          group:blue_button;
+        }
+        CheckButton light_yellow_button {
+          styles [
+            "light-yellow"
+          ]
+          group:blue_button;
+        }
+        CheckButton light_green_button {
+          styles [
+            "light-green"
+          ]
+          group:blue_button;
+        }
+        CheckButton custom_color_button {
+          styles [
+            "custom-color"
+          ]
+          group:blue_button;
+          toggled => $on_custom_color_button_toggled();
+          activate => $on_custom_color_button_activate();
+        }
+        CheckButton no_color_button{
+          styles [
+            "no-color"
+          ]
+          group:blue_button;
+        }
+      }
+    }
+  }
+}

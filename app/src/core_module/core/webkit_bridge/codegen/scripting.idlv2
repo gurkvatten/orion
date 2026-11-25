@@ -1,0 +1,168 @@
+// Chromium: extensions/common/api/scripting.idl
+// Firefox:  toolkit/components/extensions/schemas/scripting.json
+
+enum ScriptingStyleOrigin {
+    Author = "AUTHOR";
+    User = "USER";
+};
+
+enum ScriptingExecutionWorld {
+    Isolated = "ISOLATED";
+    Main = "MAIN";
+};
+
+enum ScriptingRunAt {
+    DocumentStart = "document_start";
+    DocumentEnd = "document_end";
+    DocumentIdle = "document_idle";
+};
+
+[Tags=Firefox]
+enum ScriptingCSSOrigin {
+    User = "user";
+    Author = "author";
+};
+
+callback ScriptingInjectedFunction = void();
+callback ScriptingResultsCallback = void(
+    sequence<ScriptingInjectionResult> results
+);
+callback ScriptingScriptsCallback = void(
+    sequence<ScriptingRegisteredContentScript> scripts
+);
+callback ScriptingVoidCallback = void();
+
+[AdditionalProperties=false]
+dictionary ScriptingInjectionTarget {
+    integer tabId;
+    optional sequence<integer> frameIds;
+    optional sequence<string> documentIds;
+    optional boolean allFrames;
+};
+
+[AdditionalProperties=false]
+dictionary ScriptingScriptInjection {
+    optional sequence<any> args;
+
+    [MinLength=1]
+    optional sequence<string> files;
+
+    optional ScriptingInjectedFunction func;
+    ScriptingInjectionTarget target;
+    optional ScriptingExecutionWorld world;
+    optional boolean injectImmediately;
+};
+
+[AdditionalProperties=false]
+dictionary ScriptingCSSInjection {
+    optional string css;
+
+    [MinLength=1]
+    optional sequence<string> files;
+
+    optional ScriptingStyleOrigin origin = "AUTHOR";
+    ScriptingInjectionTarget target;
+};
+
+[AdditionalProperties=false]
+dictionary ScriptingInjectionResult {
+    string documentId;
+    integer frameId;
+    optional any result;
+
+    [Tags=Firefox]
+    optional any error;
+};
+
+[AdditionalProperties=false]
+dictionary ScriptingContentScriptFilter {
+    optional sequence<string> ids;
+};
+
+[AdditionalProperties=false]
+dictionary ScriptingRegisteredContentScript {
+    string id;
+    optional sequence<string> matches;
+    optional sequence<string> excludeMatches;
+    optional sequence<string> css;
+    optional sequence<string> js;
+    optional boolean allFrames;
+    optional boolean matchOriginAsFallback;
+    optional ScriptingRunAt runAt;
+    optional boolean persistAcrossSessions;
+    optional ScriptingExecutionWorld world;
+
+    [Tags=Firefox]
+    optional ScriptingCSSOrigin cssOrigin;
+};
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage]
+[Permissions=scripting]
+[Global="scripting"]
+interface ScriptingV2 {
+    function Promise<sequence<ScriptingInjectionResult>> executeScript(
+        ScriptingScriptInjection injection
+    );
+
+    [Tags=Chrome]
+    function void executeScript(
+        ScriptingScriptInjection injection,
+        ScriptingResultsCallback callback
+    );
+
+    function Promise<void> insertCSS(ScriptingCSSInjection injection);
+
+    [Tags=Chrome]
+    function void insertCSS(
+        ScriptingCSSInjection injection,
+        ScriptingVoidCallback callback
+    );
+
+    function Promise<void> removeCSS(ScriptingCSSInjection injection);
+
+    [Tags=Chrome]
+    function void removeCSS(
+        ScriptingCSSInjection injection,
+        ScriptingVoidCallback callback
+    );
+
+    function Promise<void> registerContentScripts(
+        sequence<ScriptingRegisteredContentScript> scripts
+    );
+
+    [Tags=Chrome]
+    function void registerContentScripts(
+        sequence<ScriptingRegisteredContentScript> scripts,
+        ScriptingVoidCallback callback
+    );
+
+    function Promise<sequence<ScriptingRegisteredContentScript>> getRegisteredContentScripts(
+        optional ScriptingContentScriptFilter filter
+    );
+
+    [Tags=Chrome]
+    function void getRegisteredContentScripts(
+        optional ScriptingContentScriptFilter filter,
+        ScriptingScriptsCallback callback
+    );
+
+    function Promise<void> unregisterContentScripts(
+        optional ScriptingContentScriptFilter filter
+    );
+
+    [Tags=Chrome]
+    function void unregisterContentScripts(
+        optional ScriptingContentScriptFilter filter,
+        ScriptingVoidCallback callback
+    );
+
+    function Promise<void> updateContentScripts(
+        sequence<ScriptingRegisteredContentScript> scripts
+    );
+
+    [Tags=Chrome]
+    function void updateContentScripts(
+        sequence<ScriptingRegisteredContentScript> scripts,
+        ScriptingVoidCallback callback
+    );
+};

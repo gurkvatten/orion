@@ -1,0 +1,560 @@
+// Chromium: extensions/common/api/runtime.json
+// Firefox:  toolkit/components/extensions/schemas/runtime.json.
+
+external type Window;
+external type DirectoryEntry;
+external type tabs.Tab;
+
+enum PlatformOs {
+    Mac = "mac";
+    Windows = "win";
+    Android = "android";
+    ChromeOS = "cros";
+    Linux = "linux";
+    OpenBSD = "openbsd";
+};
+
+enum PlatformArch {
+    Arm = "arm";
+    X86_32 = "x86-32";
+    X86_64 = "x86-64";
+
+    [Tags=Chrome]
+    Arm64 = "arm64";
+    [Tags=Chrome]
+    Mips = "mips";
+    [Tags=Chrome]
+    Mips64 = "mips64";
+    [Tags=Chrome]
+    RiscV64 = "riscv64";
+
+    [Tags=Firefox]
+    AArch64 = "aarch64";
+    [Tags=Firefox]
+    PPC64 = "ppc64";
+    [Tags=Firefox]
+    S390X = "s390x";
+    [Tags=Firefox]
+    Sparc64 = "sparc64";
+    [Tags=Firefox]
+    NoArch = "noarch";
+};
+
+[Tags=Chrome]
+enum PlatformNaclArch {
+    Arm = "arm";
+    X86_32 = "x86-32";
+    X86_64 = "x86-64";
+    Mips = "mips";
+    Mips64 = "mips64";
+};
+
+enum RequestUpdateCheckStatus {
+    Throttled = "throttled";
+    NoUpdate = "no_update";
+    UpdateAvailable = "update_available";
+};
+
+enum OnInstalledReason {
+    Install = "install";
+    Update = "update";
+
+    [Tags=Chrome]
+    ChromeUpdate = "chrome_update";
+    [Tags=Chrome]
+    SharedModuleUpdate = "shared_module_update";
+
+    [Tags=Firefox]
+    BrowserUpdate = "browser_update";
+};
+
+enum OnRestartRequiredReason {
+    AppUpdate = "app_update";
+    OsUpdate = "os_update";
+    Periodic = "periodic";
+};
+
+enum ContextType {
+    Tab = "TAB";
+    Popup = "POPUP";
+    Background = "BACKGROUND";
+    SidePanel = "SIDE_PANEL";
+
+    [Tags=Chrome]
+    OffscreenDocument = "OFFSCREEN_DOCUMENT";
+    [Tags=Chrome]
+    DeveloperTools = "DEVELOPER_TOOLS";
+};
+
+[Tags=Firefox]
+enum OnPerformanceWarningCategory {
+    ContentScript = "content_script";
+};
+
+[Tags=Firefox]
+enum OnPerformanceWarningSeverity {
+    Low = "low";
+    Medium = "medium";
+    High = "high";
+};
+
+[AdditionalProperties=false]
+dictionary RuntimeLastError {
+    optional string message;
+};
+
+[AdditionalProperties=false]
+dictionary ConnectInfo {
+    optional string name = "";
+
+    [Tags=Chrome]
+    optional boolean includeTlsChannelId = false;
+};
+
+[AdditionalProperties=false]
+dictionary SendMessageOptions {
+    [Tags=Chrome]
+    optional boolean includeTlsChannelId = false;
+};
+
+[AdditionalProperties=false]
+dictionary MessageSender {
+    optional tabs.Tab tab;
+    optional integer frameId;
+    optional string id;
+    optional string url;
+
+    [Tags=Chrome]
+    optional integer guestProcessId;
+    [Tags=Chrome]
+    optional integer guestRenderFrameRoutingId;
+    [Tags=Chrome]
+    optional string nativeApplication;
+    [Tags=Chrome]
+    optional string tlsChannelId;
+    [Tags=Chrome]
+    optional string origin;
+    [Tags=Chrome]
+    optional string documentId;
+    [Tags=Chrome]
+    optional string documentLifecycle;
+
+    [Tags=Firefox]
+    optional string userScriptWorldId;
+};
+
+[AdditionalProperties=false]
+dictionary RuntimeInternalMessageSender {
+    optional string socket;
+    optional string requestId;
+    optional string name;
+    optional string id;
+    optional string url;
+    optional string origin;
+};
+
+[AdditionalProperties=false]
+dictionary PlatformInfo {
+    PlatformOs os;
+    PlatformArch arch;
+
+    [Tags=Chrome]
+    optional PlatformNaclArch nacl_arch;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary BrowserInfo {
+    string name;
+    string vendor;
+    string version;
+    string buildID;
+};
+
+[AdditionalProperties=false]
+dictionary RequestUpdateCheckResult {
+    RequestUpdateCheckStatus status;
+    optional string version;
+};
+
+[AdditionalProperties=false]
+dictionary RequestUpdateCheckDetails {
+    string version;
+};
+
+[AdditionalProperties=false]
+dictionary ExtensionContext {
+    ContextType contextType;
+    string contextId;
+    integer tabId;
+    integer windowId;
+    integer frameId;
+    optional string documentUrl;
+    optional string documentOrigin;
+    boolean incognito;
+
+    [Tags=Chrome]
+    optional string documentId;
+};
+
+[AdditionalProperties=false]
+dictionary ContextFilter {
+    optional sequence<ContextType> contextTypes;
+    optional sequence<string> contextIds;
+    optional sequence<integer> tabIds;
+    optional sequence<integer> windowIds;
+    optional sequence<string> documentIds;
+    optional sequence<integer> frameIds;
+    optional sequence<string> documentUrls;
+    optional sequence<string> documentOrigins;
+    optional boolean incognito;
+};
+
+[AdditionalProperties=false]
+dictionary OnInstalledDetails {
+    OnInstalledReason reason;
+    optional string previousVersion;
+
+    [Tags=Chrome]
+    optional string id;
+
+    [Tags=Firefox]
+    boolean temporary;
+};
+
+[AdditionalProperties=false]
+dictionary UpdateAvailableDetails {
+    string version;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary PerformanceWarningDetails {
+    OnPerformanceWarningCategory category;
+    OnPerformanceWarningSeverity severity;
+    optional integer tabId;
+    string description;
+};
+
+callback VoidCallback = void();
+callback AnyCallback = void(optional any response);
+callback WindowCallback = void(optional Window backgroundPage);
+callback PlatformInfoCallback = void(PlatformInfo platformInfo);
+callback DirectoryEntryCallback = void(DirectoryEntry directoryEntry);
+callback ContextsCallback = void(sequence<ExtensionContext> contexts);
+callback RequestUpdateCheckCallback = void(
+    RequestUpdateCheckStatus status,
+    optional RequestUpdateCheckDetails details
+);
+callback SendResponseCallback = void(optional any response);
+
+callback VoidListener = void();
+callback PortListener = void(Port port);
+callback PortDisconnectListener = void(Port port);
+callback PortMessageListener = void(any message, Port port);
+callback InstalledListener = void(OnInstalledDetails details);
+callback UpdateAvailableListener = void(UpdateAvailableDetails details);
+callback RestartRequiredListener = void(OnRestartRequiredReason reason);
+callback MessageListener = (boolean | Promise<any> | undefined)(
+    optional any message,
+    MessageSender sender,
+    SendResponseCallback sendResponse
+);
+callback UserScriptMessageListener = (boolean | undefined)(
+    optional any message,
+    MessageSender sender,
+    SendResponseCallback sendResponse
+);
+
+[Tags=Firefox]
+callback PerformanceWarningListener = void(PerformanceWarningDetails details);
+
+[Implementation=JavaScript("Runtime.Port")]
+interface Port {
+    readonly property string name;
+    readonly property (MessageSender | undefined) sender;
+
+    function void disconnect();
+    function void postMessage(any message);
+
+    event onDisconnect: PortDisconnectListener;
+    event onMessage: PortMessageListener;
+};
+
+[Tags=Chrome,Firefox,Everywhere]
+[Global="runtime"]
+interface Runtime {
+    [Implementation=JavaScript("Runtime.id")]
+    readonly property string id;
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Runtime.lastError")]
+    readonly property (RuntimeLastError | undefined) lastError;
+
+    [Tags=Firefox]
+    [Implementation=JavaScript("Runtime.lastError")]
+    readonly property RuntimeLastError? lastError;
+
+    [Deprecated]
+    function Promise<(Window | undefined)> getBackgroundPage();
+
+    [Tags=Chrome]
+    [Deprecated]
+    function void getBackgroundPage(WindowCallback callback);
+
+    function Promise<void> openOptionsPage();
+
+    [Tags=Chrome]
+    function void openOptionsPage(VoidCallback callback);
+
+    [Implementation=JavaScript("Runtime.getManifest")]
+    function object getManifest();
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Runtime.getVersion")]
+    function string getVersion();
+
+    [Implementation=JavaScript("Runtime.getURL")]
+    function string getURL(string path);
+
+    [Tags=Firefox]
+    [Implementation=JavaScript("Runtime.getFrameId")]
+    function number getFrameId(any target);
+
+    [Tags=Chrome]
+    function Promise<void> setUninstallURL([MaxLength=1023] string url);
+
+    [Tags=Firefox]
+    function Promise<void> setUninstallURL(
+        [MaxLength=1023,Undefined=Missing] optional string url = ""
+    );
+
+    [Tags=Chrome]
+    function void setUninstallURL(
+        [MaxLength=1023] string url,
+        VoidCallback callback
+    );
+
+    function void reload();
+
+    function Promise<RequestUpdateCheckResult> requestUpdateCheck();
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Runtime.requestUpdateCheck")]
+    function void requestUpdateCheck(RequestUpdateCheckCallback callback);
+
+    function void restart();
+
+    [Tags=Chrome]
+    function Promise<void> restartAfterDelay(integer seconds);
+
+    [Tags=Chrome]
+    function void restartAfterDelay(integer seconds, VoidCallback callback);
+
+    [Implementation=JavaScript("Runtime.connect")]
+    function Port connect(
+        [Undefined=Missing,Null=Missing] optional ConnectInfo connectInfo
+    );
+
+    [Implementation=JavaScript("Runtime.connect")]
+    function Port connect(
+        string extensionId,
+        [Undefined=Missing,Null=Missing] optional ConnectInfo connectInfo
+    );
+
+    [Implementation=JavaScript("Runtime.connectNative")]
+    function Port connectNative(
+        [Pattern="^\\w+(\\.\\w+)*$"] string application
+    );
+
+    [Implementation=JavaScript("Runtime.sendMessage")]
+    function Promise<any> sendMessage(
+        any message,
+        [Undefined=Missing,Null=Missing] optional SendMessageOptions options
+    );
+
+    [Implementation=JavaScript("Runtime.sendMessage")]
+    function Promise<any> sendMessage(
+        string extensionId,
+        any message,
+        [Undefined=Missing,Null=Missing] optional SendMessageOptions options
+    );
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Runtime.sendMessage")]
+    function void sendMessage(
+        any message,
+        [Undefined=Missing,Null=Missing] optional SendMessageOptions options,
+        AnyCallback callback
+    );
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Runtime.sendMessage")]
+    function void sendMessage(
+        string extensionId,
+        any message,
+        [Undefined=Missing,Null=Missing] optional SendMessageOptions options,
+        AnyCallback callback
+    );
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Runtime.sendNativeMessage")]
+    function Promise<any> sendNativeMessage(
+        [Pattern="^\\w+(\\.\\w+)*$"] string application,
+        object message
+    );
+
+    [Tags=Firefox]
+    [Implementation=JavaScript("Runtime.sendNativeMessage")]
+    function Promise<any> sendNativeMessage(
+        [Pattern="^\\w+(\\.\\w+)*$"] string application,
+        any message
+    );
+
+    [Tags=Chrome,Firefox]
+    [Implementation=JavaScript("Runtime.sendNativeMessage")]
+    function void sendNativeMessage(
+        [Pattern="^\\w+(\\.\\w+)*$"] string application,
+        object message,
+        AnyCallback callback
+    );
+
+    function Promise<PlatformInfo> getPlatformInfo();
+
+    [Tags=Chrome]
+    function void getPlatformInfo(PlatformInfoCallback callback);
+
+    function Promise<DirectoryEntry> getPackageDirectoryEntry();
+
+    [Tags=Chrome]
+    function void getPackageDirectoryEntry(DirectoryEntryCallback callback);
+
+    function Promise<sequence<ExtensionContext>> getContexts(ContextFilter filter);
+
+    [Tags=Chrome]
+    function void getContexts(ContextFilter filter, ContextsCallback callback);
+
+    [Tags=Firefox]
+    function Promise<BrowserInfo> getBrowserInfo();
+
+    [Internal]
+    function Promise<any> __sendMessageLocal(
+        any message,
+        optional SendMessageOptions options
+    );
+
+    [Internal]
+    function Promise<any> __sendMessageExternal(
+        string extensionId,
+        any message,
+        optional SendMessageOptions options
+    );
+
+    [Internal]
+    function Promise<void> __sendMessageResponse(
+        string requestId,
+        boolean responded,
+        optional any response,
+        optional string error
+    );
+
+    [Internal]
+    function Promise<any> __sendNativeMessage(
+        string application,
+        any message
+    );
+
+    [Internal]
+    function Promise<void> __portConnect(
+        string socket,
+        optional ConnectInfo connectInfo
+    );
+
+    [Internal]
+    function Promise<void> __portConnectExternal(
+        string socket,
+        string extensionId,
+        optional ConnectInfo connectInfo
+    );
+
+    [Internal]
+    function Promise<void> __portConnectNative(
+        string socket,
+        string application
+    );
+
+    [Internal]
+    function Promise<sequence<RuntimeInternalMessageSender>> __portReplayConnections(
+        boolean external
+    );
+
+    [Internal]
+    function Promise<sequence<any>> __portTakePendingMessages(string socket);
+
+    [Internal]
+    function Promise<void> __portDisconnect(string socket);
+
+    [Internal]
+    function Promise<void> __portPostMessage(string socket, any message);
+
+    event onStartup: VoidListener;
+    event onInstalled: InstalledListener;
+    event onSuspend: VoidListener;
+    event onSuspendCanceled: VoidListener;
+    event onUpdateAvailable: UpdateAvailableListener;
+
+    [Deprecated]
+    event onBrowserUpdateAvailable: VoidListener;
+
+    [Implementation=JavaScript("Runtime.events")]
+    event onConnect: PortListener;
+
+    [Tags=Chrome,Firefox,BackgroundScript,ExtensionPage,OffscreenDocument]
+    [Implementation=JavaScript("Runtime.events")]
+    event onConnectExternal: PortListener;
+
+    [Implementation=JavaScript("Runtime.events")]
+    event onUserScriptConnect: PortListener;
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Runtime.events")]
+    event onConnectNative: PortListener;
+
+    [Implementation=JavaScript("Runtime.events")]
+    event onMessage: MessageListener;
+
+    [Tags=Chrome,Firefox,BackgroundScript,ExtensionPage,OffscreenDocument]
+    [Implementation=JavaScript("Runtime.events")]
+    event onMessageExternal: MessageListener;
+
+    [Implementation=JavaScript("Runtime.events")]
+    event onUserScriptMessage: UserScriptMessageListener;
+    event onRestartRequired: RestartRequiredListener;
+
+    [Tags=Firefox]
+    event onPerformanceWarning: PerformanceWarningListener;
+
+    [Internal]
+    event __onConnect(RuntimeInternalMessageSender sender);
+
+    [Internal]
+    event __onConnectExternal(RuntimeInternalMessageSender sender);
+
+    [Internal]
+    event __onUserScriptConnect(RuntimeInternalMessageSender sender);
+
+    [Internal]
+    event __onMessage(any message, RuntimeInternalMessageSender sender);
+
+    [Internal]
+    event __onMessageExternal(any message, RuntimeInternalMessageSender sender);
+
+    [Internal]
+    event __onUserScriptMessage(any message, RuntimeInternalMessageSender sender);
+
+    [Internal]
+    event __portOnDisconnect(RuntimeInternalMessageSender sender);
+
+    [Internal]
+    event __portOnMessage(RuntimeInternalMessageSender sender, any message);
+};

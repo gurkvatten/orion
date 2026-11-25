@@ -1,0 +1,24 @@
+message AlarmInfo {
+    double when;
+    double delayInMinutes;
+    double periodInMinutes;
+}
+
+message Alarm {
+    string name;
+    double scheduledTime;
+    double periodInMinutes;
+}
+
+service Alarms [global=browser.alarms] {
+    rpc clear () returns (bool) {}
+    rpc clear (string name) returns (bool) {}
+    rpc clearAll () returns (bool) {}
+    rpc create () returns () {}
+    rpc create (AlarmInfo alarmInfo) returns () {}
+    rpc create (string name, AlarmInfo alarmInfo) returns () {}
+    rpc get () returns (Alarm) {}
+    rpc get (string name) returns (Alarm) {}
+    rpc getAll () returns (repeatable Alarm) {}
+    listener onAlarm (Alarm alarm);
+}

@@ -1,0 +1,143 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ProfileDialog: Adw.Dialog {
+  content-width: 350;
+  content-height: 400;
+  name:"new-profile-dialog";
+  title: _("New Profile");
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+     Box {
+      orientation: vertical;
+      valign: start;
+      halign: start;
+      margin-start: 30;
+      margin-top: 10;
+      margin-end:30;
+      margin-bottom:10;
+         
+
+        Grid {
+          hexpand:false;
+          row-spacing:0;
+          Box {
+            layout {
+            row:0;
+            column:0;
+            }
+            margin-top:10;
+            margin-end:0;
+            hexpand:true;
+            Entry profile_name_entry {
+              hexpand:true; 
+              activates-default:false;
+              placeholder-text:"Enter profile name";
+            }
+          }
+               Box {
+                layout {
+                  row:1;
+                  column:0;
+                }
+                orientation: horizontal;
+                spacing: 10;
+                margin-start: 0;
+                margin-top: 20;
+                $ProfilesIconSelectionBox profiles_icon_selection_box{}
+              }
+              Box setting_profile_template{
+                layout {
+                  row:2;
+                  column:0;
+                }
+                margin-top:20;
+                hexpand:true;
+                Label {
+                  halign:start;
+                  valign:center;
+                  hexpand:true;
+                  label:_("Profile template");
+                }
+              }
+              Box {
+               
+                layout {
+                  row:3;
+                  column:0;
+                }
+                margin-start:0;
+                margin-top: 10;
+                halign:start;
+                DropDown setting_profile_template_dropdown {
+                  hexpand:true;
+                  model: StringList {
+                    strings [
+                      _("Clean Profile"),
+                      _("Template"),
+                    ]
+                  };
+                }
+              }
+              Box {
+                layout {
+                  row:4;
+                  column:0;
+                }
+                margin-start:0;
+                margin-top: 20;
+                orientation: vertical;
+                homogeneous: true;
+                halign: start;
+        
+                Label {
+                  label: _("Profile keyboard shortcut (e.g. #F1)");
+                }
+              }
+              Box {
+                layout {
+                row:5;
+                column:0;
+                }
+                margin-top:10;
+                margin-end:50;
+                hexpand:true;
+                $OrionAcceleratorEntry accelerator_entry {
+                  hexpand:true; 
+                  activates-default:false;
+                }
+              }
+               
+              Box {
+                layout {
+                row:6;
+                column:0;
+                }
+                margin-top: 30;
+                hexpand: true;
+                halign: end;
+
+                Button cancel_button {
+                  label: _("Cancel");
+                  clicked => $on_cancel_clicked();
+                }
+
+                Button finish_button {
+                  margin-start: 8;
+                  styles ["suggested-action"]
+                  sensitive:false;
+                } 
+               }
+              }
+           }
+      }   
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, finish_button]
+}
+

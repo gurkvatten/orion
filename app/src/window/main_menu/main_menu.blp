@@ -1,0 +1,1963 @@
+using Gtk 4.0;
+
+menu main_menu {
+  submenu {
+    label: _("Orion");
+    
+    section {
+      item {
+        label: _("About Orion…");
+        action: "win.about-orion";
+      }
+      item {
+        label: _("Get Orion+");
+        action: "win.get-orion-plus";
+      }
+    }
+    
+    section {
+      item {
+        label: _("Popular Extensions…");
+        action: "win.popular-extensions";
+      }
+      item {
+        label: _("Check for Updates…");
+        action: "win.check-for-updates";
+      }
+    }
+    
+    section {
+      item {
+        label: _("Settings…");
+        action: "win.settings";
+      }
+      item {
+        label: _("Settings for This Website…"); // TODO: fill in hostname of the current web page
+        action: "win.settings-for-current-page";
+      }
+    }
+    
+    section {
+      item {
+        label: _("Reset Orion…");
+        action: "win.reset-orion";
+      }
+    }
+    
+    section {
+      submenu services_submenu {
+        label: _("Services");
+
+        // TODO: Dynamic content
+        section {
+          item {
+            label: _("Services Settings…");
+            action: "win.services-settings";
+          }
+        }
+      }
+    }
+
+    section {
+      item {
+        label: _("Hide Orion");
+        action: "win.hide-orion";
+      }
+      // Hide Others and Show All is probably Mac-specific and not relevant for Linux
+      // item {
+      //   label: _("Hide Others");
+      //   action: "win.hide-others";
+      // }
+      // item {
+      //   label: _("Show All");
+      //   action: "win.show-all";
+      // }
+    }
+
+    section {
+      item {
+        label: _("Quit Orion");
+        action: "win.quit-orion";
+      }
+    }
+  }
+
+  submenu {
+    label: _("File");
+    // filled dynamically in code
+  }
+
+  submenu {
+    label: _("Edit");
+
+    section undo_redo_section {
+      item {
+        label: _("Undo");
+        action: "win.undo";
+      }
+      item {
+        label: _("Redo");
+        action: "win.redo";
+      }
+    }
+
+    section {
+      item {
+        label: _("Cut");
+        action: "clipboard.cut";
+      }
+      item {
+        label: _("Copy");
+        action: "clipboard.copy";
+      }
+      item {
+        label: _("Copy Page URL");
+        action: "win.copy-page-url";
+      }
+      item {
+        label: _("Copy URL as Markdown");
+        action: "win.copy-url-as-markdown";
+      }
+      item {
+        label: _("Paste");
+        action: "clipboard.paste";
+      }
+      item {
+        label: _("Paste and Match Style");
+        action: "win.paste-and-match-style";
+      }
+      item {
+        label: _("Delete");
+        action: "selection.delete";
+      }
+      item {
+        label: _("Select All");
+        action: "selection.select-all";
+      }
+    }
+
+    section {
+      submenu {
+        label: _("Find");
+
+        section {
+          item {
+            label: _("Find…");
+            action: "win.find";
+          }
+          item {
+            label: _("Find Next");
+            action: "win.find-next";
+          }
+          item {
+            label: _("Find Previous");
+            action: "win.find-previous";
+          }
+          item {
+            label: _("Use Selection for Find");
+            action: "win.use-selection-for-find";
+          }
+          item {
+            label: _("Jump to Selection");
+            action: "win.jump-to-selection";
+          }
+        }
+      }
+
+      submenu {
+        label: _("Spelling and Grammar");
+
+        section {
+          item {
+            label: _("Show Spelling and Grammar");
+            action: "win.show-spelling-and-grammar";
+          }
+
+          item {
+            label: _("Check Document Now");
+            action: "win.check-document-now";
+          }
+        }
+
+        section {
+          item {
+            label: _("Check Spelling While Typing");
+            action: "win.check-spelling-while-typing";
+            role: "check";
+          }
+          item {
+            label: _("Check Grammar With Spelling");
+            action: "win.check-grammar-with-spelling";
+            role: "check";
+          }
+          item {
+            label: _("Correct Spelling Automatically");
+            action: "win.correct-spelling-automatically";
+            role: "check";
+          }
+        }
+      }
+
+      submenu {
+        label: _("Substitions"); // TODO: this is probably Mac-specific
+        
+        section {
+          item {
+            label: _("Show Substitutions");
+            action: "win.show-substitutions";
+          }
+        }
+
+        section {
+          item {
+            label: _("Smart Copy/Paste");
+            action: "win.smart-copy-paste";
+            role: "check";
+          }
+          item {
+            label: _("Smart Quotes");
+            action: "win.smart-quotes";
+            role: "check";
+          }
+          item {
+            label: _("Smart Dashes");
+            action: "win.smart-dashes";
+            role: "check";
+          }
+          item {
+            label: _("Smart Links");
+            action: "win.smart-links";
+            role: "check";
+          }
+          item {
+            label: _("Data Detectors");
+            action: "win.data-detectors";
+            role: "check";
+          }
+          item {
+            label: _("Text Replacement");
+            action: "win.text-replacement";
+            role: "check";
+          }
+        }
+      }
+
+      submenu {
+        label: _("Transformations"); // TODO: in-place text transformations
+
+        section {
+          item {
+            label: _("Make Upper Case");
+            action: "win.make-upper-case";
+          }
+          item {
+            label: _("Make Lower Case");
+            action: "win.make-lower-case";
+          }
+          item {
+            label: _("Capitalize");
+            action: "win.capitalize";
+          }
+        }
+      }
+
+      submenu {
+        label: _("Speech");
+
+        section {
+          item {
+            label: _("Start Speaking");
+            action: "win.start-speaking";
+          }
+          item {
+            label: _("Stop Speaking");
+            action: "win.stop-speaking";
+          }
+        }
+      }
+    }
+
+    section {
+      submenu {
+        label: _("AutoFill");
+
+        section {
+          item {
+            label: _("Contact…"); // TODO: this is probably implemented as a system dialog
+            action: "win.auotfill-contact";
+          }
+          item {
+            label: _("Passwords…"); // TODO: this action opens a system dialog on Mac (Keychain dialog)
+            action: "win.autofill-passwords";
+          }
+        }
+      }
+
+      item {
+        label: _("Start Dictation…");
+        action: "win.start-dictation";
+      }
+      item {
+        label: _("Emoji & Symbols");
+        action: "win.emoji-and-symbols";
+      }
+    }
+  }
+
+  submenu {
+    label: _("View");
+
+    section {
+      item {
+        label: _("Always Show Toolbar in Full Screen");
+        action: "win.always-show-toolbar-in-fullscreen";
+      }
+      item {
+        label: _("Customize Toolbar…");
+        action: "win.customize-menu";
+      }
+    }
+
+    section {
+      item {
+        label: _("Always Show Tab Bar"); // TODO: what should this do exactly?
+        action: "win.always-show-tab-bar";
+        role: "check";
+      }
+      item {
+        label: _("Show Bookmarks Bar");
+        action: "win.bookmarks-bar-visibility";
+      }
+      item {
+        label: _("Show Status Bar on Link Hover");
+        action: "win.toggle-show-status-bar-on-link-hover";
+      }
+    }
+
+    section {
+      item {
+        label: _("Show Sidebar");
+        action: "win.toggle-sidebar";
+      }
+      item {
+        label: _("Show Windows Sidebar");
+        action: "win.toggle-windows-sidebar";
+      }
+      item {
+        label: _("Show Vertical Tabs Sidebar");
+        action: "win.toggle-vertical-tabs-sidebar";
+      }
+      item {
+        label: _("Show Bookmarks Sidebar");
+        action: "win.toggle-bookmarks-sidebar";
+      }
+      item {
+        label: _("Show Reading List Sidebar");
+        action: "win.toggle-reading-list-sidebar";
+      }
+    }
+
+    section {
+      item {
+        label: _("Show Reader");
+        action: "win.toggle-reader";
+      }
+      item {
+        label: _("Show Tab Overview");
+        action: "overview.open";
+      }
+      item {
+        label: _("Show Downloads");
+        action: "win.show-downloads";
+      }
+    }
+
+    section {
+      item {
+        label: _("Enable Focus Mode");
+        action: "win.toggle-focus-mode"; // stateful action
+      }
+    }
+
+    section {
+      item {
+        label: _("Stop");
+        action: "win.stop";
+      }
+      item {
+        label: _("Reload This Page");
+        action: "win.reload-this-page";
+      }
+      item {
+        label: _("Reload Page Without Cache");
+        action: "win.reload-current-page-bypass-cache";
+      }
+      item {
+        label: _("Reload All Tabs in Window");
+        action: "win.reload-all-tabs-in-window";
+      }
+    }
+
+    section {
+      item {
+        label: _("Show Picture in Picture Video");
+        action: "win.show-picture-in-picture-video";
+      }
+    }
+
+    section {
+      item {
+        label: _("Actual Size");
+        action: "win.reset-zoom";
+      }
+      item {
+        label: _("Zoom In");
+        action: "win.zoom-in";
+      }
+      item {
+        label: _("Zoom Out");
+        action: "win.zoom-out";
+      }
+    }
+
+    section {
+      item {
+        label: _("Enable Full Screen");
+        action: "win.toggle-full-screen";
+      }
+    }
+  }
+
+  submenu { // History
+    label: _("History");
+    // filled dynamically in code
+  }
+
+  submenu {
+    label: _("Bookmarks");
+
+    section {
+      item {
+        label: _("Show Bookmarks…");
+        action: "win.show-bookmarks";
+      }
+      item {
+        label: _("Show Reading List…");
+        action: "win.show-reading-list";
+      }
+    }
+
+    section {
+      item {
+        label: _("Add Bookmark…");
+        action: "win.add-bookmark";
+      }
+      item {
+        label: _("Add Bookmarks for Current Tabs…"); // TODO: fill in actual number of tabs
+        action: "win.add-bookmarks-for-tabs";
+      }
+      item {
+        label: _("Add Bookmark Folder");
+        action: "win.add-bookmark-folder";
+      }
+    }
+
+    section {
+      item {
+        label: _("Add to Reading List");
+        action: "win.add-to-reading-list";
+      }
+    }
+  }
+
+  submenu {
+    label: _("Tools");
+
+    section {
+      item {
+        label: _("Passwords");
+        action: "win.passwords";
+      }
+
+      submenu {
+        label: _("Extensions");
+
+        section {
+          item {
+            label: _("Manage Extensions…");
+            action: "win.manage-extensions";
+          }
+        }
+
+        section {
+          submenu {
+            label: _("Enabled"); // MacOS version does not use submenu but this is just a title of the section
+
+            section {
+              // TODO: insert enabled extensions programmatically
+            }
+          }
+
+          submenu {
+            label: _("Disabled"); // MacOS version does not use submenu but this is just a title of the section
+
+            section {
+              // TODO: insert disabled extensions programmatically
+            }
+          }
+        }
+
+        section {
+          item {
+            label: _("Install from Firefox Store");
+            action: "win.install-from-firefox-store";
+          }
+          item {
+            label: _("Install from Chrome Store");
+            action: "win.install-from-chrome-store";
+          }
+          item {
+            label: _("Install from Disk…");
+            action: "win.install-from-disk";
+          }
+        }
+
+        section {
+          item {
+            label: _("Popular Extensions");
+            action: "win.popular-extensions";
+          }
+        }
+      }
+
+      item {
+        label: _("Notes");
+        action: "win.notes";
+      }
+    }
+
+    section {
+      item {
+        label: _("Low Power Mode…");
+        action: "win.low-power-mode";
+
+      }
+    }
+
+    section {
+      item {
+        label: _("Enable Compatibility Mode");
+        action: "win.enable-compatibility-mode";
+      }
+    }
+
+    section {
+      item {
+        label: _("Install This Site as an App");
+        action: "win.install-site-as-app";
+      }
+      item {
+        label: _("Manage Apps…"); // TODO: this is probably implemented as a system dialog on Mac
+        action: "win.manage-apps";
+      }
+    }
+
+    section {
+      item {
+        label: _("Take Screenshot");
+        action: "win.take-screenshot";
+      }
+      item {
+        label: _("Take Screenshot of Entire Page");
+        action: "win.take-screenshot-entire-page";
+      }
+    }
+
+    section {
+      item {
+        label: _("Edit Text on Page");
+        action: "win.edit-text-on-page";
+      }
+      item {
+        label: _("Allow Copy & Paste");
+        action: "win.allow-copy-and-paste";
+      }
+      item {
+        label: _("Create QR Code for This Page");
+        action: "win.create-qr-code-for-this-page";
+      }
+    }
+
+    section {
+      item {
+        label: _("Show Fonts…");
+        action: "win.show-fonts";
+      }
+      item {
+        label: _("Show Color Picker…");
+        action: "win.show-color-picker";
+      }
+    }
+
+    section {
+      item {
+        label: _("Page Tweaks…");
+        action: "win.page-tweaks";
+      }
+    }
+
+    section {
+      item {
+        label: _("Open Page in Internet Archive");
+        action: "win.open-page-in-internet-archive";
+      }
+      item {
+        label: _("Summarize Page");
+        action: "win.summarize-page";
+      }
+      item {
+        label: _("Translate with Kagi");
+        action: "win.translate-with-kagi";
+      }
+    }
+  }
+
+  submenu {
+    label: _("Develop");
+
+    section {
+      item {
+        label: _("Show Web Inspector");
+        action: "win.toggle-web-inspector";
+      }
+      item {
+        label: _("Inspect Element");
+        action: "win.inspect-element";
+      }
+    }
+
+    section {
+      item {
+        label: _("Show Design Tools");
+        action: "win.show-design-tools";
+      }
+      item {
+        label: _("Show Console Errors Indicator");
+        action: "win.show-console-errors-indicator";
+      }
+    }
+
+    section {
+      item {
+        label: _("Enter Responsive Design Mode");
+        action: "win.enter-responsive-design-mode";
+      }
+    }
+
+    section {
+      item {
+        label: _("Open Console");
+        action: "win.open-console";
+      }
+      item {
+        label: _("Open Network");
+        action: "win.open-network";
+      }
+      item {
+        label: _("Open Storage");
+        action: "win.open-storage";
+      }
+      item {
+        label: _("Open Resources");
+        action: "win.open-resources";
+      }
+      item {
+        label: _("Open Layers");
+        action: "win.open-layers";
+      }
+      item {
+        label: _("Open Graphics");
+        action: "win.open-graphics";
+      }
+    }
+
+    section {
+      item {
+        label: _("Start Performance Profile");
+        action: "win.start-performance-profile";
+      }
+    }
+
+    section {
+      item {
+        label: _("Empty Cookies and Storage for X"); // TODO: fill in current page hostname programmatically
+        action: "win.empty-cookies-and-storage";
+      }
+    }
+
+    section {
+      item {
+        label: _("Edit Cookies");
+        action: "win.edit-cookies";
+      }
+      item {
+        label: _("Empty Cache");
+        action: "win.empty-cache";
+      }
+    }
+
+    section {
+      item {
+        label: _("Disable JavaScript");
+        action: "win.disable-javascript";
+      }
+      item {
+        label: _("Disable Cookies");
+        action: "win.disable-cookies";
+      }
+      item {
+        label: _("Disable Content Blockers");
+        action: "win.disable-content-blockers";
+      }
+      item {
+        label: _("Disable Tracking Prevention");
+        action: "win.disable-tracking-prevention";
+      }
+      item {
+        label: _("Disable Images");
+        action: "win.disable-images";
+      }
+      item {
+        label: _("Disable Web Fonts");
+        action: "win.disable-web-fonts";
+      }
+      item {
+        label: _("Disable Cross-Origin Restrictions");
+        action: "win.disable-cross-origin-restrictions";
+      }
+    }
+
+    section {
+      item {
+        label: _("Allow JavaScript from Apple Events");
+        action: "win.allow-javascript-from-apple-events";
+      }
+      item {
+        label: _("Allow JavaScript from Address Bar");
+        action: "win.allow-javascript-from-address-bar";
+      }
+    }
+
+    section {
+      item {
+        label: _("View Source");
+        action: "win.view-source";
+      }
+      item {
+        label: _("Validate HTML");
+        action: "win.validate-html";
+      }
+    }
+
+    section {
+      submenu {
+        label: _("User Agent");
+
+        section {
+          item {
+            label: _("Automatic");
+            action: "win.user-agent";
+            target: "automatic";
+            role: "radio";
+          }
+          item {
+            label: _("Custom");
+            action: "win.user-agent";
+            target: "custom";
+            role: "radio";
+          }
+          item {
+            label: _("Chrome");
+            action: "win.user-agent";
+            target: "chrome";
+            role: "radio";
+          }
+          item {
+            label: _("Firefox");
+            action: "win.user-agent";
+            target: "firefox";
+            role: "radio";
+          }
+          item {
+            label: _("Safari");
+            action: "win.user-agent";
+            target: "safari";
+            role: "radio";
+          }
+          item {
+            label: _("Safari iPhone");
+            action: "win.user-agent";
+            target: "safari_iphone";
+            role: "radio";
+          }
+          item {
+            label: _("Safari iPad");
+            action: "win.user-agent";
+            target: "safari_ipad";
+            role: "radio";
+          }
+          item {
+            label: _("Edge");
+            action: "win.user-agent";
+            target: "edge";
+            role: "radio";
+          }
+        }
+      }
+    }
+    
+    // TODO: add check marks "✓"
+    section {
+      submenu {
+        label: _("Experimental Features");
+
+        section {
+          item {
+            label: _("Use UI-Side Compositing");
+            action: "win.use-ui-side-compositing";
+          }
+          submenu {
+            label: _("Animation");
+
+            section {
+              item {
+                label: _("Image Animation Control");
+                action: "win.image-animation-control";
+              }
+              item {
+                label: _("Scroll-driven Animations");
+                action: "win.scroll-driven-animations";
+              }
+              item {
+                label: _("View Transition Classes");
+                action: "win.view-transition-classes";
+              }
+              item {
+                label: _("View Transition Types");
+                action: "win.view-transition-types";
+              }
+              item {
+                label: _("View Transitions");
+                action: "win.view-transitions";
+              }
+              item {
+                label: _("Web Animations custom effects");
+                action: "win.web-animations-custom-effects";
+              }
+              item {
+                label: _("Web Animations custom frame rate");
+                action: "win.web-animations-custom-frame-rate";
+              }
+            }
+          }
+
+          submenu {
+            label: _("CSS");
+
+            section {
+              item {
+                label: _("::grammar-error and ::spelling-error pseudo-elements");
+                action: "win.css-grammar-and-spelling-error-pseudo-elements";
+              }
+              item {
+                label: _("::target-text pseudo-element");
+                action: "win.css-target-text-pseudo-element";
+              }
+              item {
+                label: _("::thumb and ::track pseudo-elements");
+                action: "win.css-thumb-and-track-pseudo-elements";
+              }
+              item {
+                label: _("@page CSS at-rule margin descriptors");
+                action: "win.css-at-page-margin-descriptors";
+              }
+              item {
+                label: _("CSS 3D Transform Interoperability for backface-visibility");
+                action: "win.css-3d-transform-interoperability-for-backface-visibility";
+              }
+              item {
+                label: _("CSS @counter-style <image> symbols");
+                action: "win.css-at-counter-style-image-symbols";
+              }
+              item {
+                label: _("CSS @counter-style");
+                action: "win.css-at-counter-style";
+              }
+              item {
+                label: _("CSS @font-face size-adjust");
+                action: "win.css-at-font-face-size-adjust";
+              }
+              item {
+                label: _("CSS @starting-style rule");
+                action: "win.css-at-starting-style-rule";
+              }
+              item {
+                label: _("CSS Accent Color");
+                action: "win.css-accent-color";
+              }
+              item {
+                label: _("CSS Anchor Positioning");
+                action: "win.css-anchor-positioning";
+              }
+              item {
+                label: _("CSS Content Visibility");
+                action: "win.css-content-visibility";
+              }
+              item {
+                label: _("CSS Input Security");
+                action: "win.css-input-security";
+              }
+              item {
+                label: _("CSS Masonry Layout");
+                action: "win.css-masonry-layout";
+              }
+              item {
+                label: _("CSS Motion Path");
+                action: "win.css-motion-path";
+              }
+              item {
+                label: _("CSS Nesting");
+                action: "win.css-nesting";
+              }
+              item {
+                label: _("CSS Overscroll Behavior");
+                action: "win.css-overscroll-behavior";
+              }
+              item {
+                label: _("CSS Painting API");
+                action: "win.css-painting-api";
+              }
+              item {
+                label: _("CSS Rhythmic Sizing");
+                action: "win.css-rhythmic-sizing";
+              }
+              item {
+                label: _("CSS Scoping (@scope)");
+                action: "win.css-scoping";
+              }
+              item {
+                label: _("CSS Scroll Anchoring");
+                action: "win.css-scroll-anchoring";
+              }
+              item {
+                label: _("CSS Typed OM: Color Support");
+                action: "win.css-typed-om-color-support";
+              }
+              item {
+                label: _("CSS Unprefixed Backdrop Filter");
+                action: "win.css-unprefixed-backdrop-filter";
+              }
+              item {
+                label: _("CSS appearance: base");
+                action: "win.css-appearance-base";
+              }
+              item {
+                label: _("CSS background-clip: border-area");
+                action: "win.css-background-clip-border-area";
+              }
+              item {
+                label: _("CSS color-layers()");
+                action: "win.css-color-layers";
+              }
+              item {
+                label: _("CSS contrast-color()");
+                action: "win.css-contrast-color";
+              }
+              item {
+                label: _("CSS d property");
+                action: "win.css-d-property";
+              }
+              item {
+                label: _("CSS field-sizing property");
+                action: "win.css-field-sizing-property";
+              }
+              item {
+                label: _("CSS font-variant-emoji property");
+                action: "win.css-font-variant-emoji-property";
+              }
+              item {
+                label: _("CSS light-dark()");
+                action: "win.css-light-dark";
+              }
+              item {
+                label: _("CSS line-clamp");
+                action: "win.css-line-clamp";
+              }
+              item {
+                label: _("CSS margin-trim property");
+                action: "win.css-margin-trim-property";
+              }
+              item {
+                label: _("CSS ruby-align property");
+                action: "win.css-ruby-align-property";
+              }
+              item {
+                label: _("CSS ruby-overhang property");
+                action: "win.css-ruby-overhang-property";
+              }
+              item {
+                label: _("CSS scrollbar-color property");
+                action: "win.css-scrollbar-color-property";
+              }
+              item {
+                label: _("CSS scrollbar-gutter property");
+                action: "win.css-scrollbar-gutter-property";
+              }
+              item {
+                label: _("CSS scrollbar-width property");
+                action: "win.css-scrollbar-width-property";
+              }
+              item {
+                label: _("CSS shape() function");
+                action: "win.css-shape-function";
+              }
+              item {
+                label: _("CSS style queries");
+                action: "win.css-style-queries";
+              }
+              item {
+                label: _("CSS text-autospace property");
+                action: "win.css-text-autospace-property";
+              }
+              item {
+                label: _("CSS text-box-trim property");
+                action: "win.css-text-box-trim-property";
+              }
+              item {
+                label: _("CSS text-group-align property");
+                action: "win.css-text-group-align-property";
+              }
+              item {
+                label: _("CSS text-justify property");
+                action: "win.css-text-justify-property";
+              }
+              item {
+                label: _("CSS text-spacing property");
+                action: "win.css-text-spacing-property";
+              }
+              item {
+                label: _("CSS text-underline-position: left right");
+                action: "win.css-text-underline-position-left-right";
+              }
+              item {
+                label: _("CSS text-wrap-style property");
+                action: "win.css-text-wrap-style-property";
+              }
+              item {
+                label: _("CSS text-wrap: pretty");
+                action: "win.css-text-wrap-pretty";
+              }
+              item {
+                label: _("CSSOM View Scrolling API");
+                action: "win.cssom-view-scrolling-api";
+              }
+              item {
+                label: _("CSSOM View Smooth Scrolling");
+                action: "win.cssom-view-smooth-scrolling";
+              }
+              item {
+                label: _("Cross document view-transitions");
+                action: "win.cross-document-view-transitions";
+              }
+              item {
+                label: _("Highlight API");
+                action: "win.highlight-api";
+              }
+              item {
+                label: _("Overlapping backing stores");
+                action: "win.overlapping-backing-stores";
+              }
+              item {
+                label: _("Sideways writing modes");
+                action: "win.sideways-writing-modes";
+              }
+              item {
+                label: _("align-content on blocks");
+                action: "win.align-content-on-blocks";
+              }
+              item {
+                label: _("word-break: auto-phrase enabled");
+                action: "win.word-break-auto-phrase-enabled";
+              }
+            }
+          }
+
+          submenu {
+            label: _("DOM");
+
+            section {
+              item {
+                label: _("<select> showPicker() method");
+                action: "win.dom-select-showpicker-method";
+              }
+              item {
+                label: _("AbortSignal.any() API");
+                action: "win.dom-abortsignal-any-api";
+              }
+              item {
+                label: _("AccessHandle API");
+                action: "win.dom-accesshandle-api";
+              }
+              item {
+                label: _("Allow WebGL in Web Workers");
+                action: "win.dom-allow-webgl-in-web-workers";
+              }
+              item {
+                label: _("BroadcastChannel API");
+                action: "win.dom-broadcastchannel-api";
+              }
+              item {
+                label: _("BroadcastChannel Origin Partitioning");
+                action: "win.dom-broadcastchannel-origin-partitioning";
+              }
+              item {
+                label: _("Canvas Color Spaces");
+                action: "win.dom-canvas-color-spaces";
+              }
+              item {
+                label: _("Canvas Filters");
+                action: "win.dom-canvas-filters";
+              }
+              item {
+                label: _("Canvas Layers");
+                action: "win.dom-canvas-layers";
+              }
+              item {
+                label: _("Compression Stream API");
+                action: "win.dom-compression-stream-api";
+              }
+              item {
+                label: _("Contact Picker API");
+                action: "win.dom-contact-picker-api";
+              }
+              item {
+                label: _("Cookie Store API CookieStoreManager");
+                action: "win.dom-cookie-store-api-cookiestoremanager";
+              }
+              item {
+                label: _("Cookie Store API Extended Attributes");
+                action: "win.dom-cookie-store-api-extended-attributes";
+              }
+              item {
+                label: _("Cookie Store API");
+                action: "win.dom-cookie-store-api";
+              }
+              item {
+                label: _("CustomStateSet and :state() pseudo class");
+                action: "win.dom-customstateset-and-state-pseudo-class";
+              }
+              item {
+                label: _("Declarative Shadow Roots Parser APIs");
+                action: "win.dom-declarative-shadow-roots-parser-apis";
+              }
+              item {
+                label: _("Defer async scripts until DOMContentLoaded or first-paint");
+                action: "win.dom-defer-async-scripts-until-domcontentloaded-or-first-paint";
+              }
+              item {
+                label: _("Deprecate AES-CFB Web Crypto");
+                action: "win.dom-deprecate-aes-cfb-web-crypto";
+              }
+              item {
+                label: _("Deprecate RSAES-PKCS1-v1_5 Web Crypto");
+                action: "win.dom-deprecate-rsases-pkcs1-v1-5-web-crypto";
+              }
+              item {
+                label: _("Deprecation Reporting");
+                action: "win.dom-deprecation-reporting";
+              }
+              item {
+                label: _("Detect UA visual transitions");
+                action: "win.dom-detect-ua-visual-transitions";
+              }
+              item {
+                label: _("Digital Credentials API");
+                action: "win.dom-digital-credentials-api";
+              }
+              item {
+                label: _("Enable Canvas fingerprinting-related quirk");
+                action: "win.dom-enable-canvas-fingerprinting-related-quirk";
+              }
+              item {
+                label: _("Enable `auxclick` event");
+                action: "win.dom-enable-auxclick-event";
+              }
+              item {
+                label: _("File System Access API");
+                action: "win.dom-file-system-access-api";
+              }
+              item {
+                label: _("Fullscreen API based Keyboard Lock");
+                action: "win.dom-fullscreen-api-based-keyboard-lock";
+              }
+              item {
+                label: _("GPU Process: DOM Rendering");
+                action: "win.dom-gpu-process-dom-rendering";
+              }
+              item {
+                label: _("Gamepad trigger vibration support");
+                action: "win.dom-gamepad-trigger-vibration-support";
+              }
+              item {
+                label: _("Gamepad.vibrationActuator support");
+                action: "win.dom-gamepad-vibrationactuator-support";
+              }
+              item {
+                label: _("Legacy showModalDialog() API");
+                action: "win.dom-legacy-showmodaldialog-api";
+              }
+              item {
+                label: _("Live Ranges in Selection");
+                action: "win.dom-live-ranges-in-selection";
+              }
+              item {
+                label: _("Load Web Archive with ephemeral storage");
+                action: "win.dom-load-web-archive-with-ephemeral-storage";
+              }
+              item {
+                label: _("Login Status API");
+                action: "win.dom-login-status-api";
+              }
+              item {
+                label: _("Navigation API");
+                action: "win.dom-navigation-api";
+              }
+              item {
+                label: _("Notifications");
+                action: "win.dom-notifications";
+              }
+              item {
+                label: _("Observable API");
+                action: "win.dom-observable-api";
+              }
+              item {
+                label: _("OffscreenCanvas in Workers");
+                action: "win.dom-offscreencanvas-in-workers";
+              }
+              item {
+                label: _("OffscreenCanvas");
+                action: "win.dom-offscreencanvas";
+              }
+              item {
+                label: _("OffscreenCanvasRenderingContext2D's deprecated commit() method");
+                action: "win.dom-offscreencanvasrenderingcontext2d-deprecated-commit-method";
+              }
+              item {
+                label: _("Permissions API");
+                action: "win.dom-permissions-api";
+              }
+              item {
+                label: _("Pointer Events getCoalescedEvents API");
+                action: "win.dom-pointer-events-getcoalescedevents-api";
+              }
+              item {
+                label: _("Pointer Events getPredicatedEvents API");
+                action: "win.dom-pointer-events-getpredicatedevents-api";
+              }
+              item {
+                label: _("Pointer Lock Options");
+                action: "win.dom-pointer-lock-options";
+              }
+              item {
+                label: _("Prefer Page Rendering Updates near 120fps");
+                action: "win.dom-prefer-page-rendering-updates-near-120fps";
+              }
+              item {
+                label: _("Prefer Page Rendering Updates near 60fps");
+                action: "win.dom-prefer-page-rendering-updates-near-60fps";
+              }
+              item {
+                label: _("Push API");
+                action: "win.dom-push-api";
+              }
+              item {
+                label: _("ReadableByteStream");
+                action: "win.dom-readablebytestream";
+              }
+              item {
+                label: _("Reporting API");
+                action: "win.dom-reporting-api";
+              }
+              item {
+                label: _("Screen Orientation API (Locking / Unlocking)");
+                action: "win.dom-screen-orientation-api-locking-unlocking";
+              }
+              item {
+                label: _("Screen Orientation API");
+                action: "win.dom-screen-orientation-api";
+              }
+              item {
+                label: _("Screen Wake Lock API");
+                action: "win.dom-screen-wake-lock-api";
+              }
+              item {
+                label: _("Scroll To Text Fragment Feature Detection");
+                action: "win.dom-scroll-to-text-fragment-feature-detection";
+              }
+              item {
+                label: _("Scroll To Text Fragment Generation");
+                action: "win.dom-scroll-to-text-fragment-generation";
+              }
+              item {
+                label: _("Scroll To Text Fragment");
+                action: "win.dom-scroll-to-text-fragment";
+              }
+              item {
+                label: _("Selection API for shadow DOM");
+                action: "win.dom-selection-api-for-shadow-dom";
+              }
+              item {
+                label: _("Service Workers");
+                action: "win.dom-service-workers";
+              }
+              item {
+                label: _("SharedWorker");
+                action: "win.dom-sharedworker";
+              }
+              item {
+                label: _("Storage API Estimate");
+                action: "win.dom-storage-api-estimate";
+              }
+              item {
+                label: _("Storage API");
+                action: "win.dom-storage-api";
+              }
+              item {
+                label: _("Trusted Types");
+                action: "win.dom-trusted-types";
+              }
+              item {
+                label: _("User Activation API");
+                action: "win.dom-user-activation-api";
+              }
+              item {
+                label: _("Web Crypto Safe Curves");
+                action: "win.dom-web-crypto-safe-curves";
+              }
+              item {
+                label: _("Web Crypto X25519 algorithm");
+                action: "win.dom-web-crypto-x25519-algorithm";
+              }
+              item {
+                label: _("Web Locks API");
+                action: "win.dom-web-locks-api";
+              }
+              item {
+                label: _("Web Locks API Level 2");
+                action: "win.dom-web-locks-api-level-2";
+              }
+              item {
+                label: _("WebGL Draft Extesions");
+                action: "win.dom-webgl-draft-extensions";
+              }
+              item {
+                label: _("WebGL Timer Queries");
+                action: "win.dom-webgl-timer-queries";
+              }
+              item {
+                label: _("WebGPU");
+                action: "win.dom-webgpu";
+              }
+              item {
+                label: _("Writing Suggestions");
+                action: "win.dom-writing-suggestions";
+              }
+              item {
+                label: _("altitudeAngle PointerEvent Property");
+                action: "win.dom-altitudeangle-pointerevent-property";
+              }
+              item {
+                label: _("azimuthAngle PointerEvent Property");
+                action: "win.dom-azimuthangle-pointerevent-property";
+              }
+              item {
+                label: _("element.checkVisibility() API");
+                action: "win.dom-element-checkvisibility-api";
+              }
+              item {
+                label: _("requestIdleCallback");
+                action: "win.dom-requestidlecallback";
+              }
+            }
+          }
+
+          submenu {
+            label: _("HTML");
+
+            section {
+              item {
+                label: _("Enable PDF.js viewer");
+                action: "win.html-enable-pdfjs-viewer";
+              }
+              item {
+                label: _("HTML <details name> attribute");
+                action: "win.html-details-name-attribute";
+              }
+              item {
+                label: _("HTML <model> element");
+                action: "win.html-model-element";
+              }
+              item {
+                label: _("HTML <model> elements for stand-alone document");
+                action: "win.html-model-elements-for-stand-alone-document";
+              }
+              item {
+                label: _("HTML command & commandfor attributes");
+                action: "win.html-command-and-commandfor-attributes";
+              }
+              item {
+                label: _("HTML popover attribute");
+                action: "win.html-popover-attribute";
+              }
+              item {
+                label: _("HTML switch control");
+                action: "win.html-switch-control";
+              }
+              item {
+                label: _("Lazy iframe loading");
+                action: "win.html-lazy-iframe-loading";
+              }
+              item {
+                label: _("Lazy image loading");
+                action: "win.html-lazy-image-loading";
+              }
+              item {
+                label: _("Send mouse events to disabled form controls");
+                action: "win.html-send-mouse-events-to-disabled-form-controls";
+              }
+              item {
+                label: _("Vertical form control support");
+                action: "win.html-vertical-form-control-support";
+              }
+            }
+          }
+
+          submenu {
+            label: _("JavaScript");
+
+            section {
+              item {
+                label: _("WebAssembly ES module integration support");
+                action: "win.javascript-webassembly-es-module-integration-support";
+              }
+            }
+          }
+
+          submenu {
+            label: _("Media");
+
+            section {
+              item {
+                label: _("Allow per media element speaker device selection");
+                action: "win.media-allow-per-media-element-speaker-device-selection";
+              }
+              item {
+                label: _("Allow speaker device selection");
+                action: "win.media-allow-speaker-device-selection";
+              }
+              item {
+                label: _("Alternate WebM Player");
+                action: "win.media-alternate-webm-player";
+              }
+              item {
+                label: _("Audio descriptions for video - Extended");
+                action: "win.media-audio-descriptions-for-video-extended";
+              }
+              item {
+                label: _("Audio descriptions for video - Standard");
+                action: "win.media-audio-descriptions-for-video-standard";
+              }
+              item {
+                label: _("AudioSession API");
+                action: "win.media-audiosession-api";
+              }
+              item {
+                label: _("AudioSession full API");
+                action: "win.media-audiosession-full-api";
+              }
+              item {
+                label: _("Detachable Media Source");
+                action: "win.media-detachable-media-source";
+              }
+              item {
+                label: _("Experimental MediaSession coordinator API");
+                action: "win.media-experimental-mediasession-coordinator-api";
+              }
+              item {
+                label: _("Experimental MediaSession playlist API");
+                action: "win.media-experimental-mediasession-playlist-api";
+              }
+              item {
+                label: _("GPU Process: Screen and Window capture");
+                action: "win.media-gpu-process-screen-and-window-capture";
+              }
+              item {
+                label: _("GraphicsContext Filter Rendering");
+                action: "win.media-graphicscontext-filter-rendering";
+              }
+              item {
+                label: _("Image Capture API");
+                action: "win.media-image-capture-api";
+              }
+              item {
+                label: _("Managed Media Source API");
+                action: "win.media-managed-media-source-api";
+              }
+              item {
+                label: _("Managed Media Source Requires AirPlay source");
+                action: "win.media-managed-media-source-requires-airplay-source";
+              }
+              item {
+                label: _("Media Capabilities Extensions");
+                action: "win.media-media-capabilities-extensions";
+              }
+              item {
+                label: _("Media Source API");
+                action: "win.media-media-source-api";
+              }
+              item {
+                label: _("MediaRecorder");
+                action: "win.media-mediarecorder";
+              }
+              item {
+                label: _("MediaSession capture related API");
+                action: "win.media-mediasession-capture-related-api";
+              }
+              item {
+                label: _("MediaSource in a Worker");
+                action: "win.media-mediasource-in-a-worker";
+              }
+              item {
+                label: _("MediaStreamTrack Processing");
+                action: "win.media-mediastreamtrack-processing";
+              }
+              item {
+                label: _("RequestVideoFrameCallback");
+                action: "win.media-requestvideoframecallback";
+              }
+              item {
+                label: _("ScreenCapture");
+                action: "win.media-screencapture";
+              }
+              item {
+                label: _("Shape Detection API");
+                action: "win.media-shape-detection-api";
+              }
+              item {
+                label: _("Show Media Stats");
+                action: "win.media-show-media-stats";
+              }
+              item {
+                label: _("Track Configuration API");
+                action: "win.media-track-configuration-api";
+              }
+              item {
+                label: _("WebCodecs AV1 codec");
+                action: "win.media-webcodecs-av1-codec";
+              }
+              item {
+                label: _("WebCodecs HVEC codec");
+                action: "win.media-webcodecs-hevc-codec";
+              }
+              item {
+                label: _("WebCodecs Video API");
+                action: "win.media-webcodecs-video-api";
+              }
+              item {
+                label: _("WebRTC AV1 codec");
+                action: "win.media-webrtc-av1-codec";
+              }
+              item {
+                label: _("WebRTC Encoded Transform API");
+                action: "win.media-webrtc-encoded-transform-api";
+              }
+              item {
+                label: _("WebRTC HEVC codec");
+                action: "win.media-webrtc-hevc-codec";
+              }
+              item {
+                label: _("WebRTC SFrame Transform API");
+                action: "win.media-webrtc-sframe-transform-api";
+              }
+              item {
+                label: _("WebRTC VP9 profile 2 codec");
+                action: "win.media-webrtc-vp9-profile-2-codec";
+              }
+            }
+          }
+
+          submenu {
+            label: _("Networking");
+
+            section {
+              item {
+                label: _("Clear-Site-Data HTTP Header");
+                action: "win.networking-clear-site-data-http-header";
+              }
+              item {
+                label: _("Enable background-fetch API");
+                action: "win.networking-enable-background-fetch-api";
+              }
+              item {
+                label: _("Enable experimental network loader");
+                action: "win.networking-enable-experimental-network-loader";
+              }
+              item {
+                label: _("FTP support enabled");
+                action: "win.networking-ftp-support-enabled";
+              }
+              item {
+                label: _("Fetch Priority");
+                action: "win.networking-fetch-priority";
+              }
+              item {
+                label: _("Filter Link Decoration");
+                action: "win.networking-filter-link-decoration";
+              }
+              item {
+                label: _("Link preload responsive images");
+                action: "win.networking-link-preload-responsive-images";
+              }
+              item {
+                label: _("Link rel=modulepreload");
+                action: "win.networking-link-rel-modulepreload";
+              }
+              item {
+                label: _("Link rel=preconnect via HTTP early hints");
+                action: "win.networking-link-rel-preconnect-via-http-early-hints";
+              }
+              item {
+                label: _("LinkPrefetch");
+                action: "win.networking-linkprefetch";
+              }
+              item {
+                label: _("Service Worker Navigation Preload");
+                action: "win.networking-service-worker-navigation-preload";
+              }
+              item {
+                label: _("Swap Processes on Cross-Site Navigation");
+                action: "win.networking-swap-processes-on-cross-site-navigation";
+              }
+              item {
+                label: _("Upgrade upgradable mixed content");
+                action: "win.networking-upgrade-upgradable-mixed-content";
+              }
+              item {
+                label: _("WebTransport");
+                action: "win.networking-webtransport";
+              }
+            }
+          }
+
+          submenu {
+            label: _("Privacy");
+
+            section {
+              item {
+                label: _("Disable Full 3rd-Party Cookie Blocking (ITP)");
+                action: "win.privacy-disable-full-3rd-party-cookie-blocking-itp";
+              }
+              item {
+                label: _("Disable Removal of Non-Cookie Data After 7 Days of No User Interation (ITP)");
+                action: "win.privacy-disable-removal-of-non-cookie-data-after-7-days-of-no-user-interation-itp";
+              }
+              item {
+                label: _("ITP Debug Mode");
+                action: "win.privacy-itp-debug-mode";
+              }
+              item {
+                label: _("Private Click Measurement Debug Mode");
+                action: "win.privacy-private-click-measurement-debug-mode";
+              }
+              item {
+                label: _("Private Click Measurement Fruad Prevention");
+                action: "win.privacy-private-click-measurement-fraud-prevention";
+              }
+              item {
+                label: _("Private Token usage by third party");
+                action: "win.privacy-private-token-usage-by-third-party";
+              }
+              item {
+                label: _("[ITP Live-on] 1 Hour Timeout For Non-Cookie Data Removal");
+                action: "win.privacy-itp-live-on-1-hour-timeout-for-non-cookie-data-removal";
+              }
+              item {
+                label: _("[ITP Repro] 30 Second Timeout For Non-Cookie Data Removal");
+                action: "win.privacy-itp-repro-30-second-timeout-for-non-cookie-data-removal";
+              }
+            }
+          }
+
+          submenu {
+            label: _("Security");
+
+            section {
+              item {
+                label: _("Allow universal access from file: URLs");
+                action: "win.security-allow-universal-access-from-file-urls";
+              }
+              item {
+                label: _("Cross-Origin-Embedder-Policy (COEP) header");
+                action: "win.security-cross-origin-embedder-policy-coep-header";
+              }
+              item {
+                label: _("Cross-Origin-Opener-Policy (COOP) header");
+                action: "win.security-cross-origin-opener-policy-coop-header";
+              }
+              item {
+                label: _("Disallow sync XHR during page dismissal");
+                action: "win.security-disallow-sync-xhr-during-page-dismissal";
+              }
+              item {
+                label: _("Enforce blob backed file access valid for web process");
+                action: "win.security-enforce-blob-backed-file-access-valid-for-web-process";
+              }
+              item {
+                label: _("HTTPS-by-default (HTTPS-First)");
+                action: "win.security-https-by-default-https-first";
+              }
+              item {
+                label: _("Lockdown Mode Safe Fonts");
+                action: "win.security-lockdown-mode-safe-fonts";
+              }
+              item {
+                label: _("Partition Blob URL Registry");
+                action: "win.security-partition-blob-url-registry";
+              }
+              item {
+                label: _("Upgrade IP addresses and localhost in mixed content");
+                action: "win.security-upgrade-ip-addresses-and-localhost-in-mixed-content";
+              }
+              item {
+                label: _("Verify window.open user gesture");
+                action: "win.security-verify-window-open-user-gesture";
+              }
+            }
+          }
+
+          section {
+              item {
+                label: _("Reset All to Defaults");
+                action: "win.reset-all-experimental-features-to-defaults";
+              }
+          }
+        }
+      }
+    }
+
+    section {
+      label: _("Open Page With");
+
+      section {
+        // TODO: fill in installed browsers programmatically
+      }
+    }
+  }
+
+  submenu {
+    label: _("Window");
+
+    section {
+      item {
+        label: _("Minimize");
+        action: "win.minimize";
+      }
+      item {
+        label: _("Zoom");
+        action: "win.zoom";
+      }
+      item {
+        label: _("Fill");
+        action: "win.fill";
+      }
+      item {
+        label: _("Center");
+        action: "win.center";
+      }
+    }
+
+    section {
+      submenu {
+        label: _("Move & Resize");
+
+        section {
+          submenu {
+            label: _("Halves");
+
+            section {
+              item {
+                label: _("Left");
+                action: "win.move-left";
+              }
+              item {
+                label: _("Right");
+                action: "win.move-right";
+              }
+              item {
+                label: _("Top");
+                action: "win.move-top";
+              }
+              item {
+                label: _("Bottom");
+                action: "win.move-bottom";
+              }
+            }
+          }
+
+          submenu {
+            label: _("Quarters");
+
+            section {
+              item {
+                label: _("Top Left");
+                action: "win.move-top-left";
+              }
+              item {
+                label: _("Top Right");
+                action: "win.move-top-right";
+              }
+              item {
+                label: _("Bottom Left");
+                action: "win.move-bottom-left";
+              }
+              item {
+                label: _("Bottom Right");
+                action: "win.move-bottom-right";
+              }
+            }
+          }
+
+          submenu {
+            label: _("Arrange");
+
+            section {
+              item {
+                label: _("Left & Right");
+                action: "win.move-left-and-right";
+              }
+              item {
+                label: _("Right & Left");
+                action: "win.move-right-and-left";
+              }
+              item {
+                label: _("Top & Bottom");
+                action: "win.move-top-and-bottom";
+              }
+              item {
+                label: _("Bottom & Top");
+                action: "win.move-bottom-and-top";
+              }
+              item {
+                label: _("Quarters");
+                action: "win.move-quarters";
+              }
+            }
+          }
+
+          section {
+            item {
+              label: _("Return to Previous Size");
+              action: "win.return-to-previous-size";
+            }
+          }
+        }
+      }
+
+      submenu {
+        label: _("Full Screen Tile");
+
+        section {
+          item {
+            label: _("Left of Screen");
+            action: "win.full-screen-tile-left";
+          }
+          item {
+            label: _("Right of Screen");
+            action: "win.full-screen-tile-right";
+          }
+        }
+      }
+    }
+
+    // Mac specific - we do not need this on Linux
+    // section {
+    //   item {
+    //     label: _("Remove Window from Set");
+    //     action: "win.remove-window-from-set";
+    //   }
+    // }
+
+    section {
+      // this section that begins with "Show Previous Tab" action (and also
+      // contains the "Mute Tab" / "Mute Other Tabs" items) is
+      // dynamically created in main_menu.cpp
+    }
+
+    section {
+      item {
+        label: _("Bring All to Front");
+        action: "win.bring-all-to-front";
+      }
+    }
+
+    section {
+      item {
+        label: _("Float on Top");
+        action: "win.float-on-top";
+      }
+    }
+
+    section {
+      // TODO: fill in actual windows programmatically
+    }
+  }
+
+  submenu {
+    label: _("Help");
+
+    section {
+      // TODO: adapt Search functionality
+
+      item {
+        label: _("Orion Help");
+        action: "win.open-help-page";
+      }
+      item {
+        label: _("Troubleshoot Website Issues");
+        action: "win.open-troubleshoot-website-issues-page";
+      }
+    }
+
+    section {
+      item {
+        label: _("Orion Feedback");
+        action: "win.open-feedback-page";
+      }
+      item {
+        label: _("Orion Discord");
+        action: "win.open-discord-page";
+      }
+      item {
+        label: _("Copy Debug Info to Clipboard");
+        action: "win.copy-debug-info-to-clipboard";
+      }
+    }
+
+    section {
+      item {
+        label: _("Release Notes");
+        action: "win.open-release-notes-page";
+      }
+    }
+  }
+}

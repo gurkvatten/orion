@@ -1,0 +1,104 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+        "name": "Remote LLDB DAP",
+        // You need to install "LLDB DAP" (llvm-vs-code-extensions.lldb-dap)
+        // and/or "CodeLLDB" (vadimcn.vscode-lldb) extensions
+        "type": "lldb-dap",
+        "request": "launch",
+        "program": "${command:cmake.launchTargetPath}",
+        "debugAdapterEnv": {
+          // This should avoid hangs when trying to contact https://debuginfod.ubuntu.com which can result in timeout
+          "DEBUGINFOD_URLS": ""
+        },
+        "args": ["--debug"],
+        "cwd": "${workspaceFolder}",
+        "stopOnEntry": false,
+        "initCommands": [
+          // Let the SIGUSR1 pass - this is important, otherwise, LLDB would block the signal completely and WebKit
+          // would block the main thread on the first garbage collector event indefinitely.
+          "process handle SIGUSR1 --pass true --stop false --notify false",
+        ],
+        "env": {
+          "XDG_CURRENT_DESKTOP": "ubuntu",
+          // NOTE: You have to start the app by F5 (ie., Run -> Start Debugging) for this to work.
+          // If the app is started by Shift+F5, then environment variables defined here in launch.json
+          // are completely ignored.
+          //NOTE: intentionally avoiding fatal warnings as some processes in the gtk layout management
+          //(widget measurement, size allocation of wrapping labels for example) spams these with no fix I know of
+          "G_DEBUG": "fatal_criticals", // "fatal_warnings"
+          //"GDK_DEBUG": "force-offload,offload", //enable this to check whether the graphics offload on tab content works correctly
+
+          // These environment variables force WebKitGTK to use software rendering reducing warning spam
+          // in console output.
+          "LIBGL_ALWAYS_SOFTWARE": "1",
+          "MESA_LOADER_DRIVER_OVERRIDE": "softpipe",
+          "LIBEGL_ALWAYS_SOFTWARE": "1",
+          "LIBEGL_DRIVER": "swiftshader",
+        }
+    },
+    {
+        "name": "Remote LLDB",
+        // You need to install "CodeLLDB" (vadimcn.vscode-lldb) extension
+        "type": "lldb",
+        "request": "launch",
+        "program": "${command:cmake.launchTargetPath}",
+        "args": ["--debug"],
+        "cwd": "${workspaceFolder}",
+        "stopOnEntry": false,
+        "initCommands": [
+          // Let the SIGUSR1 pass - this is important, otherwise, LLDB would block the signal completely and WebKit
+          // would block the main thread on the first garbage collector event indefinitely.
+          "process handle SIGUSR1 --pass true --stop false --notify false",
+        ],
+        "env": {
+          "XDG_CURRENT_DESKTOP": "ubuntu",
+          // NOTE: You have to start the app by F5 (ie., Run -> Start Debugging) for this to work.
+          // If the app is started by Shift+F5, then environment variables defined here in launch.json
+          // are completely ignored.
+          //NOTE: intentionally avoiding fatal warnings as some processes in the gtk layout management
+          //(widget measurement, size allocation of wrapping labels for example) spams these with no fix I know of
+          "G_DEBUG": "fatal_criticals", // "fatal_warnings"
+
+          // These environment variables force WebKitGTK to use software rendering reducing warning spam
+          // in console output.
+          "LIBGL_ALWAYS_SOFTWARE": "1",
+          "MESA_LOADER_DRIVER_OVERRIDE": "softpipe",
+          "LIBEGL_ALWAYS_SOFTWARE": "1",
+          "LIBEGL_DRIVER": "swiftshader",
+        }
+    },
+    {
+      "name": "Flatpak",
+      "type": "lldb", // You need to install "CodeLLDB" extension: vadimcn.vscode-lldb
+      "request": "launch",
+      "program": "/app/bin/oriongtk",
+      "args": ["--debug"],
+      "preLaunchTask": "debugLaunch",
+      "postDebugTask": "debugStop",
+      //"miDebuggerServerAddress": "localhost:${input:flatpakDebugPort}",
+      "cwd": "${workspaceFolder}",
+      //"externalConsole": false,
+      "initCommands": [
+        "process handle SIGUSR1 -p false -s false -n false",
+        "platform select remote-linux",
+        "platform connect connect://localhost:${input:flatpakDebugPort}"
+      ],
+      "env": {
+        "XDG_CURRENT_DESKTOP": "ubuntu",
+        "G_DEBUG":"fatal_warnings"
+      },
+    },
+  ],
+  "inputs": [
+    {
+      "id": "flatpakDebugPort",
+      "type": "command",
+      "command": "extension.commandvariable.file.content",
+      "args": {
+        "fileName": "${workspaceFolder}/.vscode/flatpak.debug.port.txt"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $TabSwitcher : Adw.Bin {
+  name: "tab-switcher";
+  ScrolledWindow {
+    hscrollbar-policy: never;
+    vscrollbar-policy: automatic;
+    valign:center;
+    halign:center;
+    propagate-natural-width: true;
+    propagate-natural-height: true;
+    GridView tab_grid_view {
+      styles [
+        "navigation-sidebar",
+        "gridview-no-child-padding",
+      ]
+      halign:center;
+      valign:center;
+      //single-click-activate: true;
+      factory: BuilderListItemFactory {
+        template ListItem {
+          child: Box {
+            orientation: vertical;
+            Overlay {
+              Adw.Clamp {
+                orientation: vertical;
+                maximum-size: 150;
+                Picture tab_preview_picture {
+                  content-fit: cover;
+                  //keep-aspect-ratio: true;
+                  map => $on_tab_preview_picture_map();
+                  height-request: 130;
+                }
+              }
+              [overlay]
+              Image {
+                halign: end;
+                valign: end;
+                pixel-size: 16;
+                margin-bottom: 4;
+                margin-end: 4;
+                gicon: bind template.item as <Adw.TabPage>.icon;
+              }
+            }
+            Separator {
+              hexpand: true;
+              orientation: horizontal;
+              //margin-top: 8;
+              margin-bottom: 8;
+            }
+            Label {
+              styles [
+                "title-6",
+              ]
+              halign: start;
+              margin-start: 8;
+              margin-end : 8;
+              ellipsize: end;
+              label: bind template.item as <Adw.TabPage>.title as <string>;
+            }
+            Label {
+              halign: start;
+              margin-start: 8;
+              margin-bottom: 8;
+              margin-end:8;
+              ellipsize: end;
+              label: bind $get_uri_authority(template.item as <Adw.TabPage>.child as <$OrionWebviewTabContainer>.uri) as <string>;
+            }
+          };
+        }
+      };
+    }
+    GestureClick {
+      //here just to dismiss on lmb
+      button: 1; //corresponds to GDK_BUTTON_PRIMARY
+      //NOTE: count resetting should ideally not be necessary but this is a way for a user 
+      //to intuitively fix tab switcher state in obscure situations (for example rdp session losing focus),
+      //which seem somewhat unfixable for me currently
+      released => $tab_switcher_reset_ctrl_count(template);
+    }
+  }
+}

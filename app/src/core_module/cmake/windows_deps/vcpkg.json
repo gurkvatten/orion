@@ -1,0 +1,10 @@
+{
+  "name": "orion-windows-deps",
+  "dependencies": [
+    {
+      "name": "curl",
+      "default-features": false,
+      "features": ["openssl"]
+    }
+  ]
+}

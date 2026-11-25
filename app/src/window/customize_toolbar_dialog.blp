@@ -1,0 +1,280 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $CustomizeToolbarDialog: Adw.Dialog {
+  name: "customize-toolbar-dialog";
+  map => $customize_toolbar_dialog_map();
+  unmap => $customize_toolbar_dialog_unmap();
+  
+  Box {
+    orientation: horizontal;
+    spacing: 8;
+
+    Box {
+      orientation: vertical;
+      margin-top: 16;
+      margin-end: 16;
+      margin-bottom: 16;
+      margin-start: 16;
+      hexpand: true;
+      spacing: 8;
+
+      Box {
+        hexpand: true;
+        orientation: vertical;
+        width-request: 1024;
+        spacing: 8;
+
+        DropTarget {
+          drop => $on_current_toolbar_drop_target_drop();
+          accept => $on_current_toolbar_drop_target_accept();
+          formats: "GtkListBox"; // default_toolbar_listbox
+          actions: move;
+        }
+
+        DropTarget {
+          drop => $on_current_toolbar_drop_target_drop();
+          accept => $on_current_toolbar_toolbar_item_drop_target_accept();
+          formats: "ToolbarItem"; // available_toolbar_items_box
+          actions: move;
+        }
+
+        Label {
+          label: _("Current toolbar items:");
+          halign: start;
+          styles ["title-6"]
+        }
+
+        ScrolledWindow {
+          height-request: 80;
+
+          Box toolbar_items_box {
+            name: "toolbar-items-box";
+            orientation: horizontal;
+            // No space between items to avoid confusing highlighting when drag and dropping,
+            // use padding on individual items instead
+            spacing: 0;
+            vexpand: false;
+            valign: center;
+            hexpand: false;
+            halign: start;
+
+            DropTarget {
+              drop => $on_current_toolbar_drop_target_drop();
+              accept => $on_current_toolbar_toolbar_item_drop_target_accept();
+              formats: "ToolbarItem"; // toolbar_items_box
+              actions: move;
+            }
+        
+            // Items are filled dynamically
+          }
+        }
+
+        Separator {
+          orientation: horizontal;
+          hexpand: true;
+          halign: fill;
+        }
+      }
+
+      Box {
+        hexpand: true;
+        vexpand: true;
+        orientation: horizontal;
+        spacing: 12;
+
+        Box {
+          hexpand: true;
+          orientation: vertical;
+          spacing: 8;
+
+          Label {
+            label: _("Drag your favorite items into the toolbar above…");
+            halign: start;
+            styles ["title-6"]
+          }
+
+          DropTarget {
+            drop => $on_available_box_drop_target_drop();
+            accept => $on_available_box_drop_target_accept();
+            formats: "ToolbarItem";
+            actions: move;
+          }
+
+          Adw.Clamp {
+            tightening-threshold: 1000;
+            maximum-size: 1000;
+
+            Adw.WrapBox available_toolbar_items_box {
+              child-spacing: 16;
+              line-spacing: 16;
+              halign: start;
+
+              // Items are filled dynamically
+            }
+          }
+        }
+
+        Box {
+          orientation: vertical;
+          spacing: 8;
+
+          Label {
+            label: _("Overflow Menu");
+            styles ["title-6"]
+            wrap: true;
+            xalign: 0;
+            max-width-chars: 30;
+          }
+
+          Label {
+            label: _("Drag and drop items here to keep them within reach but out of your toolbar…");
+            wrap: true;
+            xalign: 0;
+            max-width-chars: 30;
+          }
+
+          ScrolledWindow {
+            width-request: 160;
+
+            ListView overflow_menu_listview {
+              styles ["frame"]
+              vexpand: true;
+              //single-click-activate: true;
+              map => $on_overflow_menu_listview_map();
+              activate => $on_overflow_menu_listview_activate();
+              factory: BuilderListItemFactory {
+                template ListItem {
+                  child: Box {
+                    vexpand: true;
+                    hexpand: true;
+                    valign: fill;
+                    halign: fill;
+                    spacing: 4;
+                    margin-start: 2;
+                    Image {
+                      icon-name: bind template.item as <$ToolbarItem>.icon-name as <string>;
+                      pixel-size: 14;
+                      visible: bind template.item as <$ToolbarItem>.use-image-icon as <bool>;
+                    }
+                    Label {
+                      label: bind template.item as <$ToolbarItem>.icon-name as <string>;
+                      visible: bind template.item as <$ToolbarItem>.use-image-label as <bool>;
+                    }
+                    Label {
+                      label: bind template.item as <$ToolbarItem>.translated-name as <string>;
+                      margin-top: 2;
+                      margin-bottom: 2;
+                    }
+                    //item: bind template.item;
+                    //context-menu-closed => $on_context_menu_closed();
+
+                    DragSource {
+                      prepare => $on_overflow_menu_toolbar_item_drag_source_prepare();
+                      actions: move;
+                    }
+                    DropTarget {
+                      drop => $on_overflow_menu_toolbar_item_drop_target_drop();
+                      motion => $on_overflow_menu_toolbar_item_drop_target_motion();
+                      leave => $on_overflow_menu_toolbar_item_drop_target_leave();
+                      accept => $on_overflow_menu_toolbar_item_drop_target_accept();
+                      formats: "ToolbarItem";
+                      actions: move;
+                    }
+                  };
+                }
+              };
+              DropTarget {
+                drop => $on_overflow_menu_toolbar_item_drop_target_drop();
+                accept => $on_overflow_menu_toolbar_item_drop_target_accept();
+                formats: "ToolbarItem";
+                actions: move;
+              }
+            }
+          }
+        }
+      }
+
+      Box {
+        orientation: vertical;
+
+        Label {
+          label: _("… or drag the default set into the toolbar.");
+          halign: start;
+          styles ["title-6"]
+        }
+
+        ListBox default_toolbar_listbox {
+          styles ["navigation-sidebar"] // because we want rounded border
+
+          ListBoxRow {
+            DragSource {
+              prepare => $on_default_toolbar_drag_source_prepare();
+              actions: move;
+            }
+
+            ScrolledWindow {
+              vscrollbar-policy: never;
+              height-request: 100;
+
+              Box default_toolbar_box {
+                orientation: horizontal;
+                spacing: 8;
+                vexpand: false;
+                valign: center;
+                hexpand: false;
+                halign: start;
+                name: "toolbar-preview";
+
+                // Default items are filled dynamically
+              }
+            }
+          }
+        }
+      }
+
+      Separator {
+        orientation: horizontal;
+        hexpand: true;
+        halign: fill;
+      }
+
+      Box {
+        hexpand: true;
+        vexpand: false;
+        spacing: 8;
+
+        Label {
+          label: _("Show");
+        }
+
+        Box {
+          vexpand: false;
+          valign: center;
+
+          DropDown toolbar_item_style_dropdown {
+            model: StringList {
+              strings [
+                "Icon and Text",
+                "Icon Only",
+              ]
+            };
+            map => $on_toolbar_item_style_dropdown_map();
+            notify::selected => $on_toolbar_item_style_dropdown_notify_selected();
+          }
+        }
+        
+        Box {
+          hexpand: true;
+          halign: end;
+
+          Button done_button {
+            label: _("Done");
+            styles ["suggested-action"]
+            clicked => $on_done_button_clicked();
+          }
+        }
+      }
+    }
+  }
+}

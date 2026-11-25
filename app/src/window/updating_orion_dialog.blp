@@ -1,0 +1,82 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $UpdatingOrionDialog: Adw.Dialog {
+  content-width: 410;
+  content-height: 170;
+  title: _("Updating Orion");
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Grid {
+      Box {
+        layout {
+          row: 0;
+          column: 0;
+        }
+
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 60;
+          margin-start: 10;
+          margin-end: 10;
+          margin-top: 10;
+        }
+      }
+
+      Box {
+        layout {
+          row: 0;
+          column: 1;
+        }
+        orientation: vertical;
+        valign: start;
+        halign: start;
+        margin-start: 10;
+        margin-top: 20;
+
+        Box {
+          Label {
+            label: _("Downloading update...");
+          }
+        }
+
+        Box {
+          margin-top: 10;
+
+          ProgressBar progress_bar {
+            width-request: 300;
+            height-request: 20;
+          }
+        }
+      }
+
+      Box {
+        layout {
+          row: 1;
+          column: 1;
+        }
+        margin-start: 10;
+        Label {
+          label: _("10,7 MB of 83,6 MB"); // TODO: fill in actual size values
+        }
+      }
+
+      Box {
+        layout {
+          row: 1;
+          column: 1;
+        }
+        halign: end;
+
+        Button {
+          label: _("Cancel");
+          clicked => $on_cancel_clicked();
+        }
+      }
+    }
+  }
+}

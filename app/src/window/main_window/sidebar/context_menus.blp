@@ -1,0 +1,512 @@
+using Gtk 4.0;
+
+menu window_tabs_row_context_menu {
+  section {
+    item {
+      label: _("Save…");
+      action: "win.edit-current-window-group";
+    }
+  }
+
+  section {
+    item {
+      label: _("Duplicate");
+    }
+    item {
+      label: _("Close Window");
+    }
+  }
+
+  section {
+    submenu {
+      label: _("3 Tabs"); // TODO: this should be the number of tabs in the window
+
+      section {
+        item {
+          label: _("Copy Tab Links");
+        }
+        item {
+          label: _("Bookmark 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+        item {
+          label: _("Suspend 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+      }
+
+      section {
+        // TODO: fill this dynamically with the tabs in the window
+      }
+    }
+  }
+}
+
+// not used
+menu window_row_context_menu {
+  section {
+    item {
+      label: _("Open in Separate Window"); // TODO: hide this dynamically
+    }
+  }
+
+  section {
+    item {
+      label: _("Edit…");
+      action: "win.edit-current-window-group";
+    }
+    item {
+      label: _("Duplicate");
+    }
+  }
+
+  section {
+    item {
+      label: _("Close Window");
+    }
+    item {
+      label: _("Delete");
+      action: "win.delete-stored-window-menu";
+    }
+  }
+
+  section {
+    submenu {
+      label: _("3 Tabs"); // TODO: this should be the number of tabs in the window
+
+      section {
+        item {
+          label: _("Copy Tab Links");
+        }
+        item {
+          label: _("Bookmark 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+        item {
+          label: _("Suspend 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+      }
+
+      section {
+        // TODO: fill this dynamically with the tabs in the window
+      }
+    }
+  }
+}
+
+menu bookmarks_folder_context_menu {
+  section {
+    item {
+      label: _("Open in New Tabs");
+      action: "win.bookmarks-open-in-new-tabs";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.bookmarks-open-in-new-window";
+    }
+  }
+
+  section {
+    item {
+      label: _("New Folder");
+      action: "win.bookmarks-add-folder";
+    }
+    item {
+      label: _("Add Bookmark…");
+      action: "win.add-bookmark";
+    }
+  }
+}
+
+menu bookmarks_dialog_bookmark_internal_folder_context_menu {
+  section {
+    item {
+      label: _("Open in New Tabs");
+      action: "win.bookmarks-open-in-new-tabs";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.bookmarks-open-in-new-window";
+    }
+  }
+
+  section {
+    item {
+      label:_("Paste");
+      action: "win.bookmarks-paste-bookmarks";
+    }
+  }
+
+  section {
+    item {
+      label: _("New Folder");
+      action: "win.bookmarks-add-folder";
+    }
+    item {
+      label: _("Add Bookmark…");
+      action: "win.bookmarks-add-bookmark";
+    }
+  }
+}
+
+menu bookmarks_dialog_bookmark_folder_context_menu {
+  section {
+    item {
+      label: _("Open in New Tabs");
+      action: "win.bookmarks-open-in-new-tabs";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.bookmarks-open-in-new-window";
+    }
+  }
+
+  section {
+    item {
+      label: _("Rename");
+      action: "win.bookmarks-rename-bookmark";
+    }
+    item {
+      label: _("Copy");
+      action: "win.bookmarks-copy-bookmarks";
+    }
+    item {
+      label:_("Paste");
+      action: "win.bookmarks-paste-bookmarks";
+    }
+  }
+
+  section {
+    item {
+      label: _("New Folder");
+      action: "win.bookmarks-add-folder";
+    }
+    item {
+      label: _("Add Bookmark…");
+      action: "win.bookmarks-add-bookmark";
+    }
+  }
+
+  section {
+    item {
+      label: _("Delete");
+      action: "win.bookmarks-delete-bookmark";
+    }
+  }
+}
+
+menu bookmarks_dialog_bookmarks_column_view_context_menu {
+  section {
+    item {
+      label: _("New Folder");
+      action: "win.bookmarks-add-folder";
+    }
+  }
+}
+
+//TODO: next 3 menus just differ by one action, would be nice to be able to just change that elsewhere
+menu bookmarks_bookmark_context_menu {
+  section {
+    item {
+      label: _("Open in New Tab");
+      action: "win.bookmarks-open-in-new-tabs";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.bookmarks-open-in-new-window";
+    }
+  }
+
+  section {
+    item {
+      label: _("Rename");
+      action: "win.sidebar-rename-bookmark";
+    }
+    item {
+      label: _("Edit…");
+      action: "win.edit-bookmark";
+    }
+    item {
+      label: _("Copy");
+    }
+    item {
+      label: _("Paste");
+    }
+  }
+
+  section {
+    item {
+      label: _("New Folder");
+    }
+  }
+
+  section {
+    item {
+      label: _("Delete");
+    }
+  }
+}
+
+menu bookmarks_bar_list_view_context_menu {
+  section {
+    item {
+      label: _("Add Bookmark…");
+      action: "win.bookmarks-add-bookmark";
+    }
+    item {
+      label: _("New Folder");
+      action: "win.bookmarks-add-folder";
+    }
+  }
+
+  section {
+    item {
+      label: _("Text Only");
+      action: "win.bookmarks-bar-style";
+      target: "1";
+    }
+    item {
+      label: _("Icon and Text");
+      action: "win.bookmarks-bar-style";
+      target: "2";
+    }
+    item {
+      label: _("Icon Only");
+      action: "win.bookmarks-bar-style";
+      target: "3";
+    }
+  }
+  
+  section {
+    item {
+      label: _("Hide Bookmarks Bar");
+      action: "win.hide-bookmarks-bar";
+    }
+  }
+}
+
+menu bookmarks_bar_folder_context_menu {
+  section {
+    item {
+      label: _("Rename");
+      action: "win.bookmarks-bar-rename-bookmark";
+    }
+    item {
+      label: _("Edit…");
+      action: "win.edit-bookmark-folder";
+    }
+    item {
+      label: _("Copy");
+      action: "win.bookmarks-copy-bookmarks";
+    }
+    item {
+      label: _("Paste");
+      action: "win.bookmarks-paste-bookmarks";
+    }
+  }
+
+  section {
+    item {
+      label: _("Add Bookmark");
+      action: "win.bookmarks-add-bookmark";
+    }
+  }
+
+  section {
+    item {
+      label: _("Delete");
+      action: "win.bookmarks-delete-bookmark";
+    }
+  }
+}
+
+menu bookmarks_bar_bookmark_context_menu {
+  section {
+    item {
+      label: _("Open in New Tab");
+      action: "win.bookmarks-open-in-new-tabs";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.bookmarks-open-in-new-window";
+    }
+  }
+
+  section {
+    item {
+      label: _("Rename");
+      action: "win.bookmarks-bar-rename-bookmark";
+    }
+    item {
+      label: _("Edit…");
+      action: "win.edit-bookmark";
+    }
+    item {
+      label: _("Copy");
+      action: "win.bookmarks-copy-bookmarks";
+    }
+    item {
+      label: _("Paste");
+      action: "win.bookmarks-paste-bookmarks";
+    }
+  }
+
+  section {
+    item {
+      label: _("Delete");
+      action: "win.bookmarks-delete-bookmark";
+    }
+  }
+}
+
+menu bookmarks_dialog_bookmark_context_menu {
+  section {
+    item {
+      label: _("Open in New Tab");
+      action: "win.bookmarks-open-in-new-tabs";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.bookmarks-open-in-new-window";
+    }
+  }
+
+  section {
+    item {
+      label: _("Rename");
+      action: "win.bookmarks-rename-bookmark";
+    }
+    item {
+      label: _("Edit…");
+      action: "win.edit-bookmark";
+    }
+    item {
+      label: _("Copy");
+      action: "win.bookmarks-copy-bookmarks";
+    }
+    item {
+      label:_("Paste");
+      action: "win.bookmarks-paste-bookmarks";
+    }
+  }
+
+  section {
+    item {
+      label: _("New Folder");
+      action: "win.bookmarks-add-folder";
+    }
+  }
+
+  section {
+    item {
+      label: _("Delete");
+      action: "win.bookmarks-delete-bookmark";
+    }
+  }
+}
+
+menu reading_list_row_context_menu {
+  section {
+    item {
+      label: _("Open in New Tab");
+      action: "win.reading-list-columnview-open-in-new-tab";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.reading-list-columnview-open-in-new-window";
+    }
+  }
+  
+  section {
+    item {
+      label: _("Copy Link");
+    }
+    item {
+      label: _("Mark as Read");
+    }
+    item {
+      label: _("Save Offline");
+    }
+    item {
+      label: _("Remove Item");
+    }
+  }
+
+  section {
+    item {
+      label: _("Edit Reading List");
+      action: "win.open-reading-list-bookmarks";
+    }
+    item {
+      label: _("Clear All Items…");
+      action: "win.reading-list-clear-all-items";
+    }
+  }
+}
+
+// TODO: move this out
+menu history_folder_context_menu {
+  section {
+    item {
+      label: _("Delete");
+      action: "win.history-columnview-delete";
+    }
+  }
+}
+
+// TODO: move this out
+menu reading_list_folder_context_menu {
+  section {
+    item {
+      label: _("Delete");
+      action: "win.reading-list-columnview-delete";
+    }
+  }
+}
+
+// TODO: move this out
+menu reading_list_address_context_menu {
+  section {
+    item {
+      label: _("Open in New Tab");
+      action: "win.reading-list-columnview-open-in-new-tab";
+    }
+    item {
+      label: _("Open in New Window");
+      action: "win.reading-list-columnview-open-in-new-window";
+    }
+  }
+  section {
+    item {
+      label: _("Copy");
+    }
+    item {
+      label: _("Delete");
+      action: "win.reading-list-columnview-delete";
+    }
+  }
+}
+
+// TODO: move this out
+menu profiles_context_menu {
+  section {
+    item {
+      label: _("Edit…");
+      action: "win.edit-profile";
+    }
+  }
+  section {
+    // TODO: show last snapshot time if available
+    // item {
+    //   label: _("Last Snapshot 21. 5....");
+    // }
+    item {
+      label: _("Take Snapshot");
+      action: "win.take-workspace-snapshot";
+    }
+    item {
+      label: _("Restore Snapshot…");
+      action: "win.restore-snapshot-menu";
+    }
+  }
+  section {
+    // TODO: add missing circles and rocket - we probably need to implement this menu using custom Popover widget
+  }
+}

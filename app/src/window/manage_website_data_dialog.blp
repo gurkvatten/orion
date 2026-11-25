@@ -1,0 +1,105 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+template $ManageWebsiteDataDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 500;
+  title: _("Manage Website Data");
+  name: "manage-website-data-dialog";
+
+  Adw.ToolbarView {
+    Box {
+      orientation: vertical;
+      margin-top: 16;
+      margin-end: 16;
+      margin-bottom: 16;
+      margin-start: 16;
+      
+      SearchEntry {
+        placeholder-text: _("Search");
+        halign: fill;
+        hexpand: true;
+        search-changed => $on_entry_search_changed();
+      }           
+     
+      Box {
+        margin-top: 16;
+        halign: start;
+        Label {          
+          label: _("These websites have stored data that can be used to track your browsing. Removing the data may reduce tracking, but may also log you out of websites or change website behavior. ");
+          width-chars: 70;
+          wrap: true;
+        }
+      }
+         
+      ScrolledWindow {
+        margin-top: 16;
+        hexpand: true;
+        vexpand: true;
+        max-content-height: 200;   
+        max-content-width: 400;
+        min-content-height: 200;
+        min-content-width: 400;
+
+        ListView view {
+          styles ["frame"]
+
+          factory: BuilderListItemFactory {
+            template ListItem { //item is immutable, otherwise, async icon get would cause race conditions
+              child: Box {
+                spacing: 8;
+                margin-start: 8;
+                Image favicon {
+                  //passing the image as an argument to allow async loading, also binding to root to notify when we can query window for a favicon database
+                  gicon: bind $get_uri_favicon(template.item as<$WebsiteDataStorageItem>.name, favicon, favicon.root) as <Gio.Icon>; 
+                  pixel-size: 16;
+                }
+                Box {
+                  orientation: vertical;
+                  Label {
+                    label: bind template.item as <$WebsiteDataStorageItem>.name;
+                    halign: start;
+                  }
+                  Label {
+                    label: bind template.item as <$WebsiteDataStorageItem>.types_string;
+                    styles ["dim-label"]
+                    halign: start;
+                  }
+                }
+              };
+            }
+          };
+        }
+      }
+
+      Box {
+        hexpand: true;
+        margin-top: 16;
+
+        Button remove_button {
+          label: _("Remove");
+          halign: start;
+          clicked => $on_remove_clicked();
+        }                  
+        Button remove_all_button {
+          label: _("Remove all");
+          margin-start: 8;
+          halign: start;
+          clicked => $on_remove_all_clicked();
+        }
+        Button done_button {
+          label: _("Done");
+          hexpand: true;
+          halign: end;
+          styles ["suggested-action"]
+          clicked => $on_done_clicked();
+        }
+      }
+    }
+  }
+}
+
+SizeGroup {
+  widgets [remove_button, remove_all_button, done_button]
+}

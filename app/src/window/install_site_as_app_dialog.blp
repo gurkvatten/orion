@@ -1,0 +1,195 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $InstallSiteAsAppDialog: Adw.Dialog {
+  width-request: 400;
+  height-request: 250; // TODO: content-height throws warning in runtime when set too low
+  title: _("Install Site as App");
+
+  Box {
+    orientation: vertical;
+    valign: start;
+    halign: start;
+    margin-start: 16;
+    margin-end: 16;
+    margin-top: 16;
+    margin-bottom: 16;
+
+    Box {
+      hexpand: true;
+      halign: center;
+      orientation: vertical;
+      spacing: 8;
+      
+      Image {
+        name: "orion-logo";
+        icon-name: "orion-logo";
+        pixel-size: 64;
+      }
+      Label {
+        label:_("Chrome Web Store – Extensions");
+        styles ["bold-text"]
+      }
+      Label {
+        label:_("https://chromewebstore.google.com/category/extensions");
+        styles ["dim-label"]
+      }
+    }
+    Box {
+      margin-top: 16;
+      Entry {
+        hexpand: true; 
+        activates-default: false;
+        text: "Chrome webstore – extensions";
+      }
+    }
+    Expander {
+      margin-top: 16;
+      label-widget: Label {
+        label: _("Options");
+      };
+      Box {
+        orientation: vertical;
+        Box {
+          margin-top: 16;
+          orientation: vertical;
+          spacing: 8;
+          hexpand: true;
+          Label {
+            halign: start;
+            label: _("URL:");
+          }
+          Entry {
+            hexpand: true; 
+            text: "https://chromewebstore.google.com/category/extensions";
+          }
+        }
+
+        Grid grid {
+          margin-top: 16;
+          row-spacing: 8;
+          column-spacing: 24;
+
+          Label {
+            layout { row: 0; column: 0; }
+            label: _("View:");
+            halign: start;
+          }
+          // AdwToggleGroup is added here conditionally based on libadwaita version
+
+          Label {
+            layout { row: 0; column: 1; }
+            label: _("Profile:");
+            halign: start;
+          }
+          DropDown profile_dropdown {
+            layout { row: 1; column: 1; }
+            hexpand:true;
+            vexpand: false;
+            valign: start;
+            model: StringList {
+              strings [
+                _("Default"),
+                _("Template"),
+              ]
+            };
+          }
+        
+          Label {
+            layout { row: 2; column: 0; }
+            label: _("User Agent:");
+            halign: start;
+          }
+          DropDown user_agent_dropdown {
+            layout { row: 3; column: 0; }
+            hexpand: true;
+            model: StringList {
+              strings [
+                _("Automatic"),
+                _("Custom"),
+                _("Chrome"),
+                _("Firefox"),
+                _("Safari"),
+                _("Safari iPhone"),
+                _("Safari iPad"),
+                _("Edge"),
+              ]
+            };
+          }
+
+          Label {
+            layout { row: 2; column: 1; }
+            label: _("App Icon:");
+            halign: start;
+          }
+          Button browse_button {
+            layout { row: 3; column: 1; }
+            label: _("Browse…");
+            hexpand: false;
+            halign: start;
+            clicked => $on_app_icon_browse_clicked();
+          }
+
+          Label {
+            layout { row: 4; column: 0; }
+            label: _("Appearance:");
+            halign: start;
+          }
+          CheckButton float_on_top_check_button {
+            layout { row: 5; column: 0; }
+            label: _("Float on top");
+          }
+          CheckButton show_title_bar_check_button {
+            layout { row: 5; column: 1; }
+            label: _("Show Title Bar");
+          }
+
+          Box {
+            layout { row: 6; column: 0; column-span: 2; }
+            orientation: vertical;
+            Label {
+              label: _("Location:");
+              halign: start;
+            }
+            Box {
+              hexpand: true;
+              Label {
+                label: _("/home/user/Applications/Orion/WebApps");
+                styles ["dim-label"]
+                halign: start;
+              }
+              Box {
+                halign: end;
+                hexpand: true;
+                Button {
+                  Image {
+                    icon-name: "loupe-large-symbolic";
+                    pixel-size: 16;
+                  }
+                  clicked => $on_location_browse_clicked();
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    Box {
+      margin-top: 16;
+      hexpand: true;
+      halign: end;
+      homogeneous: true;
+      Button {
+        label: _("Cancel");
+        clicked => $on_cancel_clicked();
+      }
+      Button {
+        label: _("Create");
+        styles ["suggested-action"]
+        clicked => $on_create_clicked();
+        margin-start: 8;
+      }
+    }
+  }
+}

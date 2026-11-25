@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Orion API Tests</title>
+  <link rel="stylesheet" href="lib/app.css">
+</head>
+<body>
+  <h1 id="page-title">Orion API Tests</h1>
+  <div id="env">Detecting environment…</div>
+  <div id="corpus-links"></div>
+  <h2>Manual tests</h2>
+  <ul class="suite-list">
+    <li>
+      <a href="notifications_manual.html">&#9654; Notifications</a>
+      <span class="meta">shows real desktop toasts &middot; create / update / clear &middot; logs onClicked, onButtonClicked, onClosed, onShown</span>
+    </li>
+  </ul>
+  <h2>Built-in API tests</h2>
+  <div id="summary" class="running">Running…</div>
+  <table id="results">
+    <thead>
+      <tr>
+        <th>Suite</th>
+        <th>Test</th>
+        <th>Result</th>
+        <th>Details</th>
+        <th style="text-align:right">Time</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p class="note">
+    Corpus suites are copied from other browsers' test suites and run through a
+    <code>chrome.test</code>/<code>browser.test</code> shim. Most are expected to
+    fail — they are a running TODO list for Orion's <code>browser.*</code> APIs.
+  </p>
+
+  <script src="lib/env.js"></script>
+  <script src="lib/api.js"></script>
+  <script src="lib/highlight.js"></script>
+  <script src="lib/results_view.js"></script>
+  <script src="corpus/catalog.js"></script>
+  <script src="lib/test_runner.js"></script>
+  <script src="tests/storage.js"></script>
+  <script src="tests/runtime.js"></script>
+  <script src="tests/i18n.js"></script>
+  <script src="tests/alarms.js"></script>
+  <script src="tests/notifications.js"></script>
+  <script src="tests/errors.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

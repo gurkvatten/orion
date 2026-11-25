@@ -1,0 +1,192 @@
+using Gtk 4.0;
+using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+template $ProgrammableButtonPopover: Popover {
+  name: "programmable-button-popover";
+  Box {
+    orientation:vertical;
+    halign:fill;
+    spacing:15;
+    Entry {
+    }
+    //Adw.ToggleGroup { //TODO: add toggles here
+    //}
+    Label {
+      label:"Missing Adwaita ToggleGroup for compiling on Adwaita < 1.7";
+    }
+    Adw.ViewSwitcher {
+      stack:view_stack;
+    }
+    Adw.ViewStack view_stack{
+      Adw.ViewStackPage {
+        title:"Menu Action";
+        child: Box {
+          orientation: vertical;
+          hexpand:true;
+          Entry menu_item_name_entry {
+            hexpand:true;
+            primary-icon-name: "loupe-large-symbolic";
+            margin-bottom: 5;
+            placeholder-text: _("Menu item name");
+          }
+        };
+      }
+      Adw.ViewStackPage {
+        title:"Open URL";
+        child: Box {
+          orientation:vertical;
+          spacing:20;
+          Box {
+            orientation:vertical;
+            spacing:15;
+            Label {
+              halign:start;
+              label:_("URL (use %u and %t to replace current page URL or title):");
+            }
+            Entry target_url_entry {
+              placeholder-text: _("https://");
+            }
+          }
+          Box {
+            orientation:vertical;
+            spacing:15;
+            Label {
+              halign:start;
+              label:_("Open in:");
+            }
+            DropDown open_in_dropdown {
+              halign:start;
+              model: StringList {
+                strings [
+                  _("Current Tab"),
+                  _("New Tab"),
+                  _("Link Preview"),
+                  _("In Background"),
+                ]
+              };
+            }
+          }
+        };
+      }
+      Adw.ViewStackPage {
+        title:"Run Code";
+        child: Box {
+          orientation:vertical;
+          TextView {
+            styles [
+              "monospace-font",
+            ]
+            width-request:350;
+            height-request:300;
+            hexpand: true;
+            vexpand: true;
+            buffer: TextBuffer {
+              text: _("OrionInternals.clearSidebarContent();\nOrionInternals.setSidebarContent(\"Hello World\");");
+            };
+          }
+          Grid {
+            column-homogeneous: true;
+            row-spacing:20;
+            Box {
+              layout {
+                row:0;
+                column:0;
+              }
+              orientation: vertical;
+              spacing: 15;
+              Label {
+                halign:start;
+                label:_("Language:");
+              }
+              DropDown language_dropdown {
+                halign: start;
+                model: StringList {
+                  strings [
+                    _("JavaScript"),
+                    _("AppleScript"),
+                  ]
+                };
+              }
+            }
+            Box {
+              layout {
+                row:0;
+                column:1;
+              }
+              orientation: vertical;
+              spacing: 15;
+              Label {
+                halign:start;
+                label:_("Code Examples:");
+              }
+              DropDown {
+                halign: start;
+                model: StringList {
+                  strings [
+                    _("New Script Template"),
+                    _("Dark Mode"),
+                    _("Kill Sticky"),
+                    _("Translate with Google"),
+                    _("Modern CSS"),
+                    _("Classic CSS"),
+                    _("Unbiased News"),
+                    _("Summarize"),
+                    _("Stock Analysis"),
+                  ]
+                };
+              }
+            }
+            Box {
+              layout {
+                row:1;
+                column:0;
+              }
+              CheckButton show_output_in_sidebar_checkbutton {
+                label:_("Show Output in Sidebar");
+              }
+            }
+          }
+        };
+      }
+    }
+    Label {
+      halign: start;
+      label:_("Keyboard shortcut:");
+    }
+    $OrionAcceleratorEntry keyboard_shortcut_entry{
+      hexpand:false;
+      halign:start;
+    }
+    Box {
+      hexpand:true;
+      halign:fill;
+      MenuButton {
+        icon-name: "share-symbolic";
+        menu-model: share_menu;
+      }
+      Box {
+        hexpand:true;
+        halign:end;
+        spacing:15;
+        Button cancel_button {
+          halign:end;
+          label:_("Cancel");
+        }
+        Button save_button {
+          halign:end;
+          label:_("Save");
+        }
+      }
+    }
+  }
+}
+
+menu share_menu {
+  section {
+    item ("Import Button from URL...")
+    item ("Import Button from File...")
+    item ("Export to File...")
+  }
+}

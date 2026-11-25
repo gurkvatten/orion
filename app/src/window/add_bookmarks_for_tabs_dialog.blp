@@ -1,0 +1,131 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+
+template $AddBookmarksForTabsDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 200;  
+
+  Adw.ToolbarView {
+   
+    Box {
+      orientation: vertical;
+      valign: start;
+      halign: start;
+      margin-start: 20;      
+      margin-top: 10;                   
+      Box {
+        halign: start;
+        Label {          
+          margin-top: 20;
+          label:_("Add this Bookmarks Folder to:");
+        }
+      }
+      Box {                         
+        margin-top: 20;
+        margin-end: 20;
+        halign:fill;
+        hexpand: true;
+        DropDown location_dropdown {
+          styles [
+            "dropdown-section-separators"
+          ]
+          margin-top: 8;
+          hexpand:true;
+          halign:fill;
+          list-factory: BuilderListItemFactory {
+            template ListItem {
+              child: Box {
+                spacing:5;
+                Image {
+                  pixel-size: 16;
+                  gicon: bind ($get_checkmark_icon(template.item)) as <Gio.Icon>;
+                }
+                TreeExpander {
+                  //hide-expander: true;
+                  list-row: bind template.item as <TreeListRow>;
+                  child: Box {
+                    orientation:horizontal;
+                    spacing:5;
+                    Image {
+                      pixel-size: 16;
+                      icon-name: bind ($get_icon_name(template.item)) as <string>;
+                    }
+
+                    Label {
+                      ellipsize: end;
+                      hexpand: true;
+                      halign:start;
+                      xalign:0;
+                      label: bind ($get_label(template.item)) as <string>;
+                    }
+                  };
+                }
+              };
+            }
+          };
+          factory: BuilderListItemFactory {
+            template ListItem {
+              child: Box {
+                orientation:horizontal;
+                spacing:5;
+                Image {
+                  pixel-size: 16;
+                  icon-name: bind ($get_icon_name(template.item)) as <string>;
+                }
+
+                Label {
+                  ellipsize: end;
+                  hexpand: true;
+                  halign:start;
+                  xalign:0;
+                  label: bind ($get_label(template.item)) as <string>;
+                }
+              };
+            }
+          };
+          header-factory: BuilderListItemFactory {
+            template ListHeader {
+              child: Separator {
+                visible: bind ($get_separator_visibility(template.item)) as <bool>;
+              };
+            }
+          };
+        }
+      }
+      Box {
+        margin-top:20;
+        margin-end: 20;
+        halign: start;
+        hexpand:true;
+        Entry folder_name_entry {
+          hexpand:true;
+          width-chars: 50; 
+          activates-default:false;
+          text: _("Saved Tabs");
+        }
+      }                     
+      Box {
+        hexpand:true; 
+        halign: end;  
+        homogeneous: true;
+        margin-top:20;  
+        margin-bottom: 20;
+        margin-end: 20;    
+        Button {
+          label: _("Cancel");
+          margin-end: 10;                   
+          clicked => $on_cancel_clicked();
+        }
+        Button {          
+          label: _("Add");
+          margin-start: 10;
+          styles ["suggested-action"]
+          clicked => $on_add_clicked();
+        }            
+      }               
+    }
+  }    
+}
+

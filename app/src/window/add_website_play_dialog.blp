@@ -1,0 +1,89 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $AddWebsitePlayDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 200;
+  title: _("Add Website Play");
+  name: "add-website-play-dialog";
+
+  Adw.ToolbarView {    
+
+    Box {
+      orientation: vertical;
+      Box {
+        margin-top: 20;
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 49;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+      Box {          
+        margin-top: 10;
+        margin-start: 20;
+        margin-end: 20;
+        margin-bottom: 15;
+        halign: center;
+          Label {
+          styles ["bold-text"]
+          label: _("Add a website");
+          }
+      }
+      Box {
+        margin-start: 20;
+        margin-bottom: 5;
+        margin-end: 20;
+        halign: center;
+        Entry AddWebsitePlayEntry {
+          hexpand: true; 
+          halign: fill; 
+          width-chars: 40;  
+          activates-default: false;
+          text: _("Enter website (for example www.youtube.com)");
+        }
+      }
+      Box {              
+        margin-start:20;
+        margin-top: 5;
+        halign:start;
+        DropDown addWebsiteComboBox {
+          hexpand:true;
+          model: StringList {
+            strings [
+              _("Allow All Auto-Play"),
+              _("Stop Media with Sound"),
+              _("Never Auto-Play"),
+            ]
+          };
+        }
+      }        
+      Box {         
+        margin-top: 20;
+        margin-bottom: 20;
+        homogeneous: true;
+        Button {
+          label: _("Cancel");
+          margin-start: 30;
+          margin-end: 10;
+          hexpand: true; 
+          halign: fill; 
+          valign: center;          
+        }                    
+        Button {
+          label: _("Add");
+          margin-start: 10;
+          margin-end: 30;
+          hexpand: true; 
+          halign: fill; 
+          valign: center; 
+          styles ["suggested-action"]         
+        }
+      }
+    }
+  }
+}
+

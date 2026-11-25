@@ -1,0 +1,39 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $GetOrionPlusDialog: Adw.Dialog {
+  content-width: 800;
+  content-height: 640;
+  title: _("Get Orion+");
+  name: "get-orion-plus-dialog";
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Box {
+      orientation: vertical;
+    
+      ScrolledWindow {
+        min-content-width: 800;
+        min-content-height: 600;
+        styles ["gray-background"]
+        // TODO: load web page with "Choose your plan" options (WebKit view)
+        Label {
+          label: _("WebKit web page with \"Choose your plan\" options");
+        }
+      }
+      Box {
+        orientation: vertical;
+        halign: end;
+        margin-end: 16;
+        margin-top: 16;
+        margin-bottom: 16;
+        Button {
+          label: _("Close");
+          clicked => $on_close_button_clicked();
+        }
+      }
+    }
+  }
+}

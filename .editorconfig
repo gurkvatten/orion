@@ -1,0 +1,17 @@
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+
+[*.{blp,xml,css,json}]
+indent_style = space
+indent_size = 2
+
+[*.{c,cpp,h,hxx}]
+indent_style = space
+indent_size = 4
+
+[{CMakeLists.txt,*.cmake}]
+indent_style = space
+indent_size = 4

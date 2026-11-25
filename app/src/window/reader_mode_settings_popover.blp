@@ -1,0 +1,163 @@
+
+
+using Gtk 4.0;
+using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+template $ReaderModeSettingsPopover: Popover {
+  name: "reader-mode-settings-popover";
+  //autohide:false;
+
+  Box {
+    orientation:vertical;
+    halign:fill;
+    spacing:8;
+    Box {
+      styles [
+        "linked",
+        "font-size-box"
+      ]
+      orientation:horizontal;
+      spacing:0;
+      halign:center;
+      // hexpand:true;
+      height-request: 30;
+      Button { //TODO: styling for dark mode?
+        styles [
+          "flat",
+          "decrease-font-size"
+        ]
+        width-request: 32;
+        height-request: 24;
+        label: "A";
+        //hexpand:true;
+        clicked => $on_decrease_font_size_clicked();
+      }
+      Separator {
+        orientation: vertical;
+        vexpand:true;
+      }
+      Button {
+        styles [
+          "flat",
+          "increase-font-size"
+        ]
+        width-request: 32;
+        height-request: 24;
+        label: "A";
+        //hexpand:true;
+        clicked => $on_increase_font_size_clicked();
+      }
+    }
+
+    Separator {
+      orientation:horizontal;
+      hexpand:true;
+    }
+
+    Box {
+      Adw.ToggleGroup background_type_toggle_group {
+        styles [
+          "background-toggles"
+        ]
+        Adw.Toggle {
+          child: Box{
+            styles ["white"]
+            halign: center;
+            valign: center;
+          };
+        }
+        Adw.Toggle {
+          child: Box{
+            styles ["sepia"]
+            halign: center;
+            valign: center;
+          };
+        }
+        Adw.Toggle {
+          child: Box{
+            styles ["gray"]
+            halign: center;
+            valign: center;
+          };
+        }
+        Adw.Toggle {
+          child: Box{
+            styles ["night"]
+            halign: center;
+            valign: center;
+          };
+        }
+        notify::active => $on_background_type_toggle_group_changed();
+      }
+    }
+
+    Separator {
+      orientation:horizontal;
+      hexpand:true;
+    }
+
+    ListView font_list_view {
+      styles [
+        "navigation-sidebar"
+      ]
+    }
+
+    Separator {
+      orientation:horizontal;
+      hexpand:true;
+    }
+
+    Scale paper_width_scale {
+      //potentially should be set up from cpp code anyway, would be cleaner as we already have compile time constants there
+      adjustment: Adjustment {
+        lower: 0;
+        upper: 2;
+        value: 1;
+        step-increment: 1;
+        value-changed => $on_paper_width_scale_value_changed();
+      };
+      round-digits: 0;
+      draw-value: false;
+
+      marks [
+        mark(0, bottom),
+        mark(1, bottom),
+        mark(2, bottom),
+        //Hah, even text is allowed, this syntax is wild considering text gets translated into element content:
+        //mark(1.5, top, "Hi, am Mark"),
+      ]
+    }
+
+    Separator {
+      orientation:horizontal;
+      hexpand:true;
+    }
+
+    Adw.ToggleGroup text_justify_toggle_group {
+      Adw.Toggle {
+        icon-name: "text-justify-left";
+      }
+      Adw.Toggle {
+        icon-name: "text-justify-fill";
+      }
+      notify::active => $on_text_justify_toggle_group_changed();
+    }
+
+    Separator {
+      orientation:horizontal;
+      hexpand:true;
+    }
+
+    Adw.ToggleGroup border_shadow_toggle_group {
+      Adw.Toggle { //off
+        icon-name: "box-outline";
+      }
+      Adw.Toggle { //on
+        icon-name: "box-outline-filled";
+      }
+      notify::active => $on_border_shadow_toggle_group_changed();
+    }
+  }
+}

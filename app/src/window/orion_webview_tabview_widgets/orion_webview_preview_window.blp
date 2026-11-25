@@ -1,0 +1,63 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $OrionWebviewPreviewWindow : Adw.ApplicationWindow {
+  notify::default-width => $on_notify_default_width();
+  notify::default-height => $on_notify_default_height();
+
+  Adw.ToolbarView toolbar_view {
+    [top]
+    Adw.Bin {
+      Adw.HeaderBar header {
+        decoration-layout: "";
+        [start]
+        Button {
+          //would need a container carrying the windowcontrols id to be properly styled same as standard window controls, I have decided to just ignore this
+          styles [
+            "titlebutton",
+            "close-image-button",
+          ]
+          tooltip-text: _("Close");
+          icon-name: "window-close-symbolic";
+          clicked => $gtk_window_close(template);
+          accessibility {
+            label: _("Close preview");
+          }
+        }
+
+        [end]
+        Box {
+          orientation: horizontal;
+          spacing: 8;
+          Button {
+            icon-name: "share";
+            tooltip-text: _("Share");
+            sensitive: false;
+            accessibility {
+              label: _("Share");
+            }
+          }
+          Button {
+            icon-name: "scale";
+            tooltip-text: _("Open in New Tab");
+            clicked => $move_webview_to_tab(template);
+            accessibility {
+              label: _("Open in New Tab");
+            }
+          }
+        }
+
+        title-widget: Label title_label {
+          ellipsize: end;
+        };
+      }
+    }
+    //needs to be set from cpp code using webview factory, just leaving this as placeholder
+    //content: $OrionWebkitWebview {}
+  }
+
+  EventControllerKey {
+    //since this is added before app intercepts us and injects accel event controllers, this consumes escape presses before those
+    key-pressed => $on_window_key_pressed();
+  }
+}

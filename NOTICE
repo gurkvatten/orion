@@ -1,0 +1,26 @@
+orion-linux (Orion for Linux)
+Copyright 2026 Kagi Inc.
+
+This product bundles third-party components with separate copyright
+notices and license terms. Your use of these components is subject to
+the terms of the following licenses.
+
+1. Blueprint compiler
+   Copyright 2021 James Westman <james@jwestman.net> and contributors
+   License: GNU Lesser General Public License v3.0 or later
+   Bundled at: app/tools/blueprint-compiler
+   License text: app/tools/blueprint-compiler/COPYING
+   Upstream: https://gitlab.gnome.org/jwestman/blueprint-compiler
+
+2. Chromium extension API test corpus
+   Copyright The Chromium Authors
+   License: BSD 3-Clause
+   Bundled at: app/src/core_module/extensions/shared/orion-api-test/corpus/chromium
+   Upstream: https://chromium.googlesource.com/chromium/src
+   Source path: chrome/test/data/extensions/api_test
+
+3. Firefox extension test corpus
+   Copyright Mozilla Foundation
+   License: Mozilla Public License 2.0
+   Bundled at: app/src/core_module/extensions/shared/orion-api-test/corpus/firefox
+   Upstream: https://searchfox.org/mozilla-central/source/toolkit/components/extensions/test/xpcshell

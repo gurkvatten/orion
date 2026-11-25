@@ -1,0 +1,223 @@
+{
+    "version": 8,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "cmakeExecutable": "${sourceDir}/cmake/taskset_cmake.sh",
+            "hidden": true,
+            "name": "main",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "cacheVariables": {
+              "comment": "When adding new variables here, also check if they need to be added to flatpak.cmake.",
+              "ORION_COMMON_USE_GLIB": "ON"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                    "hostOS": "Linux"
+                },
+                "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+                    "sourceDir": "$env{HOME}/workspaces/$ms{projectDirName}",
+                    "copySourcesOptions": {
+                        "exclusionList": [
+                            ".flatpak-builder",
+                            ".vs",
+                            ".git",
+                            "out",
+                            "build",
+                            "install",
+                            "install-dev",
+                            "app/src/core_module/third_party/WebKit/JSTests",
+                            "app/src/core_module/third_party/WebKit/LayoutTests",
+                            "app/src/core_module/third_party/WebKit/ManualTests",
+                            "app/src/core_module/third_party/WebKit/PerformanceTests",
+                            "app/src/core_module/third_party/WebKit/WebDriverTests",
+                            "app/src/core_module/third_party/WebKit/Websites",
+                            "app/src/core_module/third_party/WebKit/WebKitBuild",
+                            "app/src/core_module/third_party/WebKit/Tools/WebKitTestRunner",
+                            "app/src/core_module/third_party/WebKit/Tools/TestWebKitAPI"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "main-flatpak",
+            "hidden": true,
+            "inherits": [
+                "main"
+            ],
+            "cacheVariables": {
+                "FLATPAK_HOST": "1"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "inherits": [
+                "main"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-release",
+            "inherits": [
+                "main"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux-webkit-debug",
+            "inherits": [
+                "main"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_WEBKIT": "1"
+            }
+        },
+        {
+            "name": "linux-webkit-release",
+            "inherits": [
+                "main"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_WEBKIT": "1"
+            }
+        },
+        {
+            "name": "flatpak-debug",
+            "inherits": [
+                "main-flatpak"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "flatpak-release",
+            "inherits": [
+                "main-flatpak"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "flatpak-webkit-debug",
+            "inherits": [
+                "main-flatpak"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_WEBKIT": "1"
+            }
+        },
+        {
+            "name": "flatpak-webkit-release",
+            "inherits": [
+                "main-flatpak"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_WEBKIT": "1"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "hidden": true,
+            "name": "main",
+            "jobs": 16
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "linux-debug",
+            "configurePreset": "linux-debug",
+            "displayName": "Debug"
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "linux-release",
+            "configurePreset": "linux-release",
+            "displayName": "Release"
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "linux-webkit-debug",
+            "configurePreset": "linux-webkit-debug",
+            "displayName": "WebKit Debug"
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "linux-webkit-release",
+            "configurePreset": "linux-webkit-release",
+            "displayName": "WebKit Release"
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "flatpak-debug",
+            "configurePreset": "flatpak-debug",
+            "displayName": "Flatpak Debug"
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "flatpak-release",
+            "configurePreset": "flatpak-release",
+            "displayName": "Flatpak Release"
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "flatpak-webkit-debug",
+            "configurePreset": "flatpak-webkit-debug",
+            "displayName": "Flatpak WebKit Debug"
+        },
+        {
+            "inherits": [
+                "main"
+            ],
+            "name": "flatpak-webkit-release",
+            "configurePreset": "flatpak-webkit-release",
+            "displayName": "Flatpak WebKit Release"
+        },
+        {
+            "name": "webkit release flatpak",
+            "description": "",
+            "displayName": "",
+            "inherits": [
+                "flatpak-webkit-release"
+            ]
+        },
+        {
+            "name": "webkit flatpak release",
+            "description": "",
+            "displayName": "",
+            "inherits": [
+                "flatpak-webkit-release"
+            ]
+        }
+    ]
+}

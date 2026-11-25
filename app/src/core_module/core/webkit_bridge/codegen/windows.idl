@@ -1,0 +1,6 @@
+service Windows [global=browser.windows] {
+    rpc getCurrent() returns (object) {}
+    rpc getCurrent(map<string,json> getInfo) returns (object) {}
+    listener onFocusChanged ();
+    listener onRemoved ();
+}

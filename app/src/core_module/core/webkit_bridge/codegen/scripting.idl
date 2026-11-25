@@ -1,0 +1,8 @@
+service Scripting [global=browser.scripting] {
+    rpc registerContentScripts(any scripts) returns () {}
+    rpc updateContentScripts(any scripts) returns () {}
+    rpc unregisterContentScripts() returns () {}
+    rpc unregisterContentScripts(any filter) returns () {}
+    rpc getRegisteredContentScripts() returns (any) {}
+    rpc getRegisteredContentScripts(any filter) returns (any) {}
+}

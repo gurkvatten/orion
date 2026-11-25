@@ -1,0 +1,422 @@
+using Gtk 4.0;
+
+menu show_sidebar_context_menu {
+  section {
+    item {
+      label: _("Tab Groups");
+    }
+    item {
+      label: _("Tabs");
+    }
+    item {
+      label: _("Bookmarks");
+    }
+    item {
+      label: _("Reading List");
+    }
+  }
+
+  section {
+    item {
+      label: _("Use Standard Tabs");
+    }
+    item {
+      label: _("Use Compact Tabs");
+    }
+    item {
+      label: _("Use Vertical Tabs");
+    }
+  }
+
+  section {
+    item {
+      label: _("Auto-Show Sidebar");
+    }
+  }
+}
+
+menu window_list_button_context_menu {
+  section {
+    item {
+      label: _("Show Icon Only");
+      action: "win.window-list-button-style";
+      target: "1";
+      role: "radio";
+    }
+    item {
+      label: _("Show Name Only");
+      action: "win.window-list-button-style";
+      target: "2";
+      role: "radio";
+    }
+    item {
+      label: _("Show Icon and Name");
+      action: "win.window-list-button-style";
+      target: "3";
+      role: "radio";
+    }
+  }
+}
+
+menu toolbar_context_menu {
+  section {
+    item {
+      label: _("Use Mini Toolbar");
+      action: "win.use-mini-toolbar";
+    }
+  }
+  section {
+    item {
+      label: _("Icon and Text");
+      action: "win.toolbar-item-style";
+      target: "1";
+    }
+    item {
+      label: _("Icon Only");
+      action: "win.toolbar-item-style";
+      target: "2";
+    }
+  }
+  section {
+    item {
+      label: _("Bookmarks Bar");
+    }
+  }
+  section {
+    item {
+      label: _("Customize Toolbar…");
+      action: "win.customize-menu";
+    }
+  }
+  section {
+    item {
+      label: _("Import Button from URL…");
+      action: "win.import-button-from-url";
+    }
+    item {
+      label: _("Import Button from File…");
+      action: "win.import-button-from-file";
+    }
+  }
+  section {
+    item {
+      label: _("Reset Toolbar"); // on Mac: Reset Toolbar (Relaunch to Take Effect)
+      action: "win.reset-toolbar";
+    }
+  }
+}
+
+menu reload_button_context_menu {
+  section {
+    item {
+      label: _("Reload Page");
+      action: "win.reload-this-page";
+    }
+  }
+  section {
+    item {
+      label: _("Reload in Compatibility Mode");
+      action: "win.reload-this-page-in-compatibility-mode"; // TODO: implement
+    }
+    item {
+      label: _("Reload Without Content Blockers");
+      action: "win.reload-this-page-without-content-blockers"; // TODO: implement
+    }
+  }
+}
+
+menu new_tab_button_context_menu {
+  // TODO: named section
+  section {
+    item {
+      label: _("Recently Closed Tabs");
+    }
+    // TODO: fill pages programmatically
+  }
+}
+
+menu extension_button_context_menu {
+  section {
+    // TODO: fill this programmatically when the extension has some custom actions
+  }
+
+  section {
+    item {
+      label: _("Disable");
+    }
+    item {
+      label: _("Options"); // this is not visible for every extension
+    }
+    item {
+      label: _("Permissions");
+      action: "win.extension-permissions";
+    }
+    item {
+      label: _("Uninstall");
+    }
+  }
+
+  section {
+    item {
+      label: _("Manage Extensions…");
+      action: "win.manage-extensions";
+    }
+  }
+
+  section {
+    item {
+      label: _("Move to Overflow Menu");
+    }
+    item {
+      label: _("Remove from Toolbar");
+    }
+    item {
+      label: _("Customize Toolbar…");
+      action: "win.customize-menu";
+    }
+  }
+}
+
+// When the page is right-clicked anywhere (except on a link, image, selected text etc.)
+menu page_context_menu {
+  section {
+    item {
+      label: _("Back");
+    }
+    item {
+      label: _("Reload");
+    }
+  }
+
+  section {
+    item {
+      label: _("View Page Source");
+    }
+    item {
+      label: _("Inspect Element");
+    }
+  }
+
+  section {
+    item {
+      label: _("Summarize Page");
+      action: "win.summarize-page";
+    }
+    item {
+      label: _("Translate with Kagi");
+    }
+  }
+
+  section {
+    // TODO: fill this programmatically when the extension has some custom actions
+  }
+}
+
+// When a link on the page is right-clicked
+menu page_link_context_menu {
+  section {
+    item {
+      label: _("Open Link in New Tab");
+    }
+    item {
+      label: _("Open Link in New Window");
+    }
+    item {
+      label: _("Open Link in New Private Window");
+    }
+    item {
+      label: _("Open Link in Preview Window");
+    }
+  }
+
+  section {
+    item {
+      label: _("Add to Reading List");
+    }
+    item {
+      label: _("Add to Bookmarks…");
+    }
+  }
+
+  section {
+    item {
+      label: _("Download Linked File");
+    }
+    item {
+      label: _("Download Linked File As…");
+    }
+  }
+
+  section {
+    item {
+      label: _("Copy Link");
+    }
+    item {
+      label: _("Copy Link as Markdown");
+    }
+  }
+
+  // TODO: hide this section when the link is not an image
+  section {
+    item {
+      label: _("Save Image to “Downloads”");
+    }
+    item {
+      label: _("Save Image As…");
+    }
+    item {
+      label: _("Add Image to Photos"); // TODO: use GNOME equivalent
+    }
+    item {
+      label: _("Use Image as Desktop Picture");  // TODO: use GNOME equivalent
+    }
+  }
+
+  // TODO: hide this section when the link is not an image
+  section {
+    item {
+      label: _("Copy Image");
+    }
+    item {
+      label: _("Copy Image Address");
+    }
+    item {
+      label: _("Look Up");
+    }
+  }
+
+  section {
+    item {
+      label: _("View Page Source");
+    }
+    item {
+      label: _("Inspect Element");
+    }
+  }
+
+  section {
+    item {
+      label: _("Translate with Kagi");
+    }
+  }
+
+  section {
+    // TODO: fill this programmatically when the extension has some custom actions
+  }
+
+  section {
+    item {
+      label: _("Share…");
+    }
+  }
+
+  section {
+    submenu {
+      label: _("Services");
+
+      // TODO: fill this programmatically with GNOME services
+    }
+  }
+}
+
+menu selected_text_on_page_context_menu {
+  section {
+    item {
+      label: _("Look Up “<text>”"); // TODO: set this programmatically
+    }
+    item {
+      label: _("Translate “<text>”"); // TODO: set this programmatically
+    }
+  }
+
+  section {
+    item {
+      label: _("Copy");
+    }
+    item {
+      label: _("Copy Link to Selection");
+    }
+  }
+
+  section {
+    item {
+      label: _("Share…");
+    }
+  }
+
+  section {
+    item {
+      label: _("View Page Source");
+    }
+    item {
+      label: _("Inspect Element");
+    }
+  }
+
+  section {
+    item {
+      label: _("Summarize Page");
+      action: "win.summarize-page";
+    }
+    item {
+      label: _("Translate with Kagi");
+    }
+  }
+
+  section {
+    // TODO: fill this programmatically when the extension has some custom actions
+  }
+
+  section {
+    submenu {
+      label: _("Speech"); // This might be MacOS specific
+
+      section {
+        item {
+          label: _("Start Speaking");
+        }
+        item {
+          label: _("Stop Speaking");
+        }
+      }
+    }
+  }
+
+  section {
+    submenu {
+      label: _("Services");
+
+      // TODO: fill this programmatically with GNOME services
+    }
+  }
+}
+
+menu share_button_menu {
+  section {
+    // TODO: add icons
+    item {
+      label: _("Create QR Code");
+    }
+    item {
+      label: _("Mail");
+    }
+    item {
+      label: _("Messages");
+    }
+    item {
+      label: _("Notes");
+    }
+    item {
+      label: _("Freeform");
+    }
+    item {
+      label: _("Reminders");
+    }
+    // TODO: insert other GNOME share services
+  }
+  section {
+    item {
+      label: _("More…");
+    }
+  }
+}

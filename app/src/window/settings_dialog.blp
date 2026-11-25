@@ -1,0 +1,3497 @@
+// #pragma include "settings.blp"
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+//NOTE: we produce error messages when we are not provided enough height:
+//"Trying to measure GtkGrid 0x5555621a0800 for height of 682, but it needs at least 753"
+//this warning is emitted on width measure of the grids, it's seeminlgy just a harmless warning
+//it involves the ScrolledWindow widgets and labels with wrap:true,
+//perhaps the minimum height of a grid changes between it first being measured
+//and that measurement subsequently being used as the for_size later on
+
+template $SettingsDialog: Adw.Dialog {
+  //width-request:500;
+  height-request:-1;
+  title: _("Settings");
+  name: "settings-dialog";
+  hexpand:true;
+  halign:fill;
+
+  Adw.ToolbarView {
+    top-bar-style: raised;
+
+    [top]
+    Adw.HeaderBar {
+      
+    }
+    [top]
+    ScrolledWindow {
+      propagate-natural-width: true;
+      hexpand:true;
+      halign:fill;
+      valign:center;
+      StackSwitcher {
+        margin-start:5;
+        margin-end:5;
+        halign:center;
+        valign:center;
+        styles [
+          "flat-compact-switcher"
+        ]
+        stack: stack;
+      }
+    }
+    //setting labels named settingLabel$$# where $$ are the first 2 letters of category name, # is numeric index
+    
+    //width of left column in grid comes from the first row
+    hexpand:true;
+    halign:fill;
+
+    content:Stack stack{
+      hexpand:true;
+      halign:fill;
+      
+      //switch-page => $on_notebook_switch_page();
+      //we bind to the pages selection model from settings_dialog.cpp instead
+      StackPage {
+        name: "general_tab";
+        title: _("General");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //General tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              margin-bottom: 20;
+              row-spacing:5;
+
+
+              Box settingLabelGE1{
+                layout {
+                  row:0;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("Orion opens with:");
+                }
+              }
+              Box box1{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                hexpand:true;
+                DropDown orionOpensDropDown{
+                  hexpand:true;
+                  model: StringList { //general_settings.cpp relies on the exact order of this
+                    strings [
+                      _("A new window"),
+                      _("A new private window"),
+                      _("All windows from last session"),
+                      _("All non-private windows from last session"),
+                    ]
+                  };
+                  map => $on_orion_opens_drop_down_map();
+                  notify::selected => $on_orion_opens_drop_down_notify_selected();
+                }
+              }
+
+
+              Box settingLabelGE2{
+                layout {
+                  row:1;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("New windows open with:");
+                }
+              }
+              Box box2{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                margin-end:140;
+                hexpand:true;
+                DropDown windowOpensDropDown{
+                  hexpand:true;
+                  model: StringList {
+                    strings [
+                      _("Start Page"),
+                      _("Empty Page"),
+                      _("Same Page"),
+                      _("Homepage"),
+                      _("Notes"),
+                    ]
+                  };
+                  map => $on_window_opens_drop_down_map();
+                  notify::selected => $on_window_opens_drop_down_notify_selected();
+                }
+              }
+
+
+              Box settingLabelGE3{
+                layout {
+                  row:2;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("New tabs open with:");
+                }
+              }
+              Box box3{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                hexpand:true;
+                DropDown tabOpensDropDown{
+                  hexpand:true;
+                  model: StringList {
+                    strings [
+                      _("Start Page"),
+                      _("Empty Page"),
+                      _("Same Page"),
+                      _("Homepage"),
+                      _("Notes"),
+                    ]
+                  };
+                  map => $on_tab_opens_drop_down_map();
+                  notify::selected => $on_tab_opens_drop_down_notify_selected();
+                }
+              }
+
+
+
+              Box settingLabelGE4{
+                layout {
+                  row:3;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("Homepage:");
+                }
+              }
+              Box box4{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                hexpand:true;
+                Entry homepageEntry{
+                  hexpand:true; 
+                  activates-default:false;
+                  text: "https://kagi.com/";
+                  map => $on_homepage_entry_map();
+                  notify::text => $on_homepage_entry_notify_text();
+                }
+              }
+              Box box5{
+                layout {
+                  row:4;
+                  column:1;
+                }
+                Button setHomepageToCurrentButton {
+                  halign:start;
+                  label:_("Set to Current Page");
+                }
+              }
+
+
+              Box settingLabelGE5{
+                layout {
+                  row:5;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("File download location:");
+                }
+              }
+              Box box6{
+                layout {
+                  row:5;
+                  column:1;
+                }
+                hexpand:true;
+                Grid {
+                  row-spacing:4;
+                  DropDown fileDownloadLocationDropDown {
+                    hexpand:true;
+                    model: StringList{
+                      strings [
+                        _("Downloads"), // TODO: should be dynamic
+                        // separators in GtkDropDown are probably not supported
+                        _("Ask for each download"),
+                        _("Other…"), // TODO: wire folder chooser system dialog here
+                      ]
+                    };
+                    notify::selected => $on_file_download_location_drop_down_notify_selected();
+                    map => $on_file_download_location_drop_down_map();
+                  }
+                }
+              }
+
+
+              Box settingLabelGE6{
+                layout {
+                  row:6;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("Remove download items:");
+                }
+              }
+              Box box7{
+                layout {
+                  row:6;
+                  column:1;
+                }
+                halign:start;
+                DropDown removeDownloadsDropDown {
+                  styles [
+                    "dropdown-section-separators",
+                  ]
+                  hexpand:true;
+                  header-factory: BuilderListItemFactory {
+                    template ListHeader {
+                      child: Separator {
+                        visible: bind ($remove_downloads_drop_down_get_separator_visible(template.start)) as <bool>;
+                      };
+                    }
+                  };
+                  model: FlattenListModel {
+                    model: Gio.ListStore {
+                      StringList {
+                        strings [
+                          _("After one day"),
+                          // separator
+                        ]
+                      }
+                      StringList {
+                        strings [
+                          _("After Orion exits"),
+                          _("Upon successful download"),
+                          _("Manually"),
+                        ]
+                      }
+                    };
+                  };
+                  map => $on_remove_downloads_drop_down_map();
+                  notify::selected => $on_remove_downloads_drop_down_notify_selected();
+                }
+              }
+              Box box8{
+                layout {
+                  row:7;
+                  column:1;
+                }
+                hexpand:true;
+                orientation: vertical;
+                spacing: 4;
+                CheckButton openSafeAfterDownloadButton {
+                  sensitive: false; // TODO: implement this
+                  hexpand:true;
+                  halign:start;
+                  label:_("Open “safe” files after downloading");
+                  map => $on_open_safe_after_download_check_button_map();
+                  toggled => $on_open_safe_after_download_check_button_toggled();
+                }
+                Label {
+                  xalign:0;
+                  halign:fill;
+                  hexpand:true;
+                  margin-start:24;
+                  wrap:true;
+                  max-width-chars: 65;
+                  label:_("“Safe” files include movies, pictures, sounds, PDF and text documents, and archives.");
+                }
+              }
+
+
+              Box settingLabelGE7{
+                layout {
+                  row:8;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("Language:");
+                }
+              }
+              Box box9{
+                layout {
+                  row:8;
+                  column:1;
+                }
+                hexpand:true;
+                DropDown languageDropDown{
+                  sensitive: false; // TODO: implement this
+                  hexpand:true;
+                  model: StringList {
+                    strings [
+                      _("Deutsch – German"),
+                      _("العربية – Arabic"), // reverse flow
+                      _("ελληνικά – Greek"),
+                      _("简体中文 – Chinese, Simplified"),
+                      _("日本語 – Japanese"),
+                      _("English"),
+                      _("українська – Ukrainian"),
+                      _("español – Spanish"),
+                      _("slvenščina – Slovenian"),
+                      _("galego – Galician"),
+                      _("italiano – Italian"),
+                      _("svenska – Swedish"),
+                      _("čeština – Czech"),
+                      _("繁體中文 – Chinese, Traditional"),
+                      _("Türkçe – Turkish"),
+                      _("polski – Polish"),
+                      _("português – Portuguese (Brazil)"),
+                      _("pусский – Russian"),
+                      _("français – French"),
+                      _("suomi – Finnish"),
+                      _("Nederlands – Dutch"),
+                      _("polski (Polska) – Polish (Poland)"),
+                    ]
+                  };
+                  map => $on_language_drop_down_map();
+                  notify::selected => $on_language_drop_down_notify_selected();
+                }
+              }
+              Box box10{
+                layout {
+                  row:9;
+                  column:1;
+                }
+                hexpand:true;
+                Label {
+                  xalign:0;
+                  halign:fill;
+                  hexpand:true;
+                  wrap:true;
+                  use-markup:true;
+                  label:_("Orion translations are done by the community, if you wish to contribute, <a href=\"https://kagi.com\">click here</a>"); //TODO: correct link
+                }
+              }
+
+
+              Box settingLabelGE8{
+                layout {
+                  row:10;
+                  column:0;
+                }
+                halign:end;
+                Label {
+                  margin-end:15;
+                  label:_("Default profile:");
+                }
+              }
+              Box box11{
+                layout {
+                  row:10;
+                  column:1;
+                }
+                hexpand:true;
+                DropDown defaultProfileDropDown { //TODO: missing color splash for profile, use ListStore with factory here
+                  hexpand:true;
+                  factory: BuilderListItemFactory {
+                    template ListItem {
+                      child: Label {
+                        xalign:0;
+                        label: bind ($default_profile_drop_down_listitem_get_label(template.item)) as <string>;
+                        use-markup:true;
+                      };
+                    }
+                  };
+                  map => $on_default_profile_drop_down_map();
+                  notify::selected => $on_default_profile_drop_down_notify_selected();
+                }
+                Button manageProfilesButton {
+                  margin-start:15;
+                  label:_("Manage Profiles…");
+                  clicked => $on_manage_profiles_clicked();
+                }
+              }
+
+
+              Box settingLabelGE9{
+                layout {
+                  row:11;
+                  column:0;
+                }
+                halign:end;
+                Label {
+                  margin-end:15;
+                  label:_("Open external links in:");
+                }
+              }
+              Box box12{
+                layout {
+                  row:11;
+                  column:1;
+                }
+                hexpand:true;
+                DropDown openExternalLinksDropDown {
+                  sensitive: false; // TODO: implement this
+                  hexpand:true;
+                  model: StringList {
+                    strings [
+                      _("Last active profile"),
+                      _("Default profile"),
+                    ]
+                  };
+                  
+                  map => $on_open_external_links_drop_down_map();
+                  notify::selected => $on_open_external_links_drop_down_notify_selected();
+                }
+              }
+
+
+              Separator {
+                layout {
+                  row:12;
+                  column:0;
+                }
+                margin-top:20;
+                margin-bottom:25;
+                margin-start:50;
+                orientation:horizontal;
+              }
+              Separator {
+                layout {
+                  row:12;
+                  column:1;
+                }
+                margin-top:20;
+                margin-bottom:25;
+                margin-end:50;
+                orientation:horizontal;
+              }
+
+
+              Box settingLabelGE10{
+                layout {
+                  row:13;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("Import browser data:");
+                }
+              }
+              Box box13{
+                layout {
+                  row:13;
+                  column:1;
+                }
+                margin-end:140;
+                Button {
+                  sensitive: false; // TODO: implement this
+                  halign:start; 
+                  label:_("Import…");
+                  clicked => $on_import_browser_data_clicked();
+                }
+              }
+              Box box14{
+                layout {
+                  row:14;
+                  column:1;
+                }
+                margin-end:140;
+                Label {
+                  xalign:0;
+                  halign:fill;
+                  hexpand:true;
+                  wrap:true;
+                  label:_("Import your bookmarks, history, passwords and more from other browsers.");
+                }
+              }
+
+              Box settingLabelGE11{
+                layout {
+                  row:15;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  margin-end:15;
+                  label:_("Orion updates:");
+                }
+              }
+              Box box15{
+                layout {
+                  row:15;
+                  column:1;
+                }
+                margin-end:140;
+                Box box16{
+                  CheckButton automaticallyKeepUpToDateButton{
+                    sensitive: false; // TODO: implement this
+                    label:_("Automatically keep Orion up to date");
+                    map => $on_automatically_keep_up_to_date_check_button_map();
+                    toggled => $on_automatically_keep_up_to_date_check_button_toggled();
+                  }
+                }
+              }
+              Box box17{
+                layout {
+                  row:16;
+                  column:1;
+                }
+                margin-end:140;
+                CheckButton showWarningBeforeQuitButton{
+                  label:_("Show warning before quitting");
+                    map => $on_show_warning_before_quit_check_button_map();
+                    toggled => $on_show_warning_before_quit_check_button_toggled();
+                }
+              }
+
+              
+              Separator {
+                visible: false;
+                layout {
+                  row:17;
+                  column:0;
+                }
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:50;
+                orientation:horizontal;
+              }
+              Separator {
+                visible: false;
+                layout {
+                  row:17;
+                  column:1;
+                }
+                margin-top:20;
+                margin-bottom:20;
+                margin-end:50;
+                orientation:horizontal;
+              }
+            }
+
+
+            Box box19{
+              visible: false;
+              layout {
+                row:1;
+                column:0;
+              }
+              halign: center;
+              margin-bottom:25;
+
+              // From Flatpak app, the default browser app cannot be set. That is probably why Flatpak versions of
+              // Firefox and Chromium does not show the option to set default browser in their settings.
+              Label {
+                label:_("Orion is not your default browser.");
+              }
+              Button set_default_browser_button {
+                margin-start:20;
+                label:_("Set Default");
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label generalTab{
+      //   label: _("General");
+      // } //End of General tab
+
+      StackPage {
+        name: "appearance_tab";
+        title: _("Appearance");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //Appearance tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              row-spacing:5;
+              column-spacing:15;
+
+
+              Box settingLabelAP1{
+                layout {
+                  row:0;
+                  column:0;
+                }
+                Label {
+                  halign: end;
+                  label:_("Theme:");
+                }
+              }
+              Box box20{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                DropDown themeDropDown {
+                  model: StringList {
+                    strings [
+                      _("System"),
+                      _("Light"),
+                      _("Dark"),
+                    ]
+                  };
+                  map => $on_theme_drop_down_map();
+                  notify::selected => $on_theme_drop_down_notify_selected();
+                }
+                Button customize_theme_button {
+                  margin-start:20;
+                  label:_("Customize…");
+                  clicked => $on_customize_theme_button_clicked();
+                }
+              }
+              Box box21{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton showWebsiteColorCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Show website color for compact & vertical tabs");
+                  map => $on_show_website_color_check_button_map();
+                  toggled => $on_show_website_color_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelAP2{
+                layout {
+                  row:2;
+                  column:0;
+                }
+                halign:end;
+                Label {
+                  label:_("Toolbar:");
+                }
+              }
+              Box box22{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                CheckButton alwaysShowToolbarCheckButton {
+                  label:_("Always show toolbar in full screen");
+                  map => $on_always_show_toolbar_in_fs_check_button_map();
+                  toggled => $on_always_show_toolbar_in_fs_check_button_toggled();
+                }
+              }
+              Box box23{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                margin-bottom:15;
+                Grid {
+                  row-spacing:5;
+                  CheckButton showBoomkarksCheckButton {
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    label:_("Show bookmarks bar");
+                    map => $on_show_bookmarks_bar_check_button_map();
+                    toggled => $on_show_bookmarks_bar_check_button_toggled();
+                  }
+                  CheckButton showProfileCheckButton {
+                    sensitive: false; // obsolete
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    label:_("Show profile in address bar");
+                    map => $on_show_profile_in_address_bar_check_button_map();
+                    toggled => $on_show_profile_in_address_bar_check_button_toggled();
+                  }
+                  CheckButton displayRssIndicatorCheckButton {
+                    sensitive: false; // TODO: implement this
+                    layout {
+                      row:3;
+                      column:0;
+                    }
+                    label:_("Display RSS Feeds indicator");
+                    map => $on_display_rss_feeds_indicator_check_button_map();
+                    toggled => $on_display_rss_feeds_indicator_check_button_toggled();
+                  }
+                  CheckButton displayWebAppIndicatorCheckButton {
+                    sensitive: false; // TODO: implement this
+                    layout {
+                      row:4;
+                      column:0;
+                    }
+                    label:_("Display Web Application indicator");
+                    map => $on_display_web_app_indicator_check_button_map();
+                    toggled => $on_display_web_app_indicator_check_button_toggled();
+                  }
+                }
+              }
+
+              
+              Box settingLabelAP3 {
+                layout {
+                  row:4;
+                  column:0;
+                }
+                halign:end;
+                margin-bottom:15;
+                Label {
+                  label:_("Bookmarks bar:");
+                }
+              }
+              Box box24{
+                layout {
+                  row:4;
+                  column:1;
+                }
+                margin-bottom:15;
+                DropDown bookmarksBarDropDown {
+                  model: StringList {
+                    strings [
+                      _("Text only"),
+                      _("Icon and text"),
+                      _("Icon only"),
+                    ]
+                  };
+                  map => $on_bookmarks_bar_style_drop_down_map();
+                  notify::selected => $on_bookmarks_bar_style_drop_down_notify_selected();
+                }
+              }
+
+
+              Box settingLabelAP4 {
+                layout {
+                  row:5;
+                  column:0;
+                }
+                halign: end;
+                margin-bottom:15;
+                Label {
+                  label:_("Sidebar:");
+                }
+              }
+              Box box25{
+                layout {
+                  row:5;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton autoShowSidebarCheckButton {
+                  label:_("Auto-show sidebar in full screen");
+                  map => $on_auto_show_sidebar_in_fs_check_button_map();
+                  toggled => $on_auto_show_sidebar_in_fs_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelAP5 {
+                layout {
+                  row:6;
+                  column:0;
+                }
+                halign: end;
+                margin-bottom:15;
+                Label {
+                  label:_("Default font:");
+                }
+              }
+              Box box26{
+                layout {
+                  row:6;
+                  column:1;
+                }
+                margin-bottom:15;
+                DropDown defaultFontDropDown {
+                  sensitive: false; // TODO: implement this
+                  model: StringList {
+                    strings [ // TODO: fill dynamically
+                      _("Times New Roman"),
+                    ]
+                  };
+                }
+                Button customizeFontButton {
+                  margin-start:20;
+                  label:_("Customize…");
+                  clicked => $on_customize_default_font_clicked();
+                }
+              }
+
+
+              Box settingLabelAP6 {
+                layout {
+                  row:7;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  label:_("Rendering:");
+                }
+              }
+              Box box27{
+                layout {
+                  row:7;
+                  column:1;
+                }
+                CheckButton preferFastRenderingUpdatesCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Prefer page rendering updates near 120fps");
+                  map => $on_prefer_fast_rendering_page_updates_check_button_map();
+                  toggled => $on_prefer_fast_rendering_page_updates_check_button_toggled();
+                }
+              }
+              Box box28{
+                layout {
+                  row:8;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton disableTransparencyCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Disable transparency for full screen windows");
+                  map => $on_disable_transparency_for_fs_windows_check_button_map();
+                  toggled => $on_disable_transparency_for_fs_windows_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelAP7 {
+                layout {
+                  row:9;
+                  column:0;
+                }
+                halign: end;
+                valign: center;
+                Label {
+                  label:_("App icon:");
+                }
+              }
+              Box box29{
+                layout {
+                  row:9;
+                  column:1;
+                }
+                homogeneous:true;
+                spacing:20;
+                hexpand:false;
+                halign:start;
+                ToggleButton app_icon_button_a { //TODO: get icons
+                  styles [
+                    "app-icon-button"
+                  ]
+                  active:true;
+                  Image {
+                    halign: center;
+                    pixel-size:50;
+                    icon-name: "orion-logo";
+                  }
+                  action-name: "win.app-icon-setting";
+                  action-target: "'orion-logo-a'";
+                  map => $on_app_icon_radio_buttons_map();
+                }
+
+                ToggleButton app_icon_button_b { //TODO: get icons
+                  styles [
+                    "app-icon-button"
+                  ]
+                  group:app_icon_button_a;
+                  Image {
+                    halign: center;
+                    pixel-size:50;
+                    icon-name: "orion-logo";
+                  }
+                  action-name: "win.app-icon-setting";
+                  action-target: "'orion-logo-b'";
+                }
+
+                ToggleButton app_icon_button_c { //TODO: get icons
+                  styles [
+                    "app-icon-button"
+                  ]
+                  group:app_icon_button_a;
+                  Image {
+                    halign: center;
+                    pixel-size:50;
+                    icon-name: "orion-logo";
+                  }
+                  action-name: "win.app-icon-setting";
+                  action-target: "'orion-logo-c'";
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label appearanceTab{
+      //   label:_("Appearance");
+      // } //End of Appearance tab
+
+      StackPage {
+        name: "tabs_tab";
+        title: _("Tabs");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //Tabs tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              row-spacing:5;
+              column-spacing:15;
+
+
+              Box settingLabelTA1 {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                halign: end;
+                valign: center;
+                margin-bottom:15;
+                Label {
+                  label:_("Tab layout:");
+                }
+              }
+              Box box30{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                margin-bottom:15;
+                Box {
+                  homogeneous:true;
+                  spacing:20;
+                  hexpand:false;
+                  ToggleButton tab_layout_button_a { //TODO: get icons
+                    active: true;
+                    styles [
+                      "tab-style-toggle-button",
+                    ]
+                    Box {
+                      orientation: vertical;
+                      halign: center;
+
+                      Image {
+                        halign: center;
+                        pixel-size:64;
+                        icon-name: "orion-logo";
+                      }
+
+                      Label {
+                        halign: center;
+                        label: _("Standard");
+                      }
+                    }
+                    action-name: "win.tab-layout-setting";
+                    action-target: "'standard'";
+                  }
+
+                  ToggleButton tab_layout_button_b { //TODO: get icons
+                    styles [
+                      "tab-style-toggle-button",
+                    ]
+                    group: tab_layout_button_a;
+                    Box {
+                      orientation: vertical;
+                      halign: center;
+
+                      Image {
+                        halign: center;
+                        pixel-size:64;
+                        icon-name: "orion-logo";
+                      }
+
+                      Label {
+                        halign: center;
+                        label: _("Compact");
+                      }
+                    }
+                    action-name: "win.tab-layout-setting";
+                    action-target: "'compact'";
+                  }
+
+                  ToggleButton tab_layout_button_c { //TODO: get icons
+                    styles [
+                      "tab-style-toggle-button",
+                    ]
+                    group: tab_layout_button_a;
+                    Box {
+                      orientation: vertical;
+                      halign: center;
+
+                      Image {
+                        halign: center;
+                        pixel-size:64;
+                        icon-name: "orion-logo";
+                      }
+
+                      Label {
+                        halign: center;
+                        label: _("Vertical");
+                      }
+                    }
+                    action-name: "win.tab-layout-setting";
+                    action-target: "'vertical'";
+                  }
+                }
+              }
+
+
+              Box box31{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                margin-bottom:15;
+                Grid {
+                  row-spacing:5;
+                  CheckButton use_mini_toolbar_check_button{
+                    layout {
+                      row:0;
+                      column:0;
+                    }
+                    label:_("Use Mini Toolbar");
+                    map => $on_use_mini_toolbar_check_button_map();
+                    toggled => $on_use_mini_toolbar_check_button_toggled();
+                  }
+                  CheckButton show_tab_preview_on_hover_check_button{
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    label:_("Show tab preview on hover");
+                    map => $on_show_tab_preview_on_hover_check_button_map();
+                    toggled => $on_show_tab_preview_on_hover_check_button_toggled();
+                    sensitive: true;
+                  }
+                  CheckButton close_window_with_last_tab_check_button{
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    label:_("Close window with last tab");
+                    map => $on_close_window_with_last_tab_check_button_map();
+                    toggled => $on_close_window_with_last_tab_check_button_toggled();
+                  }
+                  CheckButton always_show_website_titles_in_tabs_check_button{
+                    layout {
+                      row:3;
+                      column:0;
+                    }
+                    label:_("Always show website titles in tabs");
+                    map => $on_always_show_website_titles_in_tabs_check_button_map();
+                    toggled => $on_always_show_website_titles_in_tabs_check_button_toggled();
+                  }
+                  CheckButton show_favicons_inside_tabs_check_button{
+                    layout {
+                      row:4;
+                      column:0;
+                    }
+                    label:_("Show favicons inside tabs");
+                    map => $on_show_favicons_in_tabs_check_button_map();
+                    toggled => $on_show_favicons_in_tabs_check_button_toggled();
+                  }
+                }
+              }
+
+
+              Box settingLabelTA2 {
+                layout {
+                  row:2;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  label:_("Navigation:");
+                }
+              }
+              Box box32{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                CheckButton openNewNextToCheckButton{
+                  label:_("Open new tab next to current tab");
+                  map => $on_open_new_tab_next_to_current_check_button_map();
+                  toggled => $on_open_new_tab_next_to_current_check_button_toggled();
+                }
+              }
+              Box box33{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                margin-bottom:15;
+                Grid {
+                  row-spacing:5;
+                  CheckButton whenOpeningMakeActiveCheckButton{
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    label:_("When opening a link in a new tab, make it active");
+                    map => $on_make_newly_opened_link_tab_active_check_button_map();
+                    toggled => $on_make_newly_opened_link_tab_active_check_button_toggled();
+                  }
+                  CheckButton returnToLastActiveCheckButton{
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    label:_("Return to last active tab when closing current tab");
+                    map => $on_return_to_last_active_tab_when_closing_current_check_button_map();
+                    toggled => $on_return_to_last_active_tab_when_closing_current_check_button_toggled();
+                  }
+                  CheckButton useCtrlZToUndoCheckButton{ //TODO: put in correct hotkeys
+                    layout {
+                      row:3;
+                      column:0;
+                    }
+                    label:_("Use Ctrl+Z to undo close tab");
+                    map => $on_use_ctrl_z_to_undo_close_tab_check_button_map_on_default_profile();
+                    toggled => $on_use_ctrl_z_to_undo_close_tab_check_button_toggled_on_default_profile();
+                  }
+                  CheckButton useCtrlNumToSwitchCheckButton{
+                    layout {
+                      row:4;
+                      column:0;
+                    }
+                    label:_("Use Ctrl+1 to Ctrl+9 to switch tabs");
+                    map => $on_use_ctrl_num_to_switch_tabs_check_button_map();
+                    toggled => $on_use_ctrl_num_to_switch_tabs_check_button_toggled();
+                  }
+                  Box {
+                    layout {
+                      row:5;
+                      column:0;
+                    }
+                    Label {
+                      styles [
+                        "small-text"
+                      ]
+                      xalign:0;
+                      margin-start:24;
+                      halign:fill;
+                      hexpand:true;
+                      wrap:true;
+                      max-width-chars:60;
+                      width-chars:60;
+                      label:_("When this option is deselected, the shortcut will be used to navigate to bookmarks in the Bookmarks Bar.");
+                    }
+
+                  }
+                }
+              }
+
+
+              Box settingLabelTA3 {
+                layout {
+                  row:4;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Vertical tabs:");
+                }
+              }
+              Box box34{
+                layout {
+                  row:4;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton showNestedVerticalTabsCheckButton {
+                  label:_("Show nested vertical tabs");
+                  map => $on_show_nested_vertical_tabs_check_button_map();
+                  toggled => $on_show_nested_vertical_tabs_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelTA4{
+                layout {
+                  row:5;
+                  column:0;
+                }
+                halign: end;
+                Label {
+                  label:_("Tab switcher:");
+                }
+              }
+              Box box35{
+                layout {
+                  row:5;
+                  column:1;
+                }
+                CheckButton useTabSwitcherCheckButton{
+                  label:_("Use tab switcher UI for Ctrl+Tab");
+                  map => $on_use_tab_switcher_ui_for_ctrl_tab_check_button_map();
+                  toggled => $on_use_tab_switcher_ui_for_ctrl_tab_check_button_toggled();
+                }
+              }
+              Box box36{
+                layout {
+                  row:6;
+                  column:1;
+                }
+                Label {
+                  label:_("Switch tabs using");
+                  
+                  margin-start:24;
+                  margin-end:10;
+                }
+                DropDown switchTabsDropDown{
+                  model: StringList {
+                    strings [
+                      _("tab order in the window"),
+                      _("most recent used order"),
+                    ]
+                  };
+                  map => $on_tab_switch_order_drop_down_map();
+                  notify::selected => $on_tab_switch_order_drop_down_notify_selected();
+                  //sensitive: false; // TODO: implement this
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label tabsTab{
+      //   label:_("Tabs");
+      // } //End of Tabs tab
+
+      StackPage {
+        name: "browsing_tab";
+        title: _("Browsing");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //Browsing tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              margin-end:140;
+              row-spacing:5;
+              column-spacing:15;
+
+
+              Box settingLabelBR1 {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                halign: end;
+                margin-bottom:15;
+                Label {
+                  label:_("Check for SSL website:");
+                }
+              }
+              Box box37{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton automaticHTTPSUpgradeCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Automatic HTTPS upgrade");
+                  map => $on_automatic_https_upgrade_check_button_map();
+                  toggled => $on_automatic_https_upgrade_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelBR2 {
+                layout {
+                  row:1;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("URL display:");
+                }
+              }
+              Box box38{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton showFullAddressCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Show full website address");
+                  map => $on_show_full_website_address_check_button_map();
+                  toggled => $on_show_full_website_address_check_button_toggled();
+                }
+              }
+              
+
+              Box settingLabelBR3 {
+                layout {
+                  row:2;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Bookmarks:");
+                }
+              }
+              Box box39{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton openBookmarksInNewCheckButton {
+                  label:_("Open bookmarks in new tabs");
+                  map => $on_open_bookmarks_in_new_tabs_check_button_map();
+                  toggled => $on_open_bookmarks_in_new_tabs_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelBR4 {
+                layout {
+                  row:3;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Window switcher:");
+                }
+              }
+              Box box40{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton switchSavedWindowsCheckButton {
+                  label:_("Switch Tab Groups in place");
+                  map => $on_switch_saved_windows_in_place_check_button_map();
+                  toggled => $on_switch_saved_windows_in_place_check_button_toggled();
+                }
+              }
+
+              
+              Box settingLabelBR5 {
+                layout {
+                  row:4;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Link preview:");
+                }
+              }
+              Box box41{
+                layout {
+                  row:4;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton openExternalPreviewCheckButton {
+                  sensitive: false; // TODO: wire this
+                  label:_("Open external links in Preview (hold Shift to open in new tab)");
+                  map => $on_open_external_links_in_preview_check_button_map();
+                  toggled => $on_open_external_links_in_preview_check_button_toggled();
+                }
+              }
+
+              
+              Box settingLabelBR6 {
+                layout {
+                  row:5;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Focus mode:");
+                }
+              }
+              Box box42{
+                layout {
+                  row:5;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton showStandardWindowCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Show standard window buttons in Focus Mode");
+                  map => $on_show_standard_window_buttons_in_focus_mode_check_button_map();
+                  toggled => $on_show_standard_window_buttons_in_focus_mode_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelBR7 {
+                layout {
+                  row:6;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Picture in Picture:");
+                }
+              }
+              Box box43{
+                layout {
+                  row:6;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton confirmClosingTabsPiPCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Confirm closing tabs when picture in picture video is playing");
+                  map => $on_confirm_closing_tab_with_pip_check_button_map();
+                  toggled => $on_confirm_closing_tab_with_pip_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelBR8 {
+                layout {
+                  row:7;
+                  column:0;
+                }
+                halign: end;
+                valign: start;
+                Label {
+                  label:_("Spelling and Grammar:");
+                }
+              }
+              Box box44{
+                layout {
+                  row:7;
+                  column:1;
+                }
+                CheckButton checkSpellingCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Check spelling while typing");
+                  map => $on_check_spelling_while_typing_check_button_map();
+                  toggled => $on_check_spelling_while_typing_check_button_toggled();
+                }
+              }
+              Box box45{
+                layout {
+                  row:8;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton correctSpellingCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Correct spelling automatically");
+                  map => $on_correct_spelling_automatically_check_button_map();
+                  toggled => $on_correct_spelling_automatically_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelBR9 {
+                layout {
+                  row:9;
+                  column:0;
+                }
+                halign: end;
+                valign: start;
+                margin-top:8;
+                Label {
+                  label:_("Accessibility:");
+                }
+              }
+              Box box46{
+                layout {
+                  row:9;
+                  column:1;
+                }
+                CheckButton minimumFontSizeCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Minimum font size");
+                  map => $on_enable_minimum_font_size_check_button_map();
+                  toggled => $on_enable_minimum_font_size_check_button_toggled();
+                }
+                DropDown minimimFontSizeDropDown {
+                  margin-start: 15;
+                  model: StringList {
+                    strings [
+                      "9",
+                      "10",
+                      "11",
+                      "12",
+                      "14",
+                      "16",
+                      "18",
+                      "24",
+                    ]
+                  };
+                }
+              }
+              Box box47{
+                layout {
+                  row:10;
+                  column:1;
+                }
+                Grid {
+                  row-spacing:5;
+                  CheckButton pressTabToHighlightCheckButton {
+                    sensitive: false; // TODO: implement this
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    label:_("Press Tab to highlight each item on a web page");
+                    map => $on_press_tab_to_highlight_each_item_on_web_page_check_button_map();
+                    toggled => $on_press_tab_to_highlight_each_item_on_web_page_check_button_toggled();
+                  }
+                  CheckButton preventESCExitCheckButton {
+                    sensitive: false; // TODO: wire this
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    label:_("Prevent ESC from exiting full screen");
+                    map => $on_prevent_esc_from_exiting_fs_check_button_map();
+                    toggled => $on_prevent_esc_from_exiting_fs_check_button_toggled();
+                  }
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label browsingTab{
+      //   label:_("Browsing");
+      // } //End of Browsing tab
+
+      StackPage {
+        name: "sync_tab";
+        title: _("Sync");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //Sync tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              row-spacing:15;
+              column-spacing:15;
+              
+              
+              Box settingLabelSY1 {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                halign: end;
+                valign: start;
+                Label {
+                  label:_("Sync:");
+                }
+              }
+              Box box48{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                // TODO: enable this when sync is implemented
+                CheckButton enableCrossDeviceSyncCheckButton {
+                  label:_("Enable cross device sync of your tabs, bookmarks and reading list");
+                  // map => $on_enable_cross_device_sync_of_tabs_bookmarks_reading_list_check_button_map();
+                  // toggled => $on_enable_cross_device_sync_of_tabs_bookmarks_reading_list_check_button_toggled();
+                  active: false;
+                  sensitive: false;
+                }
+              }
+
+              Box box49{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                Grid {
+                  row-spacing:15;
+                  Box box50{
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    styles [
+                      "sync-grid",
+                    ]
+                    margin-start:24;
+                    Grid {
+                      margin-top:15;
+                      margin-start:20;
+                      margin-end:20;
+                      margin-bottom:15;
+                      row-spacing:15;
+                      Label {
+                        layout {
+                          row:0;
+                          column:0;
+                        }
+                        halign:start;
+                        label:_("You can export your profile data to a file and import it on another device");
+                      }
+                      Box {
+                        layout {
+                          row:1;
+                          column:0;
+                        }
+                        orientation: horizontal;
+                        spacing: 8;
+                        Button {
+                          halign:start;
+                          label: _("Export to File");
+                          clicked => $on_sync_export_to_file_clicked();
+                        }
+                        Button {
+                          halign:start;
+                          label: _("Import from File");
+                          clicked => $on_sync_import_from_file_clicked();
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label syncTab{
+      //   label:_("Sync");
+      // } //End of Sync tab
+
+      StackPage {
+        name: "passwords_tab";
+        title: _("Passwords");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //Passwords tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:40;
+              row-spacing:5;
+
+
+              Box settingLabelPA1 {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                margin-end:15;
+                halign:end;
+                Label {
+                  label:_("Password provider:");
+                }
+              }
+              Box box51{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                DropDown passwordProviderDropDowm {
+                  halign:start;
+                  model: StringList {
+                    strings [
+                      "Libsecret"
+                      // _("Orion keychain"),
+                      // _("3d party provider"),
+                      // _("None"),
+                    ]
+                  };
+                }
+              }
+              Box box52{
+                visible: false; // TODO: iCloud sync is not used on Linux
+                layout {
+                  row:1;
+                  column:1;
+                }
+                height-request:30;
+                margin-bottom:15;
+                Box {
+                  spacing:5;
+                  Box {
+                    Label {
+                      xalign:0;
+                      wrap-mode:word;
+                      halign:fill;
+                      hexpand:true;
+                      wrap:true;
+                      max-width-chars:60;
+                      label:_("Orion’s Keychain is synced over iCloud. Disable this option to only use system Keychain passwords.");
+                    }
+                  }
+                  Button passwordProviderHelpButton {
+                    icon-name: "question-round-outline-symbolic";
+                    clicked => $on_password_provider_help_clicked();
+                  }
+                }
+              }
+              
+              Box settingLabelPA2 {
+                layout {
+                  row:2;
+                  column:0;
+                }
+                margin-end:15;
+                halign:end;
+                Label {
+                  label:_("Password AutoFill:");
+                }
+              }
+              Box box53{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                CheckButton offerToAutofillCheckButton {
+                  label:_("Offer to AutoFill passwords from Orion's Libsecret storage");
+                  map => $on_offer_to_autofill_from_orion_keychain_check_button_map();
+                  toggled => $on_offer_to_autofill_from_orion_keychain_check_button_toggled();
+                }
+              }
+              Box box54{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                margin-bottom:15;
+                Grid {
+                  row-spacing:5;
+                  CheckButton offerToSavePasswordsCheckButton {
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    label:_("Offer to save passwords to Orion's Libsecret storage");
+                    map => $on_offer_to_save_to_orion_keychain_check_button_map();
+                    toggled => $on_offer_to_save_to_orion_keychain_check_button_toggled();
+                  }
+                  CheckButton submitFormAutomaticallyCheckButton {
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    label:_("Submit form automatically");
+                    map => $on_submit_form_automatically_check_button_map();
+                    toggled => $on_submit_form_automatically_check_button_toggled();
+                  }
+                }
+              }
+
+              Box box55{
+                layout {
+                  row:4;
+                  column:1;
+                }
+                Button managePasswordsButton {
+                  label:_("Manage Passwords…");
+                  clicked => $on_manage_passwords_clicked();
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label passwordsTab{
+      //   label:_("Passwords");
+      // } //End of Passwords tab
+
+      StackPage {
+        name: "privacy_tab";
+        title: _("Privacy");
+        child: ScrolledWindow {
+          propagate-natural-height: true;
+          Grid { //Privacy tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              row-spacing:5;
+
+
+              Box settingLabelPR1 {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                margin-end:15;
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Remove trackers from URLs:");
+                }
+              }
+              Box box56{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                margin-bottom:15;
+                halign: start;
+                DropDown removeTrackersDropDown{
+                  //should be reimplemented in WebProcessExtension, currently handled in orion_webkit_webview.cpp::use_policy_decision_with_autoplay()
+                  //WebProcessExtension's WebKitWebPage::send-signal allows us to intercept network requests to do url stripping
+                  model: StringList {
+                    strings [
+                      _("For Private Browsing only"),
+                      _("For all browsing"),
+                    ]
+                  };
+                  map => $on_remove_trackers_mode_drop_down_map();
+                  notify::selected => $on_remove_trackers_mode_drop_down_notify_selected();
+                }
+              }
+
+
+              Box settingLabelPR2 {
+                layout {
+                  row:1;
+                  column:0;
+                }
+                margin-end:15;
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Remove history items:");
+                }
+              }
+              Box box57{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                margin-bottom:15;
+                halign: start;
+                DropDown removeHistoryDropDown{
+                  model: StringList {
+                    strings [
+                      _("After one day"),
+                      _("After one week"),
+                      _("After two weeks"),
+                      _("After one month"),
+                      _("After three months"),
+                      _("After six months"),
+                      _("After one year"),
+                      // separator
+                      _("After Orion exits"),
+                      _("Manually"),
+                    ]
+                  };
+                  map => $on_remove_history_mode_drop_down_map();
+                  notify::selected => $on_remove_history_mode_drop_down_notify_selected();
+                }
+              }
+
+
+              Box settingLabelPR3 {
+                layout {
+                  row:2;
+                  column:0;
+                }
+                margin-end:15;
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("Automatically delete cookies:");
+                }
+              }
+              Box box58{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                margin-bottom:15;
+                halign: start;
+                DropDown deleteCookiesDropDown{
+                  model: StringList {
+                    strings [
+                      _("After one day"),
+                      _("After one week"),
+                      _("After two weeks"),
+                      _("After one month"),
+                      _("After three months"),
+                      _("After six months"),
+                      _("After one year"),
+                      // separator
+                      _("After Orion exits"),
+                      _("Manually"),
+                    ]
+                  };
+                  map => $on_delete_cookies_mode_drop_down_map();
+                  notify::selected => $on_delete_cookies_mode_drop_down_notify_selected();
+                }
+              }
+
+
+
+              Box settingLabelPR4 {
+                layout {
+                  row:3;
+                  column:0;
+                }
+                margin-end:15;
+                halign: end;
+                Label {
+                  label:_("Cookies and website data:");
+                }
+              }
+              Box box59{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                halign: start;
+                CheckButton disableHistoryCheckButton{
+                  sensitive: false; // TODO: implement this
+                  label:_("Disable history");
+                  map => $on_disable_history_check_button_map();
+                  toggled => $on_disable_history_check_button_toggled();
+                }
+              }
+              Box box60{
+                layout {
+                  row:4;
+                  column:1;
+                }
+                margin-bottom:15;
+                Button resetOrionButton {
+                  margin-end: 15;
+                  label:_("Reset Orion…");
+                  clicked => $on_reset_orion_clicked();
+                }
+                Button manageCookiesAndDataButton {
+                  label:_("Manage Website Data…");
+                  clicked => $on_manage_website_data_clicked();
+                }
+              }
+
+
+              Box settingLabelPR5 {
+                layout {
+                  row:5;
+                  column:0;
+                }
+                margin-end:15;
+                halign: end;
+                Label {
+                  label:_("Share crash reports:");
+                }
+              }
+              Box box61{
+                sensitive: false; // TODO: implement this
+                layout {
+                  row:5;
+                  column:1;
+                }
+                halign: start;
+                CheckButton shareCrashA{
+                  label:_("After asking for approval");
+                  action-name: "win.share-crash-reports-setting";
+                  //NOTE: at the time of development, numeric string action targets are converted to int32 gvariants
+                  //might break in the future once proper syntax gets introduced to blueprint compiler
+                  action-target: "1";
+                  map => $on_share_crash_radio_buttons_map();
+                }
+              }
+              Box box62{
+                sensitive: false; // TODO: implement this
+                layout {
+                  row:6;
+                  column:1;
+                }
+                margin-bottom:15;
+                Grid {
+                  CheckButton shareCrashB{
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    group:shareCrashA;
+                    label:_("Always, without asking");
+                    action-name: "win.share-crash-reports-setting";
+                    action-target: "2";
+                  }
+                  CheckButton shareCrashC{
+                    sensitive: false; // TODO: implement this
+                    margin-top: 4;
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    group:shareCrashA;
+                    label:_("Never");
+                    action-name: "win.share-crash-reports-setting";
+                    action-target: "3";
+                  }
+                }
+              }
+
+
+              Box settingLabelPR6 {
+                layout {
+                  row:7;
+                  column:0;
+                }
+                margin-end:15;
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  label:_("“Custom” user agent:");
+                }
+              }
+              Box box63{
+                layout {
+                  row:7;
+                  column:1;
+                }
+                margin-bottom:15;
+                halign: fill;
+                Entry customUserAgentEntry{
+                  hexpand:true;
+                  activates-default:false;
+                  text: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"; // TODO: fill dynamically
+                  notify::text => $on_custom_user_agent_entry_notify_text();
+                  map => $on_custom_user_agent_entry_map();
+                }
+              }
+              Box box64{
+                layout {
+                  row:8;
+                  column:1;
+                }
+                Label {
+                  styles [
+                    "small-text",
+                  ]
+                  //wrap:true;
+                  label:_("To be used when “Custom” option is selected for user agent in Website Settings.");
+                }
+              }
+              
+              Separator {
+                layout {
+                  row:9;
+                  column:0;
+                }
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:50;
+                orientation:horizontal;
+              }
+              Separator {
+                layout {
+                  row:9;
+                  column:1;
+                }
+                margin-top:20;
+                margin-bottom:20;
+                margin-end:50;
+                orientation:horizontal;
+              }
+
+
+              Box settingLabelPR7 {
+                layout {
+                  row:10;
+                  column:0;
+                }
+                margin-end:15;
+                margin-bottom:15;
+                halign: end;
+                Label {
+                  halign: end;
+                  label:_("Content blocker:");
+                }
+              }
+              Box box65{
+                layout {
+                  row:10;
+                  column:1;
+                }
+                CheckButton auto_update_content_blockers_check_button {
+                  label:_("Auto-update content blockers");
+                  map => $on_auto_update_content_blockers_check_button_map();
+                  toggled => $on_auto_update_content_blockers_check_button_toggled();
+                }
+              }
+              Box {
+                layout {
+                  row:11;
+                  column:1;
+                }
+                Label {
+                  styles [
+                    "gray-text"
+                  ]
+                  label:_("Last updated – ");
+                }
+                Label content_blocker_last_updated_label {
+                  styles [
+                    "gray-text"
+                  ]
+                  // Format example: 08.05.2025, 16:22
+                  label:"never";
+                }
+              }
+              Box box66{
+                layout {
+                  row:12;
+                  column:1;
+                }
+                margin-top:8;
+                Grid {
+                  row-spacing:5;
+                  Stack content_blocker_status_stack {
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    transition-type: crossfade;
+                    StackPage {
+                      name: "counts";
+                      child: Box {
+                        Label content_blocker_active_rules_label {
+                          styles [
+                            "gray-text"
+                          ]
+                          label:"0";
+                        }
+                        Label {
+                          styles [
+                            "gray-text"
+                          ]
+                          label:_(" active rules from ");
+                        }
+                        Label content_blocker_active_lists_label {
+                          styles [
+                            "gray-text"
+                          ]
+                          label:"0";
+                        }
+                        Label {
+                          styles [
+                            "gray-text"
+                          ]
+                          label:_(" active lists.");
+                        }
+                      };
+                    }
+                    StackPage {
+                      name: "syncing";
+                      child: ProgressBar content_blocker_sync_progress_bar {
+                        width-request: 260;
+                        valign: center;
+                        pulse-step: 0.02;
+                        show-text: false;
+                      };
+                    }
+                  }
+                  Box box68{
+                    margin-top: 8;
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    Button content_blocker_update_now_button {
+                      margin-end: 15;
+                      label:_("Update Now");
+                    }
+                    Button manage_filter_lists_button {
+                      label:_("Manage Filter Lists…");
+                    }
+                  }
+                }
+              }
+
+              
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label privacyTab{
+      //   label: _("Privacy");
+      // } //End of Privacy tab
+
+      StackPage {
+        name: "search_tab";
+        title: _("Search");
+        child: ScrolledWindow {
+          propagate-natural-height: true;
+          Grid { //Search tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              row-spacing:5;
+              column-spacing:15;
+
+
+              Box settingLabelSE1 {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                halign:end;
+                Label {
+                  label:_("Search engine:");
+                }
+              }
+              Box box69{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                DropDown searchEngineDropDown {
+                  model: StringList {
+                    strings [
+                      _("Kagi"),
+                      _("None"),
+                      _("Google"),
+                      _("Bing"),
+                      _("Yandex"),
+                      _("DuckDuckGo"),
+                      _("Startpage"),
+                      _("Brave"),
+                      _("Ecosia"),
+                      _("Yahoo"),
+                      _("Baidu"),
+                      _("Qwant"),
+                      _("Mojeek"),
+                      _("You.com"),
+                    ]
+                  };
+                  map => $on_search_engine_drop_down_map();
+                  notify::selected => $on_search_engine_drop_down_notify_selected();
+                }
+              }
+              Box box70{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton alsoUseInPrivateBrowsingCheckButton {
+                  label:_("Also use in Private Browsing");
+                  map => $on_also_use_search_engine_in_private_browsing_check_button_map();
+                  toggled => $on_also_use_search_engine_in_private_browsing_check_button_toggled();
+                  sensitive: false; // TODO: enable this when Private Browsing is implemented
+                }
+              }
+
+
+              Box settingLabelSE2 {
+                layout {
+                  row:2;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign:end;
+                Label {
+                  label:_("Private Browsing search engine:");
+                }
+              }
+              Box box71{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                margin-bottom:15;
+                DropDown privateBrowsingSearchEngineDropDown {
+                  model: StringList {
+                    strings [
+                      _("Kagi"),
+                      _("None"),
+                      _("Google"),
+                      _("Bing"),
+                      _("Yandex"),
+                      _("DuckDuckGo"),
+                      _("Startpage"),
+                      _("Brave"),
+                      _("Ecosia"),
+                      _("Yahoo"),
+                      _("Baidu"),
+                      _("Qwant"),
+                      _("Mojeek"),
+                      _("You.com"),
+                    ]
+                  };
+                  sensitive: false; // TODO: enable this when Private Browsing is implemented
+                }
+              }
+
+
+              Box settingLabelSE3 {
+                layout {
+                  row:3;
+                  column:0;
+                }
+                halign:end;
+                Label {
+                  label:_("Custom search engines:");
+                }
+              }
+              Box box72{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                Button manageSearchEnginesButton {
+                  halign:start;
+                  label:_("Manage Search Engines…");
+                  clicked => $on_manage_search_engines_clicked();
+                }
+              }
+              Box box73{
+                layout {
+                  row:4;
+                  column:1;
+                }
+                Label {
+                  styles [
+                    "small-text",
+                  ]
+                  xalign:0;
+                  margin-bottom:15;
+                  use-markup:true;
+                  halign:fill;
+                  hexpand:true;
+                  wrap:true;
+                  label:_("Orion can make any bookmark into a search engine with quick searches. <a href=\"https://help.kagi.com/orion/features/quick-searches.html\">Learn more</a>.");
+                  activate-link => $on_search_learn_more_link_activated();
+                }
+              }
+
+
+              Box settingLabelSE4 {
+                layout {
+                  row:5;
+                  column:0;
+                }
+                halign:end;
+                Label {
+                  label:_("Autocomplete suggestions:");
+                }
+              }
+              Box box74{
+                layout {
+                  row:5;
+                  column:1;
+                }
+                CheckButton topHitsSuggestionsCheckButton {
+                  label:_("Top Hits");
+                  map => $on_autocomplete_top_hits_check_button_map();
+                  toggled => $on_autocomplete_top_hits_check_button_toggled();
+                }
+              }
+              Box box75{
+                layout {
+                  row:6;
+                  column:1;
+                }
+                Grid {
+                  row-spacing:5;
+                  CheckButton searchEngineSuggestionsCheckButton {
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    label:_("Search engine");
+                    map => $on_autocomplete_search_engines_check_button_map();
+                    toggled => $on_autocomplete_search_engines_check_button_toggled();
+                  }
+                  CheckButton askFastGPTSuggestionsCheckButton {
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    margin-start:24;
+                    label:_("Ask FastGPT");
+                    map => $on_autocomplete_ask_fastgpt_check_button_map();
+                    toggled => $on_autocomplete_ask_fastgpt_check_button_toggled();
+                  }
+                  CheckButton historySuggestionsCheckButton {
+                    layout {
+                      row:3;
+                      column:0;
+                    }
+                    label:_("History");
+                    map => $on_autocomplete_history_check_button_map();
+                    toggled => $on_autocomplete_history_check_button_toggled();
+                  }
+                  CheckButton bookmarksSuggestionsCheckButton {
+                    layout {
+                      row:4;
+                      column:0;
+                    }
+                    label:_("Bookmarks");
+                    map => $on_autocomplete_bookmarks_check_button_map();
+                    toggled => $on_autocomplete_bookmarks_check_button_toggled();
+                  }
+                  CheckButton openTabsSuggestionsCheckButton {
+                    layout {
+                      row:5;
+                      column:0;
+                    }
+                    label:_("Open tabs");
+                    map => $on_autocomplete_open_tabs_check_button_map();
+                    toggled => $on_autocomplete_open_tabs_check_button_toggled();
+                  }
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label searchTab{
+      //   label: _("Search");
+      // } //End of Search tab
+
+      StackPage {
+        name: "websites_tab";
+        title: _("Websites");
+        child: ScrolledWindow {
+          propagate-natural-height: true;
+          Adw.NavigationSplitView { //Websites tab
+            sidebar: Adw.NavigationPage websites_sidebar {
+              title:"websites_sidebar";
+              Box {
+                margin-top:35;
+                margin-start:35;
+                margin-end:35;
+                margin-bottom:35;
+                orientation:vertical;
+                Label {
+                  styles [
+                    "list-header-text",
+                  ]
+                  halign:start;
+                  label:_("General Settings");
+                }
+                ScrolledWindow {
+                  styles [
+                    "websites-settings-scrolled-window",
+                  ]
+                  vexpand: true;
+                  hexpand: true;
+                  min-content-width:250;
+                  ListBox websites_settings_sidebar_list_box { //TODO: fix icons, styles, copy over code from bookmarks_dialog to make the stack work
+                    vexpand:true;
+                    styles [
+                      "websites-settings-sidebar",
+                    ]
+                    show-separators:false;
+                    activate-on-single-click:true;
+                    Box box76{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"rich-text-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Reader Mode";
+                      }
+                    }
+                    Box box77{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"play-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Auto-Play";
+                      }
+                    }
+                    Box box78{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"loupe-plus-large-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Page Zoom";
+                      }
+                    }
+                    Box box79{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"overlapping-windows-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Pop-up Windows";
+                      }
+                    }
+                    Box box80{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"bell-outline-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Notifications";
+                      }
+                    }
+                    Box box81{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"arrow3-down-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Downloads";
+                      }
+                    }
+                    Box box82{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"film-camera-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Camera";
+                      }
+                    }
+                    Box box83{
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"mic-1-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Microphone";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"screencast-recorded-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Screen Sharing";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"shield-safe-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Content Blockers";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"navigate-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Location";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"hand-openyay-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Tracking Prevention";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"cake-symbolic";//TODO: get cookie icon
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Cookies";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"code-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"JavaScript";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"font-x-generic-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Web Fonts";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"verified-checkmark-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"SSL Certificate Check";
+                        ellipsize:end;
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"web-browser-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"User Agent";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"baseball-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Compatibility mode";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"software-store-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"External Apps";
+                      }
+                    }
+                    Box {
+                      Image {
+                        margin-top:7;
+                        margin-start:7;
+                        margin-end:9;
+                        margin-bottom:7;
+                        icon-name:"pip-in-symbolic";
+                        pixel-size:24;
+                      }
+                      Label {
+                        margin-end:20;
+                        label:"Picture in Picture";
+                      }
+                    }
+                    Box {
+                      Label {
+                        styles [
+                          "list-header-text",
+                        ]
+                        halign:start;
+                        label:_("Extension Settings");
+                      }
+                    }
+                  }
+                }
+              }
+            };
+
+            content: Adw.NavigationPage websites_main_view {
+              title:"websites_main_view";
+              styles [
+                "websites-settings-main-view"
+              ]
+              Grid {
+                Box box84{
+                  layout {
+                    row:0;
+                    column:0;
+                  }
+                  margin-top:35;
+                  margin-start:35;
+                  margin-end:35;
+                  margin-bottom:35;
+                  hexpand: true;
+                  vexpand:false;
+                  valign:start;
+                  Label settingLabelWE1 {
+                    halign:start;
+                    hexpand:true;
+                    valign:center;
+                    label:_("Default settings for all websites:");
+                  }
+
+                  Stack websites_default_settings_stack {
+                    halign:end;
+                    valign:center;
+                    transition-type: crossfade;
+
+                    StackPage {
+                      name: "reader-mode";
+                      child: DropDown websitesDefaultReaderModeDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("On"), _("Off") ] };
+                        map => $on_websites_default_reader_mode_drop_down_map();
+                        notify::selected => $on_websites_default_reader_mode_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "autoplay";
+                      child: DropDown websitesDefaultAutoplayDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Allow All Auto-Play"), _("Stop Media with Sound"), _("Never Auto-Play") ] };
+                        map => $on_websites_default_autoplay_drop_down_map();
+                        notify::selected => $on_websites_default_autoplay_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "page-zoom";
+                      child: DropDown websitesDefaultPageZoomDropDown {
+                        halign:end;
+                        model: StringList {
+                          strings [
+                            _("50%"),
+                            _("75%"),
+                            _("80%"),
+                            _("85%"),
+                            _("90%"),
+                            _("95%"),
+                            _("100%"),
+                            _("115%"),
+                            _("125%"),
+                            _("150%"),
+                            _("175%"),
+                            _("200%"),
+                            _("250%"),
+                            _("300%"),
+                          ]
+                        };
+                        map => $on_websites_default_page_zoom_drop_down_map();
+                        notify::selected => $on_websites_default_page_zoom_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "popup-windows";
+                      child: DropDown websitesDefaultPopupWindowsDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Allow"), _("Block"), _("Block and Notify") ] };
+                        map => $on_websites_default_popup_windows_drop_down_map();
+                        notify::selected => $on_websites_default_popup_windows_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "notifications";
+                      child: DropDown websitesDefaultNotificationsDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Ask"), _("Allow"), _("Don't Allow") ] };
+                        map => $on_websites_default_notifications_drop_down_map();
+                        notify::selected => $on_websites_default_notifications_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "downloads";
+                      child: DropDown websitesDefaultDownloadsDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Ask"), _("Don't Allow"), _("Allow") ] };
+                        map => $on_websites_default_downloads_drop_down_map();
+                        notify::selected => $on_websites_default_downloads_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "camera";
+                      child: DropDown websitesDefaultCameraDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Ask"), _("Deny"), _("Allow") ] };
+                        map => $on_websites_default_camera_drop_down_map();
+                        notify::selected => $on_websites_default_camera_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "microphone";
+                      child: DropDown websitesDefaultMicrophoneDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Ask"), _("Deny"), _("Allow") ] };
+                        map => $on_websites_default_microphone_drop_down_map();
+                        notify::selected => $on_websites_default_microphone_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "screen-sharing";
+                      child: DropDown websitesDefaultScreenSharingDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Ask"), _("Deny"), _("Allow") ] };
+                        map => $on_websites_default_screen_sharing_drop_down_map();
+                        notify::selected => $on_websites_default_screen_sharing_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "content-blockers";
+                      child: DropDown websitesDefaultContentBlockersDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("On"), _("Off") ] };
+                        map => $on_websites_default_content_blockers_drop_down_map();
+                        notify::selected => $on_websites_default_content_blockers_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "location";
+                      child: DropDown websitesDefaultLocationDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Ask"), _("Don't Allow"), _("Allow") ] };
+                        map => $on_websites_default_location_drop_down_map();
+                        notify::selected => $on_websites_default_location_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "tracking-prevention";
+                      child: DropDown websitesDefaultTrackingPreventionDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("On"), _("Off") ] };
+                        map => $on_websites_default_tracking_prevention_drop_down_map();
+                        notify::selected => $on_websites_default_tracking_prevention_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "cookies";
+                      child: DropDown websitesDefaultCookiesDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("On"), _("Off") ] };
+                        map => $on_websites_default_cookies_drop_down_map();
+                        notify::selected => $on_websites_default_cookies_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "javascript";
+                      child: DropDown websitesDefaultJavascriptDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("On"), _("Off") ] };
+                        map => $on_websites_default_javascript_drop_down_map();
+                        notify::selected => $on_websites_default_javascript_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "web-fonts";
+                      child: DropDown websitesDefaultWebFontsDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("On"), _("Off") ] };
+                        map => $on_websites_default_web_fonts_drop_down_map();
+                        notify::selected => $on_websites_default_web_fonts_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "ssl-certificate-validation";
+                      child: DropDown websitesDefaultSslCertificateValidationDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Strict"), _("Ignore") ] };
+                        map => $on_websites_default_ssl_certificate_validation_drop_down_map();
+                        notify::selected => $on_websites_default_ssl_certificate_validation_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "user-agent";
+                      child: DropDown websitesDefaultUserAgentDropDown {
+                        halign:end;
+                        model: StringList {
+                          strings [
+                            _("Automatic"),
+                            _("Custom"),
+                            _("Chrome"),
+                            _("Firefox"),
+                            _("Safari"),
+                            _("Safari iPhone"),
+                            _("Safari iPad"),
+                            _("Edge"),
+                          ]
+                        };
+                        map => $on_websites_default_user_agent_drop_down_map();
+                        notify::selected => $on_websites_default_user_agent_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "compatibility-mode";
+                      child: DropDown websitesDefaultCompatibilityModeDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("On"), _("Off") ] };
+                        map => $on_websites_default_compatibility_mode_drop_down_map();
+                        notify::selected => $on_websites_default_compatibility_mode_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "external-apps";
+                      child: DropDown websitesDefaultExternalAppsDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Ask"), _("Don't Allow"), _("Allow") ] };
+                        map => $on_websites_default_external_apps_drop_down_map();
+                        notify::selected => $on_websites_default_external_apps_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "picture-in-picture";
+                      child: DropDown websitesDefaultPictureInPictureDropDown {
+                        halign:end;
+                        model: StringList { strings [ _("Automatic"), _("Manual") ] };
+                        map => $on_websites_default_picture_in_picture_drop_down_map();
+                        notify::selected => $on_websites_default_picture_in_picture_drop_down_notify_selected();
+                      };
+                    }
+
+                    StackPage {
+                      name: "extension-settings";
+                      child: Box {};
+                    }
+                  }
+                }
+
+                Separator {
+                  layout {
+                    row:1;
+                    column:0;
+                  }
+                  margin-bottom:20;
+                  orientation:horizontal;
+                }
+
+                Box {
+                  layout {
+                    row:3;
+                    column:0;
+                  }
+                  styles [
+                    "frame",
+                  ]
+                  orientation:vertical;
+                  hexpand:true;
+                  vexpand:true;
+                  margin-start:35;
+                  margin-end:35;
+                  margin-bottom:15;
+                  halign:fill;
+                  spacing:5;
+                  Label {
+                    margin-start:10;
+                    margin-top:5;
+                    halign:start;
+                    label:_("Configured Websites");
+                  }
+                  Separator {
+                    orientation:horizontal;
+                    hexpand:true;
+                  }
+                  ScrolledWindow {
+                    hexpand:true;
+                    vexpand:true;
+                    propagate-natural-width:false;
+                    propagate-natural-height:false;
+                    ListView configured_websites_list_view {
+                      styles [
+                        "websites-settings-websites-list",
+                      ]
+                      hexpand:true;
+                      vexpand:true;
+                    }
+                  }
+                }
+
+                Box box85{
+                  layout {
+                    row:4;
+                    column:0;
+                  }
+                  margin-start:35;
+                  margin-end:35;
+                  margin-bottom:35;
+                  Button add_website_button {
+                    icon-name: "plus-large-symbolic";
+                    clicked => $on_add_website_clicked();
+                  }
+                  Button remove_website_button {
+                    margin-start: 4;
+                    icon-name: "minus-large-symbolic";
+                    clicked => $on_remove_website_clicked();
+                  }
+                }
+              }
+            };
+          }
+        };
+      }
+
+      // [tab]
+      // Label websitesTab{
+      //   label: _("Websites");
+      // } //End of Websites tab
+
+      StackPage {
+        name: "advanced_tab";
+        title: _("Advanced");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //Advanced tab
+            halign:center;
+            Grid {
+              layout {
+                row:0;
+                column:0;
+              }
+              margin-top:20;
+              row-spacing:5;
+              column-spacing:15;
+
+
+              Box settingLabelAD1 {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                margin-bottom:15;
+                halign:end;
+                Label {
+                  label:_("Rendering:");
+                }
+              }
+              Box box86{
+                layout {
+                  row:0;
+                  column:1;
+                }
+                margin-bottom:15;
+                CheckButton enableJSONFormattingCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Enable JSON formatting");
+                  map => $on_enable_json_formatting_check_button_map();
+                  toggled => $on_enable_json_formatting_check_button_toggled();
+                }
+              }
+
+
+              Box settingLabelAD2 {
+                layout {
+                  row:1;
+                  column:0;
+                }
+                valign: start;
+                margin-top:4;
+                halign:end;
+                Label {
+                  label:_("Extensions:");
+                }
+              }
+              Box box87{
+                layout {
+                  row:1;
+                  column:1;
+                }
+                CheckButton allowInstallationChromeExtensionsCheckButton {
+                  sensitive: false; // TODO: implement this
+                  label:_("Allow installation of 3rd party Chrome extensions");
+                  map => $on_allow_installation_of_3rd_party_chrome_extensions_check_button_map();
+                  toggled => $on_allow_installation_of_3rd_party_chrome_extensions_check_button_toggled();
+                }
+              }
+              Box box88{
+                layout {
+                  row:2;
+                  column:1;
+                }
+                margin-bottom:15;
+                Grid {
+                  CheckButton allowInstallationFireFoxExtensionsCheckButton {
+                    sensitive: false; // TODO: implement this
+                    layout {
+                      row:1;
+                      column:0;
+                    }
+                    label:_("Allow installation of 3rd party Firefox extensions");
+                    map => $on_allow_installation_of_3rd_party_firefox_extensions_check_button_map();
+                    toggled => $on_allow_installation_of_3rd_party_firefox_extensions_check_button_toggled();
+                  }
+                  Label {
+                    layout {
+                      row:2;
+                      column:0;
+                    }
+                    styles [
+                      "small-text",
+                    ]
+                    margin-start:24;
+                    use-markup:true;
+                    label:_("Read more about <a href=\"https://kagi.com/\">web extensions support</a> in Orion"); //TODO: correct link
+                  }
+                }
+              }
+
+
+              Box box89{
+                layout {
+                  row:3;
+                  column:1;
+                }
+                Button manageExtensionsButton {
+                  label:_("Manage Extensions…");
+                  clicked => $on_manage_extensions_clicked();
+                }
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label advancedTab{
+      //   label: _("Advanced");
+      // } //End of Advanced tab
+
+      StackPage {
+        name: "plus_tab";
+        title: _("Plus");
+        child: ScrolledWindow {
+          propagate-natural-width: true;
+          propagate-natural-height: true;
+          Grid { //Plus tab
+            halign:center;
+            margin-top:40;
+            Grid {
+              halign:center;
+              layout {
+                row:0;
+                column:0;
+              }
+              row-spacing:5;
+              Image {
+                layout {
+                  row: 0;
+                  column: 0;
+                }
+                name: "orion-logo";
+                icon-name: "orion-logo";
+                pixel-size: 196;
+                margin-bottom:15;
+                halign:center;
+              }
+              Label {
+                layout {
+                  row:1;
+                  column:0;
+                }
+                styles [
+                  "gray-text",
+                ]
+                halign: center;
+                label:_("Current plan:");
+              }
+              Label {
+                layout {
+                  row:2;
+                  column:0;
+                }
+                styles [
+                  "bold-text"
+                ]
+                halign: center;
+                margin-bottom:5;
+                label:_("Free");
+              }
+              Button {
+                layout {
+                  row:3;
+                  column:0;
+                }
+                styles [
+                  "restore-purchases-button",
+                ]
+                halign: center;
+                label:_("Restore Purchase");
+                clicked => $on_restore_purchase_clicked();
+              }
+            }
+            Grid {
+              halign:center;
+              layout {
+                row:0;
+                column:1;
+              }
+              row-spacing:20;
+              Box {
+                layout {
+                  row:0;
+                  column:0;
+                }
+                halign:start;
+                Label {
+                  xalign:0;
+                  natural-wrap-mode:inherit;
+                  halign:fill;
+                  hexpand:true;
+                  wrap:true;
+                  wrap-mode:word_char;
+                  max-width-chars:65;
+                  label:_("Since we are self-funded and only generate revenue from our users directly, we currently offer Orion as a subscripion to cover the cost of development.");
+                }
+              }
+              Box box90{
+                layout {
+                  row:1;
+                  column:0;
+                }
+                halign:start;
+                orientation:vertical;
+                spacing:10;
+                Label {
+                  halign:start;
+                  margin-bottom:10;
+                  label:_("Orion+ gets you the following perks:");
+                }
+                Box box91{
+                  halign:start;
+                  Image {
+                    icon-name:"star-outline-thick-symbolic";
+                    pixel-size:20;
+                  }
+                  Label {
+                    label:_("Special Orion+ App icons");
+                    margin-start: 4;
+                  }
+                }
+                Box box92{
+                  halign:start;
+                  Image {
+                    icon-name:"star-outline-thick-symbolic";
+                    pixel-size:20;
+                  }
+                  Label {
+                    label:_("Access to Orion Release Candidate and Beta versions");
+                    margin-start: 4;
+                  }
+                }
+                Box box93{
+                  halign:start;
+                  Image {
+                    icon-name:"star-outline-thick-symbolic";
+                    pixel-size:20;
+                  }
+                  Label {
+                    label:_("Access to Orion iOS TestFlight");
+                    margin-start: 4;
+                  }
+                }
+                Box box94{
+                  halign:start;
+                  Image {
+                    icon-name:"star-outline-thick-symbolic";
+                    pixel-size:20;
+                  }
+                  Label {
+                    label:_("Orion+ badge on orionfeedback.org");
+                    margin-start: 4;
+                  }
+                }
+                Box box95{
+                  halign:start;
+                  Image {
+                    icon-name:"star-outline-thick-symbolic";
+                    pixel-size:20;
+                  }
+                  Label {
+                    label:_("Your voice has more weight influencing Orion's product roadmap");
+                    margin-start: 4;
+                  }
+                }
+              }
+              Button {
+                layout {
+                  row:2;
+                  column:0;
+                }
+                halign:start;
+                label: _("Get Orion+");
+                styles ["suggested-action"]
+                action-name: "win.get-orion-plus";
+              }
+            }
+          }
+        };
+      }
+
+      // [tab]
+      // Label plusTab{
+      //   label: _("Plus");
+      // } //end of Plus tab
+    };
+  }
+}

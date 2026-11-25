@@ -1,0 +1,350 @@
+enum WebRequestResourceType {
+    MainFrame = "main_frame";
+    SubFrame = "sub_frame";
+    Stylesheet = "stylesheet";
+    Script = "script";
+    Image = "image";
+    Font = "font";
+    Object = "object";
+    XmlHttpRequest = "xmlhttprequest";
+    Ping = "ping";
+    CspReport = "csp_report";
+    Media = "media";
+    WebSocket = "websocket";
+    Other = "other";
+
+    [Tags=Chrome]
+    WebBundle = "webbundle";
+
+    [Tags=Firefox]
+    Xslt = "xslt";
+
+    [Tags=Firefox]
+    Beacon = "beacon";
+
+    [Tags=Firefox]
+    XmlDtd = "xml_dtd";
+
+    [Tags=Firefox]
+    ImageSet = "imageset";
+
+    [Tags=Firefox]
+    WebManifest = "web_manifest";
+
+    [Tags=Firefox]
+    Speculative = "speculative";
+
+    [Tags=Firefox]
+    Json = "json";
+};
+
+[Tags=Chrome]
+enum WebRequestDocumentLifecycle {
+    Prerender = "prerender";
+    Active = "active";
+    Cached = "cached";
+    PendingDeletion = "pending_deletion";
+};
+
+[Tags=Chrome]
+enum WebRequestFrameType {
+    OutermostFrame = "outermost_frame";
+    FencedFrame = "fenced_frame";
+    SubFrame = "sub_frame";
+};
+
+enum WebRequestOnCompletedOption {
+    ResponseHeaders = "responseHeaders";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+};
+
+enum WebRequestOnBeforeSendHeadersOption {
+    RequestHeaders = "requestHeaders";
+    Blocking = "blocking";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+};
+
+enum WebRequestOnBeforeRequestOption {
+    Blocking = "blocking";
+    RequestBody = "requestBody";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+};
+
+enum WebRequestOnSendHeadersOption {
+    RequestHeaders = "requestHeaders";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+};
+
+enum WebRequestOnHeadersReceivedOption {
+    Blocking = "blocking";
+    ResponseHeaders = "responseHeaders";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+
+    [Tags=Chrome]
+    SecurityInfo = "securityInfo";
+
+    [Tags=Chrome]
+    SecurityInfoRawDer = "securityInfoRawDer";
+};
+
+enum WebRequestOnAuthRequiredOption {
+    ResponseHeaders = "responseHeaders";
+    Blocking = "blocking";
+    AsyncBlocking = "asyncBlocking";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+};
+
+enum WebRequestOnResponseStartedOption {
+    ResponseHeaders = "responseHeaders";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+};
+
+enum WebRequestOnBeforeRedirectOption {
+    ResponseHeaders = "responseHeaders";
+
+    [Tags=Chrome]
+    ExtraHeaders = "extraHeaders";
+};
+
+[Tags=Chrome]
+enum WebRequestOnErrorOccurredOption {
+    ExtraHeaders = "extraHeaders";
+};
+
+// These types describe webRequest.addListener registration arguments.
+// Native event objects retain registrations but do not yet dispatch requests.
+[AdditionalProperties=false]
+dictionary WebRequestRequestFilter {
+    sequence<string> urls;
+    optional sequence<WebRequestResourceType> types;
+    optional integer tabId;
+    optional integer windowId;
+
+    [Tags=Firefox]
+    optional boolean incognito;
+};
+
+[AdditionalProperties=false]
+dictionary WebRequestOnCompletedDetails {
+    string requestId;
+    string url;
+    string method;
+    integer frameId;
+    integer parentFrameId;
+    integer tabId;
+    WebRequestResourceType type;
+    number timeStamp;
+    boolean fromCache;
+    integer statusCode;
+    string statusLine;
+    optional string ip;
+    optional sequence<object> responseHeaders;
+
+    [Tags=Chrome]
+    optional string documentId;
+
+    [Tags=Chrome]
+    optional string parentDocumentId;
+
+    [Tags=Chrome]
+    WebRequestDocumentLifecycle documentLifecycle;
+
+    [Tags=Chrome]
+    WebRequestFrameType frameType;
+
+    [Tags=Chrome]
+    optional string initiator;
+
+    [Tags=Firefox]
+    optional boolean incognito;
+
+    [Tags=Firefox]
+    optional string cookieStoreId;
+
+    [Tags=Firefox]
+    optional string originUrl;
+
+    [Tags=Firefox]
+    optional string documentUrl;
+
+    [Tags=Firefox]
+    object urlClassification;
+
+    [Tags=Firefox]
+    boolean thirdParty;
+
+    [Tags=Firefox]
+    integer requestSize;
+
+    [Tags=Firefox]
+    integer responseSize;
+};
+
+[AdditionalProperties=false]
+dictionary WebRequestOnBeforeSendHeadersDetails {
+    string requestId;
+    string url;
+    string method;
+    integer frameId;
+    integer parentFrameId;
+    integer tabId;
+    WebRequestResourceType type;
+    number timeStamp;
+    optional sequence<object> requestHeaders;
+    optional string documentId;
+    optional string parentDocumentId;
+
+    [Tags=Chrome]
+    WebRequestDocumentLifecycle documentLifecycle;
+
+    [Tags=Chrome]
+    WebRequestFrameType frameType;
+
+    [Tags=Chrome]
+    optional string initiator;
+
+    [Tags=Firefox]
+    optional boolean incognito;
+
+    [Tags=Firefox]
+    optional string cookieStoreId;
+
+    [Tags=Firefox]
+    optional string originUrl;
+
+    [Tags=Firefox]
+    optional string documentUrl;
+
+    [Tags=Firefox]
+    optional object urlClassification;
+
+    [Tags=Firefox]
+    boolean thirdParty;
+};
+
+[AdditionalProperties=false]
+dictionary WebRequestOnBeforeRequestDetails {
+    string requestId;
+    string url;
+    string method;
+    integer frameId;
+    integer parentFrameId;
+    integer tabId;
+    WebRequestResourceType type;
+    number timeStamp;
+    optional object requestBody;
+    optional string documentId;
+    optional string parentDocumentId;
+
+    [Tags=Chrome]
+    WebRequestDocumentLifecycle documentLifecycle;
+
+    [Tags=Chrome]
+    WebRequestFrameType frameType;
+
+    [Tags=Chrome]
+    optional string initiator;
+
+    [Tags=Firefox]
+    optional boolean incognito;
+
+    [Tags=Firefox]
+    optional string cookieStoreId;
+
+    [Tags=Firefox]
+    optional string originUrl;
+
+    [Tags=Firefox]
+    optional string documentUrl;
+
+    [Tags=Firefox]
+    optional object urlClassification;
+
+    [Tags=Firefox]
+    boolean thirdParty;
+};
+
+callback WebRequestOnCompletedListener = void(
+    WebRequestOnCompletedDetails details
+);
+
+callback WebRequestOnBeforeSendHeadersListener =
+    (object | undefined)(
+        WebRequestOnBeforeSendHeadersDetails details
+    );
+
+callback WebRequestOnBeforeRequestListener =
+    (object | undefined)(WebRequestOnBeforeRequestDetails details);
+
+callback WebRequestGenericListener = void(any details);
+callback WebRequestBlockingListener = (object | undefined)(any details);
+callback WebRequestAuthResponseCallback = void(object response);
+callback WebRequestAuthRequiredListener = (object | undefined)(
+    any details,
+    optional WebRequestAuthResponseCallback asyncCallback
+);
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage]
+[Permissions=webRequest]
+[Global="webRequest"]
+interface WebRequest {
+    event onBeforeRequest: WebRequestOnBeforeRequestListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnBeforeRequestOption> extraInfoSpec
+    );
+
+    event onBeforeSendHeaders: WebRequestOnBeforeSendHeadersListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnBeforeSendHeadersOption> extraInfoSpec
+    );
+
+    event onSendHeaders: WebRequestGenericListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnSendHeadersOption> extraInfoSpec
+    );
+
+    event onHeadersReceived: WebRequestBlockingListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnHeadersReceivedOption> extraInfoSpec
+    );
+
+    event onAuthRequired: WebRequestAuthRequiredListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnAuthRequiredOption> extraInfoSpec
+    );
+
+    event onResponseStarted: WebRequestGenericListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnResponseStartedOption> extraInfoSpec
+    );
+
+    event onBeforeRedirect: WebRequestGenericListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnBeforeRedirectOption> extraInfoSpec
+    );
+
+    event onCompleted: WebRequestOnCompletedListener with (
+        WebRequestRequestFilter filter,
+        optional sequence<WebRequestOnCompletedOption> extraInfoSpec
+    );
+
+    event onErrorOccurred: WebRequestGenericListener with (
+        WebRequestRequestFilter filter,
+        [Tags=Chrome]
+        optional sequence<WebRequestOnErrorOccurredOption> extraInfoSpec
+    );
+};

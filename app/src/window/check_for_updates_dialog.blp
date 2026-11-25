@@ -1,0 +1,68 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $CheckForUpdatesDialog: Adw.Dialog {
+  content-width: 410;
+  content-height: 170;
+  title: _("Updating Orion");
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Grid {
+      Box {
+        layout {
+          row: 0;
+          column: 0;
+        }
+
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 60;
+          margin-start: 10;
+          margin-end: 10;
+          margin-top: 10;
+        }
+      }
+
+      Box {
+        layout {
+          row: 0;
+          column: 1;
+        }
+
+        orientation: vertical;
+        valign: start;
+        halign: start;
+        margin-start: 10;
+        margin-top: 20;
+
+        Box {
+          Label {
+            label: _("Checking for updates...");
+          }
+        }
+
+        Box {
+          margin-top: 10;
+
+          ProgressBar progress_bar {
+            width-request: 300;
+            height-request: 20;
+          }
+        }
+
+        Box {
+          halign: end;
+
+          Button {
+            label: _("Cancel");
+            clicked => $on_cancel_clicked();
+          }
+        }
+      }
+    }
+  }
+}

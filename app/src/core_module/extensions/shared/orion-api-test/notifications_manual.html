@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Orion API Tests — Notifications (manual)</title>
+  <link rel="stylesheet" href="lib/app.css">
+  <style>
+    body { min-width: 640px; }
+    form.opts { display: grid; grid-template-columns: max-content 1fr max-content 1fr; gap: 6px 10px; align-items: center; margin: 8px 0 10px; }
+    form.opts label { font-size: 12px; color: #444; }
+    form.opts input[type=text], form.opts select, form.opts input[type=number] { width: 100%; padding: 3px 6px; font: inherit; }
+    form.opts .wide { grid-column: 2 / 5; }
+    form.opts .checks { grid-column: 1 / 5; display: flex; gap: 16px; font-size: 12px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .actions button { padding: 5px 10px; font: inherit; cursor: pointer; }
+    .actions button.primary { font-weight: 600; }
+    .actions button:disabled { opacity: 0.5; cursor: default; }
+    #last-id { font-family: Consolas, monospace; }
+    table#log td { vertical-align: top; font-size: 12px; }
+    table#log td.when { color: #999; white-space: nowrap; }
+    table#log tr.event td.kind { color: #0b5ed7; font-weight: 600; }
+    table#log tr.call td.kind { color: #555; }
+    table#log tr.error td.kind, table#log tr.error td.what { color: #dc3545; }
+    table#log td.what { font-family: Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <a class="back" href="popup.html">← Back to tests</a>
+  <h1>Notifications — manual test</h1>
+  <div id="env">Detecting environment…</div>
+  <p class="note">
+    Creates real desktop notifications through the flavor's <code>notifications</code> API (<code>browser.*</code> promises in the Firefox flavor, <code>chrome.*</code> callbacks in the Chrome flavor).
+    Click the toast body or one of its buttons and watch the event log below
+    for <code>onClicked</code> / <code>onButtonClicked</code> / <code>onClosed</code>
+    (and <code>onShown</code> in the Firefox flavor).
+  </p>
+
+  <h2>Options</h2>
+  <form class="opts" onsubmit="return false">
+    <label for="opt-id">Notification id</label>
+    <input id="opt-id" type="text" placeholder="(empty = let the browser generate one)">
+    <label for="opt-type">Type</label>
+    <select id="opt-type">
+      <option value="basic" selected>basic</option>
+      <option value="image">image</option>
+      <option value="list">list</option>
+      <option value="progress">progress</option>
+    </select>
+
+    <label for="opt-title">Title</label>
+    <input id="opt-title" type="text" value="Orion API Test">
+    <label for="opt-icon">Icon</label>
+    <select id="opt-icon">
+      <option value="package" selected>package resource: icons/orion-64.png (Orion logo)</option>
+      <option value="data">data: URL (generated swatch)</option>
+      <option value="none">none</option>
+    </select>
+
+    <label for="opt-message">Message</label>
+    <input id="opt-message" class="wide" type="text" value="Hello from the APITestExtension. Click me, or a button.">
+
+    <label for="opt-context">Context message</label>
+    <input id="opt-context" type="text" value="">
+    <label for="opt-buttons">Buttons</label>
+    <select id="opt-buttons">
+      <option value="0">none</option>
+      <option value="1">1 (“Open”)</option>
+      <option value="2" selected>2 (“Open”, “Dismiss”)</option>
+    </select>
+
+    <label for="opt-progress">Progress (%)</label>
+    <input id="opt-progress" type="number" min="0" max="100" value="40">
+    <label for="opt-priority">Priority</label>
+    <input id="opt-priority" type="number" min="-2" max="2" value="0">
+
+    <div class="checks">
+      <label><input id="opt-require" type="checkbox"> requireInteraction</label>
+      <label><input id="opt-silent" type="checkbox"> silent</label>
+      <label><input id="opt-eventtime" type="checkbox"> eventTime = now</label>
+    </div>
+  </form>
+
+  <div class="actions">
+    <button id="btn-create" class="primary">Create</button>
+    <button id="btn-update">Update last</button>
+    <button id="btn-clear">Clear last</button>
+    <button id="btn-getall">getAll()</button>
+    <button id="btn-permission">getPermissionLevel()</button>
+    <span class="muted" style="align-self:center">last id: <span id="last-id">—</span></span>
+  </div>
+
+  <h2>Event log <button id="btn-clearlog" style="font-size:11px;margin-left:8px">clear</button></h2>
+  <table id="log">
+    <thead><tr><th style="width:90px">Time</th><th style="width:150px">Kind</th><th>Details</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="lib/env.js"></script>
+  <script src="lib/api.js"></script>
+  <script src="notifications_manual.js"></script>
+</body>
+</html>

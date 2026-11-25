@@ -1,0 +1,321 @@
+using Gtk 4.0;
+using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+template $ProgrammableButtonPopover: Popover {
+  name: "programmable-button-popover";
+  default-widget: save_button;
+  //autohide:false;
+
+  Box {
+    orientation:vertical;
+    halign:fill;
+    spacing:15;
+    Entry title_entry {
+      placeholder-text:_("Title");
+      buffer: EntryBuffer {
+        text:_("Programmable Button");
+      };
+      //TODO: set text from code;
+    }
+    Box {
+      hexpand:true;
+      orientation:horizontal;
+      halign:fill;
+      spacing:10;
+      Adw.ToggleGroup icon_toggle_group {
+        styles [
+          "title-2",
+        ]
+        hexpand:true;
+        halign:fill;
+        homogeneous:true;
+        //toggles are newly set from code, to more easily look up indexes
+        // Adw.Toggle {
+        //   label: "❖";
+        //   name: "diagonal-square";
+        // }
+        // Adw.Toggle {
+        //   icon-name:"play-symbolic";
+        //   name:"play-symbolic";
+        // }
+        // Adw.Toggle {
+        //   icon-name:"running-symbolic";
+        //   name:"running-symbolic";
+        // }
+        // Adw.Toggle {
+        //   icon-name:"navigate-symbolic";
+        //   name:"navigate-symbolic";
+        // }
+        // Adw.Toggle {
+        //   icon-name:"shoe-box-symbolic";
+        //   name:"shoe-box-symbolic";
+        // }
+        // Adw.Toggle {
+        //   icon-name:"brain-symbolic";
+        //   name:"brain-symbolic";
+        // }
+        // Adw.Toggle {
+        //   icon-name:"search-folder-symbolic";
+        //   name:"search-folder-symbolic";
+        // }
+        // Adw.Toggle {
+        //   icon-name:"share-symbolic";
+        //   name:"share-symbolic";
+        // }
+      }
+      MenuButton icon_search_menu_button {
+        always-show-arrow:false;
+        icon-name:"more-small-symbolic";
+        sensitive: true;
+        popover: Popover {
+          Box {
+            orientation:vertical;
+            SearchEntry icon_search_entry {
+              search-changed => $on_icon_search_entry_search_changed();
+            }
+            ScrolledWindow {
+              GridView icon_grid_view {
+                //model handled programatically
+                valign:fill;
+                factory: BuilderListItemFactory {
+                  template ListItem {
+                    child: Image {
+                      pixel-size: 16;
+                      icon-name: bind template.item as <StringObject>.string;
+                    };
+                  }
+                };
+              }
+            }
+          }
+        };
+      }
+    }
+    Adw.InlineViewSwitcher {
+      stack:view_stack;
+      display-mode:labels;
+    }
+    Adw.ViewStack view_stack{
+      Adw.ViewStackPage {
+        title: _("Menu Action");
+        name: "menu_action_page";
+        child: Box {
+          orientation: vertical;
+          hexpand:true;
+          DropDown menu_item_dropdown {
+            hexpand:true;
+            //primary-icon-name: "loupe-large-symbolic";
+            margin-bottom: 5;
+            //placeholder-text: _("Menu item name");
+
+            enable-search: true;
+            search-match-mode: substring;
+            expression: expr $join_strv_and_str(item as <$AppMenuItem>.label, item as <$AppMenuItem>.path) as <string>; 
+
+            factory: BuilderListItemFactory {
+              template ListItem {
+                child: Box {
+                  orientation: horizontal;
+                  Label {
+                    styles [
+                      "dimmed-text"
+                    ]
+                    label: bind $path_to_string(template.item as <$AppMenuItem>.path) as <string>;
+                    ellipsize: end;
+                    max-width-chars: 40;
+                  }
+                  Label {
+                    label: bind template.item as <$AppMenuItem>.label as <string>;
+                    ellipsize: end;
+                  }
+                };
+              }
+            };
+            list-factory: BuilderListItemFactory {
+              template ListItem {
+                child: Box {
+                  orientation: horizontal;
+                  Label {
+                    styles [
+                      "dimmed-text"
+                    ]
+                    label: bind $path_to_string(template.item as <$AppMenuItem>.path) as <string>;
+                    ellipsize: end;
+                    max-width-chars: 40;
+                  }
+                  Label {
+                    label: bind template.item as <$AppMenuItem>.label as <string>;
+                    ellipsize: end;
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+      Adw.ViewStackPage {
+        title: _("Open URL");
+        name: "open_uri_page";
+        child: Box {
+          orientation:vertical;
+          spacing:20;
+          Box {
+            orientation:vertical;
+            spacing:15;
+            Label {
+              halign:start;
+              label:_("URL (use %u and %t to replace current page URL or title):");
+            }
+            Entry target_url_entry {
+              placeholder-text: _("https://");
+            }
+          }
+          Box {
+            orientation:vertical;
+            spacing:15;
+            Label {
+              halign:start;
+              label:_("Open in:");
+            }
+            DropDown open_in_dropdown {
+              halign:start;
+              model: StringList {
+                strings [
+                  _("Current Tab"),
+                  _("New Tab"),
+                  _("Link Preview"),
+                  _("In Background"),
+                ]
+              };
+            }
+          }
+        };
+      }
+      Adw.ViewStackPage {
+        title: _("Run Code");
+        name: "run_code_page";
+        child: Box {
+          orientation:vertical;
+          spacing: 15;
+          TextView code_text_view {
+            styles [
+              "frame",
+              "monospace-font",
+            ]
+            width-request:450;
+            height-request:300;
+            hexpand: true;
+            vexpand: true;
+            buffer: TextBuffer {
+              text: _("OrionInternals.clearSidebarContent();\nOrionInternals.setSidebarContent(\"Hello World\");");
+            };
+          }
+          Grid {
+            column-homogeneous: true;
+            row-spacing:20;
+            Box {
+              layout {
+                row:0;
+                column:0;
+              }
+              orientation: vertical;
+              spacing: 15;
+              Label {
+                halign:start;
+                label:_("Language:");
+              }
+              DropDown code_language_dropdown {
+                halign: start;
+                model: StringList {
+                  strings [
+                    _("JavaScript"),
+                  ]
+                };
+              }
+            }
+            Box {
+              layout {
+                row:0;
+                column:1;
+              }
+              orientation: vertical;
+              spacing: 15;
+              Label {
+                halign:start;
+                label:_("Code Examples:");
+              }
+              DropDown {
+                halign: start;
+                model: StringList {
+                  strings [
+                    _("New Script Template"),
+                    _("Dark Mode"),
+                    _("Kill Sticky"),
+                    _("Translate with Google"),
+                    _("Modern CSS"),
+                    _("Classic CSS"),
+                    _("Unbiased News"),
+                    _("Summarize"),
+                    _("Stock Analysis"),
+                  ]
+                };
+              }
+            }
+            Box {
+              layout {
+                row:1;
+                column:0;
+              }
+              CheckButton show_output_in_sidebar_check_button {
+                label:_("Show Output in Sidebar");
+              }
+            }
+          }
+        };
+      }
+    }
+    Label {
+      halign: start;
+      label:_("Keyboard shortcut:");
+    }
+    $OrionAcceleratorEntry accelerator_entry{
+      hexpand:false;
+      halign:start;
+    }
+    Box {
+      hexpand:true;
+      halign:fill;
+      MenuButton menu_button {
+        icon-name: "share-symbolic";
+        // menu-model is set dynamically in code
+      }
+      Box {
+        hexpand:true;
+        halign:end;
+        spacing:15;
+        Button cancel_button {
+          halign:end;
+          label:_("Cancel");
+          clicked => $on_cancel_clicked();
+        }
+        Button save_button {
+          styles [
+            "suggested-action",
+          ]
+          halign:end;
+          label:_("Save");
+          clicked => $on_save_clicked();
+        }
+      }
+    }
+  }
+}
+
+SizeGroup {
+  widgets [
+    cancel_button,
+    save_button,
+  ]
+}

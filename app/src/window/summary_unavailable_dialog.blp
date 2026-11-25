@@ -1,0 +1,93 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $SummaryUnavailableDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 250;
+  title: _("Summary Unavailable");
+
+  Adw.ToolbarView {    
+
+    Box {
+      orientation: vertical;
+      Box {
+        margin-top: 20;
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 49;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+      Box {          
+        margin-top: 20;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          styles ["bold-text"]
+          label: _("Summary is Unavailable");
+        }
+      }      
+      Box {
+        margin-top: 15;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {   
+          label: _("Summary is available for logged-in Kagi search users only (select Kagi as your default search engine).");
+          wrap: true;
+          max-width-chars: 50;
+          xalign: 0.5;
+          justify: center;
+        }
+      }
+      Box {        
+        margin-top: 20;
+        margin-bottom: 5;
+        homogeneous: true;              
+        Button {
+          label: _("Open Settings…");
+          margin-start: 20;
+          margin-end: 20;
+          hexpand: true; 
+          halign: fill; 
+          valign: center;
+          styles ["suggested-action"]
+          clicked => $on_open_settings_clicked();
+        }
+      }
+      Box {        
+        margin-top: 0;
+        margin-bottom: 20;
+        homogeneous: true;
+        Button {
+          label: _("Remove item from the menu");
+          margin-start: 20;
+          margin-end: 20;
+          hexpand: true; 
+          halign: fill; 
+          valign: center;          
+        }
+      }
+      Box {        
+        margin-top: 5;
+        margin-bottom: 20;
+        homogeneous: true;
+        Button {
+          label: _("Cancel");
+          margin-start: 20;
+          margin-end: 20;
+          hexpand: true; 
+          halign: fill; 
+          valign: center;
+          clicked => $on_cancel_clicked();
+        }
+      }
+    }
+  }
+}
+
+

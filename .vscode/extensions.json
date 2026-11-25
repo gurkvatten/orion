@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        "ms-vscode.cmake-tools",
+        "ms-vscode-remote.remote-ssh",
+        "ms-vscode-remote.remote-ssh-edit",
+        "ms-vscode.remote-explorer",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-themes",
+        "jeff-hykin.better-cpp-syntax",
+        "bodil.blueprint-gtk",
+        "editorconfig.editorconfig",
+        "rioj7.command-variable",
+        "vadimcn.vscode-lldb",
+        "llvm-vs-code-extensions.lldb-dap"
+    ]
+}

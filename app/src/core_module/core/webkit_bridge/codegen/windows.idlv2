@@ -1,0 +1,203 @@
+// Chromium: chrome/common/extensions/api/windows.json
+// Firefox:  browser/components/extensions/schemas/windows.json
+
+enum WindowsWindowType {
+    Normal = "normal";
+    Popup = "popup";
+    Panel = "panel";
+    App = "app";
+    DevTools = "devtools";
+
+    [Tags=Chrome]
+    CustomTab = "custom-tab";
+};
+
+enum WindowsWindowState {
+    Normal = "normal";
+    Minimized = "minimized";
+    Maximized = "maximized";
+    Fullscreen = "fullscreen";
+
+    [Tags=Chrome]
+    LockedFullscreen = "locked-fullscreen";
+
+    [Tags=Firefox]
+    Docked = "docked";
+};
+
+enum WindowsCreateType {
+    Normal = "normal";
+    Popup = "popup";
+    Panel = "panel";
+
+    [Tags=Firefox]
+    DetachedPanel = "detached_panel";
+};
+
+[AdditionalProperties=false]
+dictionary WindowsWindow {
+    optional integer id;
+    boolean focused;
+    optional integer top;
+    optional integer left;
+    optional integer width;
+    optional integer height;
+    optional sequence<tabs.Tab> tabs;
+    boolean incognito;
+    optional WindowsWindowType type;
+    optional WindowsWindowState state;
+    boolean alwaysOnTop;
+    optional string sessionId;
+
+    [Tags=Firefox]
+    optional string title;
+};
+
+[AdditionalProperties=false]
+dictionary WindowsQueryOptions {
+    optional boolean populate;
+    optional sequence<WindowsWindowType> windowTypes;
+};
+
+[AdditionalProperties=false]
+dictionary WindowsCreateData {
+    optional (string | sequence<string>) url;
+    optional integer tabId;
+    optional integer left;
+    optional integer top;
+    optional integer width;
+    optional integer height;
+    optional boolean focused;
+    optional boolean incognito;
+    optional WindowsCreateType type;
+    optional WindowsWindowState state;
+
+    [Tags=Chrome]
+    optional boolean setSelfAsOpener;
+
+    [Tags=Firefox]
+    optional boolean allowScriptsToClose;
+    [Tags=Firefox]
+    optional string cookieStoreId;
+    [Tags=Firefox]
+    optional string titlePreface;
+};
+
+[AdditionalProperties=false]
+dictionary WindowsUpdateInfo {
+    optional integer left;
+    optional integer top;
+    optional integer width;
+    optional integer height;
+    optional boolean focused;
+    optional boolean drawAttention;
+    optional WindowsWindowState state;
+
+    [Tags=Firefox]
+    optional string titlePreface;
+};
+
+[Tags=Chrome]
+[AdditionalProperties=false]
+dictionary WindowsEventFilter {
+    sequence<WindowsWindowType> windowTypes;
+};
+
+callback WindowsWindowCallback = void(WindowsWindow window);
+callback WindowsOptionalWindowCallback = void(optional WindowsWindow window);
+callback WindowsWindowListCallback = void(sequence<WindowsWindow> windows);
+callback WindowsVoidCallback = void();
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage,DevToolsPage]
+[Global="windows"]
+interface Windows {
+    [Implementation=JavaScript("Windows.WINDOW_ID_NONE")]
+    readonly property integer WINDOW_ID_NONE;
+
+    [Implementation=JavaScript("Windows.WINDOW_ID_CURRENT")]
+    readonly property integer WINDOW_ID_CURRENT;
+
+    function Promise<WindowsWindow> get(
+        integer windowId,
+        optional WindowsQueryOptions queryOptions
+    );
+
+    [Tags=Chrome]
+    function void get(
+        integer windowId,
+        optional WindowsQueryOptions queryOptions,
+        WindowsWindowCallback callback
+    );
+
+    function Promise<WindowsWindow> getCurrent(
+        optional WindowsQueryOptions queryOptions
+    );
+
+    [Tags=Chrome]
+    function void getCurrent(
+        optional WindowsQueryOptions queryOptions,
+        WindowsWindowCallback callback
+    );
+
+    function Promise<WindowsWindow> getLastFocused(
+        optional WindowsQueryOptions queryOptions
+    );
+
+    [Tags=Chrome]
+    function void getLastFocused(
+        optional WindowsQueryOptions queryOptions,
+        WindowsWindowCallback callback
+    );
+
+    function Promise<sequence<WindowsWindow>> getAll(
+        optional WindowsQueryOptions queryOptions
+    );
+
+    [Tags=Chrome]
+    function void getAll(
+        optional WindowsQueryOptions queryOptions,
+        WindowsWindowListCallback callback
+    );
+
+    function Promise<(WindowsWindow | undefined)> create(
+        optional WindowsCreateData createData
+    );
+
+    [Tags=Chrome]
+    function void create(
+        optional WindowsCreateData createData,
+        WindowsOptionalWindowCallback callback
+    );
+
+    function Promise<WindowsWindow> update(
+        integer windowId,
+        WindowsUpdateInfo updateInfo
+    );
+
+    [Tags=Chrome]
+    function void update(
+        integer windowId,
+        WindowsUpdateInfo updateInfo,
+        WindowsWindowCallback callback
+    );
+
+    function Promise<void> remove(integer windowId);
+
+    [Tags=Chrome]
+    function void remove(integer windowId, WindowsVoidCallback callback);
+
+    event onCreated(WindowsWindow window) with (
+        [Tags=Chrome] optional WindowsEventFilter filters
+    );
+
+    event onRemoved(integer windowId) with (
+        [Tags=Chrome] optional WindowsEventFilter filters
+    );
+
+    event onFocusChanged(integer windowId) with (
+        [Tags=Chrome] optional WindowsEventFilter filters
+    );
+
+    [Tags=Chrome]
+    event onBoundsChanged(WindowsWindow window);
+};

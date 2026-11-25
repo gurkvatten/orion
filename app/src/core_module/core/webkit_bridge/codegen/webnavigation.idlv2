@@ -1,0 +1,244 @@
+// Chromium: chrome/common/extensions/api/web_navigation.json
+// Firefox:  toolkit/components/extensions/schemas/web_navigation.json
+
+enum WebNavigationTransitionType {
+    Link = "link";
+    Typed = "typed";
+    AutoBookmark = "auto_bookmark";
+    AutoSubframe = "auto_subframe";
+    ManualSubframe = "manual_subframe";
+    Generated = "generated";
+    StartPage = "start_page";
+    FormSubmit = "form_submit";
+    Reload = "reload";
+    Keyword = "keyword";
+    KeywordGenerated = "keyword_generated";
+};
+
+enum WebNavigationTransitionQualifier {
+    ClientRedirect = "client_redirect";
+    ServerRedirect = "server_redirect";
+    ForwardBack = "forward_back";
+    FromAddressBar = "from_address_bar";
+};
+
+[Tags=Chrome]
+enum WebNavigationDocumentLifecycle {
+    Prerender = "prerender";
+    Active = "active";
+    Cached = "cached";
+    PendingDeletion = "pending_deletion";
+};
+
+[Tags=Chrome]
+enum WebNavigationFrameType {
+    OutermostFrame = "outermost_frame";
+    FencedFrame = "fenced_frame";
+    SubFrame = "sub_frame";
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationEventFilter {
+    optional sequence<object> url;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationGetFrameDetails {
+    integer tabId;
+    integer frameId;
+    optional integer processId;
+
+    [Tags=Chrome]
+    optional string documentId;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationGetAllFramesDetails {
+    integer tabId;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationFrameDetails {
+    boolean errorOccurred;
+    string url;
+    integer parentFrameId;
+    integer frameId;
+    integer tabId;
+    optional integer processId;
+
+    [Tags=Chrome]
+    optional string documentId;
+
+    [Tags=Chrome]
+    optional string parentDocumentId;
+
+    [Tags=Chrome]
+    optional WebNavigationDocumentLifecycle documentLifecycle;
+
+    [Tags=Chrome]
+    optional WebNavigationFrameType frameType;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationEventDetails {
+    integer tabId;
+    string url;
+    integer frameId;
+    optional integer parentFrameId;
+    optional integer processId;
+    number timeStamp;
+
+    [Tags=Chrome]
+    optional string documentId;
+
+    [Tags=Chrome]
+    optional string parentDocumentId;
+
+    [Tags=Chrome]
+    optional WebNavigationDocumentLifecycle documentLifecycle;
+
+    [Tags=Chrome]
+    optional WebNavigationFrameType frameType;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationCommittedDetails {
+    integer tabId;
+    string url;
+    integer frameId;
+    optional integer parentFrameId;
+    optional integer processId;
+    number timeStamp;
+    WebNavigationTransitionType transitionType;
+    sequence<WebNavigationTransitionQualifier> transitionQualifiers;
+
+    [Tags=Chrome]
+    optional string documentId;
+
+    [Tags=Chrome]
+    optional string parentDocumentId;
+
+    [Tags=Chrome]
+    optional WebNavigationDocumentLifecycle documentLifecycle;
+
+    [Tags=Chrome]
+    optional WebNavigationFrameType frameType;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationErrorDetails {
+    integer tabId;
+    string url;
+    integer frameId;
+    optional integer parentFrameId;
+    optional integer processId;
+    number timeStamp;
+    string error;
+
+    [Tags=Chrome]
+    optional string documentId;
+
+    [Tags=Chrome]
+    optional string parentDocumentId;
+
+    [Tags=Chrome]
+    optional WebNavigationDocumentLifecycle documentLifecycle;
+
+    [Tags=Chrome]
+    optional WebNavigationFrameType frameType;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationCreatedNavigationTargetDetails {
+    integer sourceTabId;
+    integer sourceFrameId;
+    optional integer sourceProcessId;
+    string url;
+    integer tabId;
+    number timeStamp;
+
+    [Tags=Chrome]
+    optional string sourceDocumentId;
+};
+
+[AdditionalProperties=false]
+dictionary WebNavigationTabReplacedDetails {
+    integer replacedTabId;
+    integer tabId;
+    number timeStamp;
+};
+
+callback WebNavigationFrameCallback = void(
+    optional WebNavigationFrameDetails details
+);
+callback WebNavigationAllFramesCallback = void(
+    optional sequence<WebNavigationFrameDetails> details
+);
+callback WebNavigationEventListener = void(WebNavigationEventDetails details);
+callback WebNavigationCommittedListener = void(WebNavigationCommittedDetails details);
+callback WebNavigationErrorListener = void(WebNavigationErrorDetails details);
+callback WebNavigationCreatedNavigationTargetListener = void(
+    WebNavigationCreatedNavigationTargetDetails details
+);
+callback WebNavigationTabReplacedListener = void(
+    WebNavigationTabReplacedDetails details
+);
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage]
+[Permissions=webNavigation]
+[Global="webNavigation"]
+interface WebNavigationV2 {
+    function Promise<(WebNavigationFrameDetails | undefined)> getFrame(
+        WebNavigationGetFrameDetails details
+    );
+
+    [Tags=Chrome]
+    function void getFrame(
+        WebNavigationGetFrameDetails details,
+        WebNavigationFrameCallback callback
+    );
+
+    function Promise<(sequence<WebNavigationFrameDetails> | undefined)> getAllFrames(
+        WebNavigationGetAllFramesDetails details
+    );
+
+    [Tags=Chrome]
+    function void getAllFrames(
+        WebNavigationGetAllFramesDetails details,
+        WebNavigationAllFramesCallback callback
+    );
+
+    event onBeforeNavigate: WebNavigationEventListener with (
+        optional WebNavigationEventFilter filters
+    );
+
+    event onCommitted: WebNavigationCommittedListener with (
+        optional WebNavigationEventFilter filters
+    );
+
+    event onDOMContentLoaded: WebNavigationEventListener with (
+        optional WebNavigationEventFilter filters
+    );
+
+    event onCompleted: WebNavigationEventListener with (
+        optional WebNavigationEventFilter filters
+    );
+
+    event onErrorOccurred: WebNavigationErrorListener with (
+        optional WebNavigationEventFilter filters
+    );
+
+    event onCreatedNavigationTarget: WebNavigationCreatedNavigationTargetListener with (
+        optional WebNavigationEventFilter filters
+    );
+
+    event onReferenceFragmentUpdated: WebNavigationCommittedListener with (
+        optional WebNavigationEventFilter filters
+    );
+
+    event onTabReplaced: WebNavigationTabReplacedListener;
+
+    event onHistoryStateUpdated: WebNavigationCommittedListener with (
+        optional WebNavigationEventFilter filters
+    );
+};

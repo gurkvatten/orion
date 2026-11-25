@@ -1,0 +1,101 @@
+using Gtk 4.0;
+
+PopoverMenu bookmarks_dialog_profiles_popover_menu {
+  width-request: 300;
+  name:"profiles-popover-menu";
+  menu-model:profiles_context_menu;
+  autohide:true;
+  cascade-popdown:false;
+}
+
+PopoverMenu bookmarks_dialog_internal_profile_popover_menu {
+  width-request: 300;
+  name:"internal-profile-popover-menu";
+  menu-model:internal_profile_context_menu;
+  autohide:true;
+  cascade-popdown:false;
+}
+
+menu profiles_context_menu {
+  // "Switch to Profile" action must be set up dynamically in profiles_columnview.cpp
+
+  section {
+    item {
+      label: _("Edit...");
+      action: "win.profiles-columnview-edit";
+    }
+    item {
+      label: _("Delete");
+      action: "win.profiles-columnview-delete";
+    }
+  }
+
+  section {
+    item {
+      label: _("Show in Finder");
+    }
+  }
+
+  section {
+    item {
+      label: _("Set Default");
+      action: "win.profiles-columnview-set-default";
+    }
+  }
+
+  section {
+    // TODO: show last snapshot time if available
+    // item {
+    //   label: _("Last Snapshot 21. 5....");
+    // }
+    item {
+      label: _("Take Snapshot");
+      action: "win.take-workspace-snapshot";
+    }
+    item {
+      label: _("Restore Snapshot…");
+      action: "win.restore-snapshot-menu";
+    }
+  }
+  section {
+    item {
+      custom: "profile_icon_selection";
+    }
+  }
+}
+
+menu internal_profile_context_menu {
+  section {
+    item {
+      label: _("Edit..."); // TODO: add checkmark dynamically
+      action: "win.profiles-columnview-edit";
+    }
+  }
+
+  section {
+    item {
+      label: _("Set Default");
+      action: "win.profiles-columnview-set-default";
+    }
+  }
+
+  section {
+    // TODO: show last snapshot time if available
+    // item {
+    //   label: _("Last Snapshot 21. 5....");
+    // }
+    item {
+      label: _("Take Snapshot");
+      action: "win.take-workspace-snapshot";
+    }
+    item {
+      label: _("Restore Snapshot…");
+      action: "win.restore-snapshot-menu";
+    }
+  }
+  section {
+    item {
+      custom: "profile_icon_selection";
+    }
+  }
+}

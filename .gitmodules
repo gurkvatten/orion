@@ -1,0 +1,33 @@
+[submodule "third_party/WebKit"]
+	path = app/src/core_module/third_party/WebKit
+	url = https://github.com/WebKit/WebKit.git
+[submodule "third_party/libbacktrace"]
+	path = app/src/core_module/third_party/libbacktrace
+	url = https://github.com/ianlancetaylor/libbacktrace.git
+[submodule "third_party/unifdef"]
+	path = app/src/core_module/third_party/unifdef
+	url = https://github.com/fanf2/unifdef.git
+[submodule "app/third_party/sqlite/sqlite"]
+	path = app/src/core_module/third_party/sqlite/sqlite
+	url = https://github.com/sqlite/sqlite
+[submodule "app/third_party/libuv/libuv"]
+	path = app/src/core_module/third_party/libuv/libuv
+	url = https://github.com/libuv/libuv
+[submodule "app/third_party/libzip/libzip"]
+	path = app/src/core_module/third_party/libzip/libzip
+	url = https://github.com/nih-at/libzip/
+[submodule "app/third_party/libsecret/libsecret"]
+	path = app/src/core_module/third_party/libsecret/libsecret
+	url = https://gitlab.gnome.org/GNOME/libsecret
+[submodule "app/src/core_module/third_party/zlib"]
+	path = app/src/core_module/third_party/zlib
+	url = https://github.com/madler/zlib
+[submodule "app/src/core_module/third_party/pugixml"]
+	path = app/src/core_module/third_party/pugixml
+	url = https://github.com/zeux/pugixml.git
+[submodule "app/src/core_module/third_party/reflect-cpp"]
+	path = app/src/core_module/third_party/reflectcpp
+	url = https://github.com/getml/reflect-cpp.git
+[submodule "app/src/core_module/third_party/vcpkg"]
+	path = app/src/core_module/third_party/vcpkg
+	url = https://github.com/microsoft/vcpkg

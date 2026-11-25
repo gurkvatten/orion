@@ -1,0 +1,41 @@
+using Gtk 4.0;
+
+//TODO: fix the styles to actually look good
+
+template $SearchCompletionPopover: Popover {
+  name:"search-completion";
+  width-request:800;
+  halign:fill;
+  hexpand:true;
+  autohide:false;
+
+  ScrolledWindow {
+    propagate-natural-width:false;
+    propagate-natural-height:true;
+    max-content-height:800;
+    //min-content-height:800;
+    hexpand:true;
+    vexpand:true;
+    // Box {
+    //   margin-top: 10;
+    //   margin-bottom: 10;
+    //   spacing: 17;
+    //   orientation:vertical;
+    //   ListView top_hits_list_view {
+    //   }
+    //   ListView suggestions_list_view {
+    //   }
+    //   ListView bookmarks_list_view {
+    //   }
+    //   ListView history_list_view {
+    //   }
+    // }
+    ColumnView columnview {
+      single-click-activate: true;
+      // header-factory: SignalListItemFactory {
+      //   setup => $header_factory_setup();
+      //   bind => $header_factory_bind(recommendations_list_view);
+      // };
+    }
+  }
+}

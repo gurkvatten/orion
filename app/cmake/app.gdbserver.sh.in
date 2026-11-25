@@ -1,0 +1,10 @@
+#!/bin/bash
+echo ${FLATPAK_DEBUG_PORT}
+
+PORT_FILE=$(mktemp)
+~/.vscode-server/extensions/vadimcn.vscode-lldb-*/lldb/bin/lldb-server platform --socket-file "$PORT_FILE" --listen localhost:${FLATPAK_DEBUG_PORT} --server &
+LLDB_PID=$!
+
+while [ ! -s "$PORT_FILE" ]; do
+    sleep 0.1
+done

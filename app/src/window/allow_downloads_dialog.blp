@@ -1,0 +1,56 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $AllowDownloadsDialog: Adw.Dialog {
+  content-width: 500;
+  content-height: 200; 
+
+  Adw.ToolbarView {
+   
+     Box {
+      orientation: vertical;
+      valign: start;
+      halign: start;
+      margin-start: 30;      
+      margin-top: 10;                   
+        Box {
+        halign: start;
+          Label {
+            margin-start: 0;
+              margin-top: 30;
+              label: _("Do you want to allow downloads from www.example.com?");
+              styles ["bold-text"]                  
+          }
+        }
+        Box {
+        halign: start;
+          Label {
+            margin-start: 0;
+            margin-end: 30;
+            margin-top: 30;
+            label: _("You can change which websites can download files in Orion Websites preferences.");
+          }
+        }                      
+        Box {
+          hexpand: true;
+          homogeneous: true;
+          halign: end;
+          margin-top: 40;
+          margin-bottom: 20;  
+          margin-start: 120;
+          margin-end: 30;          
+            Button {               
+              margin-end: 5;          
+              label: _("Deny");                         
+              styles ["suggested-action"]
+            }
+            Button {              
+              label: _("Allow");
+              margin-start: 5;
+                           
+            }                  
+        }              
+    }
+  }    
+}
+

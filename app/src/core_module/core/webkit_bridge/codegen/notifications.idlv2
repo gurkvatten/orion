@@ -1,0 +1,115 @@
+// Chromium: chrome/common/extensions/api/notifications.idl
+// Firefox:  toolkit/components/extensions/schemas/notifications.json
+
+enum NotificationTemplateType {
+    Basic = "basic";
+    Image = "image";
+    List = "list";
+    Progress = "progress";
+};
+
+enum NotificationPermissionLevel {
+    Granted = "granted";
+    Denied = "denied";
+};
+
+[AdditionalProperties=false]
+dictionary NotificationItem {
+    string title;
+    string message;
+};
+
+[AdditionalProperties=false]
+dictionary NotificationButton {
+    string title;
+    optional string iconUrl;
+};
+
+[AdditionalProperties=false]
+dictionary NotificationOptions {
+    optional NotificationTemplateType type;
+    optional string iconUrl;
+    optional string appIconMaskUrl;
+    optional string title;
+    optional string message;
+    optional string contextMessage;
+    optional integer priority;
+    optional number eventTime;
+    optional sequence<NotificationButton> buttons;
+    optional string imageUrl;
+    optional sequence<NotificationItem> items;
+    optional integer progress;
+    optional boolean isClickable;
+    optional boolean requireInteraction;
+    optional boolean silent;
+};
+
+callback NotificationCreateCallback = void(string notificationId);
+callback NotificationBooleanCallback = void(boolean result);
+callback NotificationGetAllCallback = void(object notifications);
+callback NotificationPermissionLevelCallback = void(NotificationPermissionLevel level);
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage]
+[Permissions=notifications]
+[Global="notifications"]
+interface Notifications {
+    function Promise<string> create(
+        optional string notificationId,
+        NotificationOptions options
+    );
+
+    [Tags=Chrome]
+    function void create(
+        optional string notificationId,
+        NotificationOptions options,
+        NotificationCreateCallback callback
+    );
+
+    [Tags=Chrome]
+    function Promise<boolean> update(
+        string notificationId,
+        NotificationOptions options
+    );
+
+    [Tags=Chrome]
+    function void update(
+        string notificationId,
+        NotificationOptions options,
+        NotificationBooleanCallback callback
+    );
+
+    function Promise<boolean> clear(string notificationId);
+
+    [Tags=Chrome]
+    function void clear(
+        string notificationId,
+        NotificationBooleanCallback callback
+    );
+
+    function Promise<object> getAll();
+
+    [Tags=Chrome]
+    function void getAll(NotificationGetAllCallback callback);
+
+    [Tags=Chrome]
+    function Promise<NotificationPermissionLevel> getPermissionLevel();
+
+    [Tags=Chrome]
+    function void getPermissionLevel(NotificationPermissionLevelCallback callback);
+
+    event onClosed(string notificationId, boolean byUser);
+    event onClicked(string notificationId);
+
+    [Tags=Chrome]
+    event onButtonClicked(string notificationId, integer buttonIndex);
+
+    [Tags=Chrome]
+    event onPermissionLevelChanged(NotificationPermissionLevel level);
+
+    [Tags=Chrome]
+    [Deprecated]
+    event onShowSettings();
+
+    [Tags=Firefox]
+    event onShown(string notificationId);
+};

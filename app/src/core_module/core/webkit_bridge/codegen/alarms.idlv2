@@ -1,0 +1,56 @@
+[AdditionalProperties=false]
+dictionary AlarmCreateInfo {
+    optional number when;
+    optional number delayInMinutes;
+    optional number periodInMinutes;
+
+    [Tags=Chrome]
+    optional boolean persistAcrossSessions;
+};
+
+[AdditionalProperties=false]
+dictionary Alarm {
+    string name;
+    number scheduledTime;
+    optional number periodInMinutes;
+
+    [Tags=Chrome]
+    boolean persistAcrossSessions;
+};
+
+callback VoidCallback = void();
+callback BooleanCallback = void(boolean result);
+callback AlarmCallback = void(optional Alarm alarm);
+callback AlarmListCallback = void(sequence<Alarm> alarms);
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage]
+[Permissions=alarms]
+[Global="alarms"]
+interface Alarms {
+    function Promise<boolean> clear(optional string name);
+
+    [Tags=Chrome]
+    function void clear(optional string name, BooleanCallback callback);
+
+    function Promise<boolean> clearAll();
+
+    [Tags=Chrome]
+    function void clearAll(BooleanCallback callback);
+
+    function Promise<void> create(optional string name, AlarmCreateInfo alarmInfo);
+
+    [Tags=Chrome]
+    function void create(optional string name, AlarmCreateInfo alarmInfo, VoidCallback callback);
+
+    function Promise<(Alarm | undefined)> get(optional string name);
+
+    [Tags=Chrome]
+    function void get(optional string name, AlarmCallback callback);
+
+    function Promise<sequence<Alarm>> getAll();
+
+    [Tags=Chrome]
+    function void getAll(AlarmListCallback callback);
+
+    event onAlarm(Alarm alarm);
+};

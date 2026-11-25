@@ -1,0 +1,60 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $InvalidSetupKeyDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 180;
+  title: _("Invalid Setup Key");
+  name: "invalid-setup-key-dialog";
+
+  Adw.ToolbarView {
+    
+    Box {
+      orientation: vertical;
+      valign: start;
+        
+      Box {    
+        margin-top: 20;
+        margin-bottom: 10;
+        halign: center;
+        Image {
+          name: "orion-logo"; 
+          icon-name: "orion-logo";
+          pixel-size: 49;          
+        }
+      }
+      Box {
+        margin-top: 10;
+        margin-bottom: 10;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          styles [
+            "bold-text"
+          ]
+          label: _("Invalid Setup Key");
+        }
+      }      
+                 
+      Box {
+        margin-top: 10;
+        margin-bottom: 10;
+        margin-start: 20;
+        margin-end: 20;
+        hexpand: true;
+        halign: fill; 
+        homogeneous: true;             
+        Button {
+          label: _("OK"); 
+          hexpand: true;
+          halign: fill; 
+          styles ["suggested-action"]
+          clicked => $on_ok_clicked();
+        }
+      }
+    }
+  }
+}
+
+

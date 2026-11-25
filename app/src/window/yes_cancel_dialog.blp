@@ -1,0 +1,57 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $YesCancelDialog: Adw.Dialog {
+  width-request: 250;
+  height-request: 150;
+  title: _("Yes Cancel");
+    
+  Box {
+    orientation: vertical;
+    margin-start: 16;
+    margin-end: 16;
+    margin-top: 16;
+    margin-bottom: 16;
+
+    Box {
+      halign: center;
+      Image {
+        name: "orion-logo";
+        icon-name: "orion-logo";
+        pixel-size: 48;
+      }
+    }
+    Box {       
+      margin-top: 16;
+      halign: center;
+        Label {
+          styles ["bold-text"]
+          label: _("Are you sure that you want to reset all erased elements?");
+          wrap: true; 
+          halign: center;
+          xalign: 0.5;
+          max-width-chars: 20;
+          justify: center;
+        }
+    }         
+    Box {        
+      margin-top: 16;
+      homogeneous: true;       
+      hexpand: true;
+      halign: center;
+      Button {
+        label: _("Cancel");
+        clicked => $on_cancel_clicked();
+        width-request: 100;
+      }
+      Button {
+        label: _("Yes");
+        margin-start: 8;
+        styles ["suggested-action"]
+        clicked => $on_yes_clicked();     
+      }
+    }
+  }
+}
+
+

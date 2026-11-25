@@ -1,0 +1,59 @@
+[AdditionalProperties=false]
+dictionary ActionBadgeBackgroundColorDetails {
+    any color;
+    optional integer tabId;
+
+    [Tags=Firefox]
+    optional integer windowId;
+};
+
+[AdditionalProperties=false]
+dictionary ActionBadgeTextDetails {
+    string text;
+    optional integer tabId;
+
+    [Tags=Firefox]
+    optional integer windowId;
+};
+
+[AdditionalProperties=false]
+dictionary ActionSetIconDetails {
+    optional any imageData;
+    optional (string | object) path;
+    optional integer tabId;
+
+    [Tags=Firefox]
+    optional integer windowId;
+};
+
+callback ActionVoidCallback = void();
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage]
+[Global="action"]
+interface Action {
+    function Promise<void> setBadgeBackgroundColor(
+        ActionBadgeBackgroundColorDetails details
+    );
+
+    [Tags=Chrome]
+    function void setBadgeBackgroundColor(
+        ActionBadgeBackgroundColorDetails details,
+        ActionVoidCallback callback
+    );
+
+    function Promise<void> setBadgeText(ActionBadgeTextDetails details);
+
+    [Tags=Chrome]
+    function void setBadgeText(
+        ActionBadgeTextDetails details,
+        ActionVoidCallback callback
+    );
+
+    function Promise<void> setIcon(ActionSetIconDetails details);
+
+    [Tags=Chrome]
+    function void setIcon(
+        ActionSetIconDetails details,
+        ActionVoidCallback callback
+    );
+};

@@ -1,0 +1,20 @@
+message ExtensionInfo {
+    string name;
+    string displayName;
+    string info;
+    string iconURL;
+    string installURL;
+    string webExtID;
+    string webExtType;
+    string geckoId;
+    string version;
+    bool orionHosted;
+}
+
+message ExtensionList {
+    repeatable ExtensionInfo debug;
+    repeatable ExtensionInfo passwordManagers;
+    repeatable ExtensionInfo adBlockers;
+    repeatable ExtensionInfo vpns;
+    repeatable ExtensionInfo browserBetter;
+}

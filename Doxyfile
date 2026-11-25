@@ -1,0 +1,34 @@
+PROJECT_NAME           = "Orion - Browser"
+OUTPUT_DIRECTORY       = docs/output
+INPUT                  = app/src \
+						 docs/mainpage.md \
+						 README.md \
+						 Development.md \
+						 NewDialog.md \
+						 Workbench.md
+RECURSIVE              = YES
+
+# Include Blueprint UI sources in the generated documentation.
+FILE_PATTERNS          = *.h *.hpp *.c *.cpp *.cc *.md *.blp
+SOURCE_BROWSER         = YES
+
+USE_MDFILE_AS_MAINPAGE = docs/mainpage.md
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome.css
+
+# External library cross-references (Doxygen tagfiles)
+# Generate these first via: scripts/doxygen-generate-gtk-adw.sh
+#
+# Links are relative to the main HTML output dir (docs/output/html).
+TAGFILES              += "docs/output/externals/gtk4/gtk4.tag=../externals/gtk4/html"
+TAGFILES              += "docs/output/externals/libadwaita/libadwaita.tag=../externals/libadwaita/html"
+
+
+HAVE_DOT               = YES
+UML_LOOK               = YES
+TEMPLATE_RELATIONS     = YES
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = YES
+CALL_GRAPH             = YES

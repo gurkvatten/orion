@@ -1,0 +1,56 @@
+{
+  "debug": [
+    {
+      "name": "Bitwarden Password Manager (July 2026)",
+      "displayName": "Bitwarden (July 2026)",
+      "info": "Secure and free password manager for all of your devices",
+      "iconURL": "https://addons.mozilla.org/user-media/addon_icons/735/735894-64.png?modified=27707d93",
+      "installURL": "https://addons.mozilla.org/firefox/downloads/file/4915668/bitwarden_password_manager-2026.7.0.xpi",
+      "geckoId": "{446900e4-71c2-419f-a6a7-df9c091e268b}",
+      "webExtType": "firefox",
+      "version": "2026.7.0"
+    },
+    {
+      "name": "Orion API Test",
+      "displayName": "Orion API Test",
+      "info": "Runs bundled Chromium and Firefox WebExtension API test corpora",
+      "installURL": "file://@WEBEXTENSIONS_OUTPUT_DIR@/orion-api-test.crx",
+      "webExtType": "chrome",
+      "version": "1.0.0"
+    },
+    {
+      "name": "Orion API Test (Firefox)",
+      "displayName": "Orion API Test (Firefox)",
+      "info": "Runs bundled Chromium and Firefox WebExtension API test corpora (MV2, Firefox flavor)",
+      "installURL": "file://@WEBEXTENSIONS_OUTPUT_DIR@/orion-api-test.xpi",
+      "webExtType": "firefox",
+      "geckoId": "orion-api-test@orion.test",
+      "version": "1.0.0"
+    },
+    {
+      "name": "Chrome Runtime Messaging Test",
+      "displayName": "Chrome Runtime Messaging Test",
+      "info": "Exercises Chrome one-off messages and long-lived ports",
+      "installURL": "file://@WEBEXTENSIONS_OUTPUT_DIR@/runtime-messaging.crx",
+      "webExtType": "chrome",
+      "version": "1.0.0"
+    },
+    {
+      "name": "Firefox Runtime Messaging Test",
+      "displayName": "Firefox Runtime Messaging Test",
+      "info": "Exercises Firefox one-off messages and long-lived ports",
+      "installURL": "file://@WEBEXTENSIONS_OUTPUT_DIR@/runtime-messaging.xpi",
+      "webExtType": "firefox",
+      "geckoId": "runtime-messaging@orion.test",
+      "version": "1.0.0"
+    },
+    {
+      "name": "Hello World",
+      "displayName": "Hello World",
+      "info": "Minimal extension with a background script and popup",
+      "installURL": "file://@WEBEXTENSIONS_OUTPUT_DIR@/hello-world.crx",
+      "webExtType": "chrome",
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+using Gtk 4.0;
+
+Popover reader_mode_unavailable_popover {
+  Box {
+    orientation: vertical;
+    halign: center;
+
+    Image {
+      icon-name: "open-book-symbolic";
+      pixel-size: 64;
+      margin-top: 16;
+    }
+
+    Label {
+      label: _("Reader mode is unavailable for this page");
+      margin-top: 16;
+      margin-bottom: 16;
+      max-width-chars: 30;
+      wrap: true;
+      justify: center;
+    }
+  }
+}

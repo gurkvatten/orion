@@ -1,0 +1,17 @@
+{
+    "cmake.configureOnOpen": false,
+    "C_Cpp.files.exclude": {
+        "**/third_party/WebKit/JSTests": true,
+        "**/third_party/WebKit/LayoutTests": true,
+        "**/third_party/WebKit/ManualTests": true,
+        "**/third_party/WebKit/PerformanceTests": true,
+        "**/third_party/WebKit/WebDriverTests": true,
+        "**/third_party/WebKit/WebKitBuild": true,
+        "**/third_party/WebKit/Websites": true,
+        "**/third_party/WebKit/Tools/WebKitTestRunner": true,
+        "**/third_party/WebKit/Tools/TestWebKitAPI": true,
+        "**/.vscode": true,
+        "**/.vs": true
+    },
+    "debug.toolBarLocation": "commandCenter"
+}

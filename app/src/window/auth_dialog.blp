@@ -1,0 +1,83 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $AuthDialog: Adw.Dialog {
+  content-width: 400;
+  content-height: 250;
+  title: _("Auth Dialog");
+
+  Box {
+    orientation: vertical;
+    margin-start: 20;
+    margin-end: 20;
+    Box {
+      margin-top: 20;
+      orientation: vertical;
+      halign: start;
+      spacing: 5;
+
+      Label log_in_host_label{
+       styles [
+        "bold-text"
+        ]
+        halign: start;
+        hexpand: false;
+        justify: left;
+      }
+      Label security_label{
+       styles [
+        "bold-text"
+        ]
+        halign: start;
+        hexpand: false;
+        justify: left;
+      }
+    }
+    Box{
+      margin-top: 20;
+      margin-bottom: 10;
+      orientation: vertical;
+      spacing: 5;
+      Entry username_entry{
+        placeholder-text: _("Username");
+      }
+      PasswordEntry password_entry{
+        placeholder-text: _("Password");
+      }
+      CheckButton remember_checkbox{
+        label: _("Remember this password");
+      }
+    }
+    Separator {
+      orientation: horizontal;
+    }
+    Box {
+      orientation: horizontal;
+      margin-top: 10;
+      margin-bottom: 20;
+      spacing: 10;
+      halign: end;
+
+      Button cancel_button {
+        label: _("Cancel");
+        hexpand: true; 
+        halign: fill; 
+        valign: center;
+        clicked => $on_cancel_button_clicked();
+      }
+      Button log_in_button{
+        label: _("Log in");
+        styles ["suggested-action"]
+        hexpand: true; 
+        halign: fill; 
+        valign: center;
+        clicked => $on_log_in_button_clicked();
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [log_in_button, cancel_button]
+}

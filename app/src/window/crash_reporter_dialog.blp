@@ -1,0 +1,181 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $CrashReporterDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 500;
+  title: _("Crash Reporter");
+  name: "crash-reporter-dialog";
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+    Box {
+      orientation: vertical;
+      margin-start: 16;
+      margin-end: 16;
+      
+      Box {
+        halign: start;
+        Label {
+          styles [
+            "bold-text"
+          ]
+          label: _("New Crash Log Found");
+        }
+      }
+      Box {          
+        margin-top: 12;
+        margin-bottom: 5;
+        halign: start;
+        Label {          
+          label: _("To help us diagnose and fix the problem you can send us a crash report. You can see the crash report by clicking on 'Show Details...' button. ");
+          width-chars: 40;
+          wrap: true;
+        }
+      }
+
+      Expander {
+        label-widget: Label {
+          label: "Show Details";
+          styles ["bold-text"]
+          margin-start: 2;
+        };
+
+        ScrolledWindow {
+          margin-top: 8;
+          margin-bottom: 5;
+          hexpand: true;
+          vexpand: true;        
+          max-content-height: 200;        
+          max-content-width: 400;        
+          min-content-height: 200;        
+          min-content-width: 400;                  
+          TextView details_text_view {
+            margin-top: 5;
+            margin-bottom: 5;
+            hexpand: true;
+            //halign: fill;
+            vexpand: true;
+            wrap-mode: word;
+            editable: false;
+            cursor-visible: true;
+            styles ["frame", "monospace-font"]
+          }  //to add crash log details here
+        }               
+      }
+
+      Box {          
+        margin-top: 8;
+        margin-bottom: 5;
+        halign: start;
+        hexpand: true;
+        Label {      
+          xalign: 0;    
+          label: _("Describe what lead to the crash to help us to find and fix the problem (optional)");
+          width-chars: 40;
+          wrap: true;
+        }
+      } 
+      ScrolledWindow {
+        margin-top: 5;
+        margin-bottom: 5;
+        hexpand: true;
+        vexpand: true;        
+        max-content-height: 200;        
+        max-content-width: 400;        
+        min-content-height: 200;        
+        min-content-width: 400;                   
+        TextView DescriptionWhatLeadTextView {
+          margin-top: 10;
+          margin-bottom: 5;
+          hexpand: true;
+          //halign: fill;
+          vexpand: true;
+          wrap-mode: word;
+          editable: true;
+          cursor-visible: true; 
+          styles ["frame"]       
+        }  
+      }               
+      Box {          
+        margin-top: 8;
+        margin-bottom: 5;
+        halign: start;
+        CheckButton AllowOrionToContactMeCheckButton {
+          label: _("Allow Orion to contact me about this report");
+          active: false; // Default unchecked
+          hexpand: false;
+          halign: start;
+          valign: center;                  
+        }
+      }      
+      Box {
+        margin-bottom: 5;
+        halign: start;
+
+        Entry InvocationCharacterEntry {
+          hexpand: true; 
+          halign: fill; 
+          width-chars: 60;  
+          activates-default: false;
+          tooltip-text: _("Enter your email address here");
+        }
+      }
+      Separator {
+        margin-top:16;
+        orientation:horizontal;
+      }
+      Box {          
+        margin-top: 16;
+        halign: start;
+        CheckButton SendAdditionalDebugInformationCheckButton {
+          label: _("Send additional debug information (open tabs, website settings...)");
+          active: true; 
+          hexpand: false;
+          halign: start;
+          valign: center;                  
+        }
+      }
+      Box {          
+        margin-top: 8;
+        halign: start;
+        CheckButton SendCrashReportAutomaticallyCheckButton {
+          label: _("Send crash report automatically");
+          active: false; 
+          hexpand: false;
+          halign: start;
+          valign: center;                  
+        }
+      }
+      Box {
+        margin-start: 8;
+        Label {
+          label: _("You can skip this alert in the future by automatically sending crash reports. You can change this setting in Preferences.");
+          wrap: true;
+          xalign: 0;
+          max-width-chars: 40;
+          styles ["dimmed-text"]
+        }
+      }
+      Box {        
+        margin-top: 8;
+        margin-bottom: 16;
+        homogeneous: true;
+        hexpand: true; 
+        halign: end; 
+        Button {
+          label: _("Don't Send");
+          clicked => $on_dont_send_clicked();
+        }                  
+        Button {
+          label: _("Send Crash Log");
+          margin-start: 8;
+          styles ["suggested-action"]
+          clicked => $on_send_crash_log_clicked();
+        }
+      }
+    }
+  }
+}
+

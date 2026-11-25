@@ -1,0 +1,91 @@
+using Gtk 4.0;
+
+template $ExtensionsItem: Box {
+  styles [
+    "background",
+  ]
+  width-request: 500;
+
+  Grid {
+    margin-start:10;
+    margin-end:10;
+    margin-top:10;
+    margin-bottom:10;
+    column-spacing:10;
+    row-spacing:10;
+    hexpand:true;
+    halign:fill;
+    Image {
+      layout {
+        row:0;
+        column:0;
+      }
+      pixel-size:35;
+    }
+    Box {
+      layout {
+        row:0;
+        column:1;
+      }
+      hexpand:true;
+      orientation:vertical;
+      Label title_label {
+        halign:start;
+      }
+      Label source_label {
+        halign:start;
+      }
+    }
+    Box { //TODO: probably should have these invisible by default otherwise changing that in runtime will keep spacing
+      layout {
+        row:1;
+        column:1;
+      }
+      spacing:10;
+      Button reload_extension_button {
+        icon-name: "arrow-circular-top-right-symbolic";
+      }
+      MenuButton extension_menu_button {
+        icon-name: "sliders-horizontal";
+        menu-model: extension_menu;
+      }
+      MenuButton extension_keyboard_shortcuts_menu_button {
+        icon-name: "keyboard3-symbolic";
+      }
+      Button extension_uninstall_button {
+        label:_("Uninstall");
+      }
+    }
+    Box {
+      layout {
+        row:1;
+        column:2;
+      }
+      halign:end;
+      Switch {
+        valign:center;
+      }
+    }
+  }
+}
+
+menu extension_menu {
+  section {
+    item {
+      label: _("Options");
+    }
+    item {
+      label: _("Console");
+    }
+    item {
+      label: _("Permissions");
+      action: "win.extension-permissions";
+    }
+  }
+  section {
+    item {
+      label: _("Do not update");
+      action: "win.do-not-update-extension";
+    }
+  }
+}

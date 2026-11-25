@@ -1,0 +1,131 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $EditBookmarkDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 200;
+  title: _("Edit Bookmark");
+  name: "edit-bookmark-dialog";
+
+  Adw.ToolbarView {
+    
+    Box {
+      orientation: vertical;
+      
+      Box {          
+        margin-top: 30;
+        margin-start: 20;
+        margin-end: 20;
+        margin-bottom: 5;
+        halign: start;
+        Label {
+          styles [
+            "bold-text"
+          ]
+          label: _("Title");
+        }
+      }
+      Box {
+        margin-start: 20;
+        margin-bottom: 5;
+        margin-end: 20;
+        halign: start;
+        Entry title_entry {
+          hexpand: true; 
+          halign: fill; 
+          width-chars: 60;  
+          activates-default: false;
+          placeholder-text: _("Title");
+        }
+      }
+      Box {          
+        margin-top: 10;
+        margin-start: 20;
+        margin-end: 20;
+        margin-bottom: 5;
+        halign: start;
+        Label {
+          styles [
+            "bold-text"
+          ]
+          label: _("Address (use %s to expand with extra user input at invocation)");
+        }
+      }
+      Box {
+        margin-start: 20;
+        margin-bottom: 15;
+        margin-end: 20;
+        halign: start;
+        Entry address_entry {
+          hexpand: true; 
+          halign: fill; 
+          width-chars: 60;  
+          activates-default: false;
+          placeholder-text: "Address (use %s to expand with extra user input at invocation)";
+        }
+      }
+      Box {          
+        margin-top: 10;
+        margin-start: 20;
+        margin-end: 20;
+        margin-bottom: 5;
+        halign: start;
+        Label {
+          styles [
+              "bold-text"
+          ]
+          label: _("Invocation character or keyword");
+        }
+      }
+      Box {
+        margin-start: 20;
+        margin-bottom: 5;
+        margin-end: 20;
+        halign: start;
+
+        Entry invocation_keyword_entry {
+          hexpand: true; 
+          halign: fill; 
+          width-chars: 60;  
+          activates-default: false;
+          placeholder-text: _("Invocation character or keyword");
+        }
+      }
+      Box {        
+        halign:fill;
+        margin-top: 20;
+        margin-start: 20;
+        margin-end: 20;
+        margin-bottom: 20;
+        spacing: 5;
+        Button remove_button {
+          label: _("Remove Bookmark");
+          halign:start;
+          clicked => $on_remove_clicked();
+        }
+        Button cancel_button {
+          label: _("Cancel");
+          hexpand: true; 
+          halign: end; 
+          valign: end;
+          clicked => $on_cancel_clicked();      
+        }                  
+        Button save_button {
+          label: _("Save");
+          //hexpand: true; 
+          halign: end; 
+          styles ["suggested-action"]
+          clicked => $on_save_clicked();
+        }
+      }
+     }
+    }
+  }
+
+SizeGroup {
+  widgets [
+    //remove_button, //NOTE: while guidelines recommend putting all buttons into a sizegroup, remove_button is way too large
+    cancel_button,
+    save_button,
+  ]
+}

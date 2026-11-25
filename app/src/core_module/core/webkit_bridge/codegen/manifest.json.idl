@@ -1,0 +1,49 @@
+message ManifestBrowserAction {
+    any default_icon;
+    string default_popup;
+    string default_title;
+}
+
+message ManifestSidebarAction {
+    any default_icon;
+    string default_panel;
+    string default_title;
+}
+
+message ManifestSidePanel {
+    string default_path;
+}
+
+message ManifestBackground {
+    string page;
+    repeatable string scripts;
+    string service_worker;
+    string type;
+}
+
+message ManifestContentScript {
+    repeatable string matches;
+    repeatable string exclude_matches;
+    repeatable string js;
+    repeatable string css;
+    string run_at;
+    string world;
+    bool all_frames;
+}
+
+message Manifest {
+    int32 manifest_version;
+    string name;
+    string version;
+    string description;
+    string homepage_url;
+    string default_locale;
+    any icons;
+    ManifestBrowserAction action;
+    ManifestBrowserAction browser_action;
+    ManifestSidebarAction sidebar_action;
+    ManifestSidePanel side_panel;
+    ManifestBackground background;
+    repeatable string permissions;
+    repeatable ManifestContentScript content_scripts;
+}

@@ -1,0 +1,832 @@
+// Chromium: chrome/common/extensions/api/tabs.json
+// Firefox:  browser/components/extensions/schemas/tabs.json
+// Chromium: extensions/common/api/extension_types.json
+// Firefox:  toolkit/components/extensions/schemas/extension_types.json
+
+external type windows.Window;
+
+enum TabsTabStatus {
+    [Tags=Chrome]
+    Unloaded = "unloaded";
+    Loading = "loading";
+    Complete = "complete";
+};
+
+enum TabsWindowType {
+    Normal = "normal";
+    Popup = "popup";
+    Panel = "panel";
+    App = "app";
+    DevTools = "devtools";
+
+    [Tags=Chrome]
+    CustomTab = "custom-tab";
+};
+
+enum TabsMutedInfoReason {
+    User = "user";
+    Capture = "capture";
+    Extension = "extension";
+};
+
+enum TabsZoomSettingsMode {
+    Automatic = "automatic";
+    Manual = "manual";
+    Disabled = "disabled";
+};
+
+enum TabsZoomSettingsScope {
+    PerOrigin = "per-origin";
+    PerTab = "per-tab";
+};
+
+enum TabsImageFormat {
+    Jpeg = "jpeg";
+    Png = "png";
+};
+
+enum TabsRunAt {
+    DocumentStart = "document_start";
+    DocumentEnd = "document_end";
+    DocumentIdle = "document_idle";
+};
+
+enum TabsCSSOrigin {
+    Author = "author";
+    User = "user";
+};
+
+[Tags=Firefox]
+enum TabsSharingScreenType {
+    Screen = "Screen";
+    Window = "Window";
+    Application = "Application";
+};
+
+[Tags=Firefox]
+enum TabsUpdatePropertyName {
+    Attention = "attention";
+    Audible = "audible";
+    AutoDiscardable = "autoDiscardable";
+    Discarded = "discarded";
+    FavIconUrl = "favIconUrl";
+    GroupId = "groupId";
+    Hidden = "hidden";
+    IsArticle = "isArticle";
+    MutedInfo = "mutedInfo";
+    Pinned = "pinned";
+    SharingState = "sharingState";
+    SplitViewId = "splitViewId";
+    Status = "status";
+    Title = "title";
+    Url = "url";
+};
+
+[AdditionalProperties=false]
+dictionary TabsMutedInfo {
+    boolean muted;
+    optional TabsMutedInfoReason reason;
+    optional string extensionId;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary TabsSharingState {
+    optional string screen;
+    boolean camera;
+    boolean microphone;
+};
+
+[AdditionalProperties=false]
+dictionary TabsZoomSettings {
+    optional TabsZoomSettingsMode mode;
+    optional TabsZoomSettingsScope scope;
+    optional number defaultZoomFactor;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary TabsPageSettings {
+    optional string toFileName;
+    optional integer paperSizeUnit;
+    optional number paperWidth;
+    optional number paperHeight;
+    optional integer orientation;
+    optional number scaling;
+    optional boolean shrinkToFit;
+    optional boolean showBackgroundColors;
+    optional boolean showBackgroundImages;
+    optional number edgeLeft;
+    optional number edgeRight;
+    optional number edgeTop;
+    optional number edgeBottom;
+    optional number marginLeft;
+    optional number marginRight;
+    optional number marginTop;
+    optional number marginBottom;
+    optional string headerLeft;
+    optional string headerCenter;
+    optional string headerRight;
+    optional string footerLeft;
+    optional string footerCenter;
+    optional string footerRight;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary TabsUpdateFilter {
+    [MinLength=1]
+    optional sequence<string> urls;
+
+    [MinLength=1]
+    optional sequence<TabsUpdatePropertyName> properties;
+
+    optional integer tabId;
+    optional integer windowId;
+    optional string cookieStoreId;
+};
+
+[AdditionalProperties=false]
+dictionary TabsQueryInfo {
+    optional boolean active;
+    optional boolean pinned;
+    optional boolean audible;
+    optional boolean autoDiscardable;
+    optional boolean muted;
+    optional boolean highlighted;
+    optional boolean discarded;
+    optional boolean currentWindow;
+    optional boolean lastFocusedWindow;
+    optional TabsTabStatus status;
+    optional string title;
+    optional (string | sequence<string>) url;
+    optional integer groupId;
+    optional integer splitViewId;
+    optional integer windowId;
+    optional TabsWindowType windowType;
+    optional integer index;
+
+    [Tags=Chrome]
+    optional boolean frozen;
+
+    [Tags=Firefox]
+    optional boolean attention;
+    [Tags=Firefox]
+    optional boolean hidden;
+    [Tags=Firefox]
+    optional (string | sequence<string>) cookieStoreId;
+    [Tags=Firefox]
+    optional integer openerTabId;
+    [Tags=Firefox]
+    optional (TabsSharingScreenType | boolean) screen;
+    [Tags=Firefox]
+    optional boolean camera;
+    [Tags=Firefox]
+    optional boolean microphone;
+};
+
+[AdditionalProperties=false]
+dictionary TabsConnectInfo {
+    optional string name;
+    optional integer frameId;
+    optional string documentId;
+};
+
+[AdditionalProperties=false]
+dictionary TabsSendMessageOptions {
+    optional integer frameId;
+    optional string documentId;
+};
+
+[AdditionalProperties=false]
+dictionary TabsCreateProperties {
+    optional integer windowId;
+    optional integer index;
+    optional string url;
+    optional boolean active;
+    optional boolean pinned;
+    optional integer openerTabId;
+
+    [Tags=Chrome]
+    [Deprecated]
+    optional boolean selected;
+    [Tags=Chrome]
+    optional integer splitWithTabId;
+
+    [Tags=Firefox]
+    optional string cookieStoreId;
+    [Tags=Firefox]
+    optional boolean openInReaderMode;
+    [Tags=Firefox]
+    optional boolean discarded;
+    [Tags=Firefox]
+    optional string title;
+    [Tags=Firefox]
+    optional boolean muted;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary TabsDuplicateProperties {
+    optional integer index;
+    optional boolean active;
+};
+
+[AdditionalProperties=false]
+dictionary TabsHighlightInfo {
+    optional integer windowId;
+
+    [Tags=Firefox]
+    optional boolean populate = true;
+
+    (integer | sequence<integer>) tabs;
+};
+
+[AdditionalProperties=false]
+dictionary TabsUpdateProperties {
+    optional string url;
+    optional boolean active;
+    optional boolean highlighted;
+    optional boolean pinned;
+    optional boolean muted;
+    optional integer openerTabId;
+    optional boolean autoDiscardable;
+
+    [Tags=Chrome]
+    [Deprecated]
+    optional boolean selected;
+
+    [Tags=Firefox]
+    optional boolean loadReplace;
+    [Tags=Firefox]
+    optional integer successorTabId;
+};
+
+[AdditionalProperties=false]
+dictionary TabsMoveProperties {
+    optional integer windowId;
+    integer index;
+};
+
+[AdditionalProperties=false]
+dictionary TabsReloadProperties {
+    optional boolean bypassCache;
+};
+
+[AdditionalProperties=false]
+dictionary TabsGroupCreateProperties {
+    optional integer windowId;
+};
+
+[AdditionalProperties=false]
+dictionary TabsGroupOptions {
+    (integer | sequence<integer>) tabIds;
+    optional integer groupId;
+    optional TabsGroupCreateProperties createProperties;
+};
+
+[AdditionalProperties=false]
+dictionary TabsImageRect {
+    number x;
+    number y;
+    number width;
+    number height;
+};
+
+[AdditionalProperties=false]
+dictionary TabsImageDetails {
+    optional TabsImageFormat format;
+    optional integer quality;
+    optional TabsImageRect rect;
+    optional number scale;
+
+    [Tags=Firefox]
+    optional boolean resetScrollPosition;
+};
+
+[AdditionalProperties=false]
+dictionary TabsInjectDetails {
+    optional string code;
+    optional string file;
+    optional boolean allFrames;
+    optional integer frameId;
+    optional boolean matchAboutBlank;
+    optional TabsRunAt runAt;
+    optional TabsCSSOrigin cssOrigin;
+};
+
+[AdditionalProperties=false]
+dictionary TabsRemoveCSSDetails {
+    optional string code;
+    optional string file;
+    optional boolean allFrames;
+    optional integer frameId;
+    optional boolean matchAboutBlank;
+    optional TabsCSSOrigin cssOrigin;
+
+    [Tags=Firefox]
+    optional TabsRunAt runAt;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary TabsMoveInSuccessionOptions {
+    optional boolean append = false;
+    optional boolean insert = false;
+};
+
+[AdditionalProperties=false]
+dictionary TabsUpdatedChangeInfo {
+    optional TabsTabStatus status;
+    optional string url;
+    optional integer groupId;
+    optional integer splitViewId;
+    optional boolean pinned;
+    optional boolean audible;
+    optional boolean discarded;
+    optional boolean autoDiscardable;
+    optional TabsMutedInfo mutedInfo;
+    optional string favIconUrl;
+    optional string title;
+
+    [Tags=Chrome]
+    optional boolean frozen;
+
+    [Tags=Firefox]
+    optional boolean attention;
+    [Tags=Firefox]
+    optional boolean hidden;
+    [Tags=Firefox]
+    optional boolean isArticle;
+    [Tags=Firefox]
+    optional TabsSharingState sharingState;
+};
+
+[AdditionalProperties=false]
+dictionary TabsMovedInfo {
+    integer windowId;
+    integer fromIndex;
+    integer toIndex;
+};
+
+[Tags=Chrome]
+[AdditionalProperties=false]
+dictionary TabsSelectInfo {
+    integer windowId;
+};
+
+[AdditionalProperties=false]
+dictionary TabsActivatedInfo {
+    integer tabId;
+    integer windowId;
+
+    [Tags=Firefox]
+    optional integer previousTabId;
+};
+
+[AdditionalProperties=false]
+dictionary TabsHighlightedInfo {
+    integer windowId;
+    sequence<integer> tabIds;
+};
+
+[AdditionalProperties=false]
+dictionary TabsDetachedInfo {
+    integer oldWindowId;
+    integer oldPosition;
+};
+
+[AdditionalProperties=false]
+dictionary TabsAttachedInfo {
+    integer newWindowId;
+    integer newPosition;
+};
+
+[AdditionalProperties=false]
+dictionary TabsRemovedInfo {
+    integer windowId;
+    boolean isWindowClosing;
+};
+
+[AdditionalProperties=false]
+dictionary TabsZoomChangeInfo {
+    integer tabId;
+    number oldZoomFactor;
+    number newZoomFactor;
+    TabsZoomSettings zoomSettings;
+};
+
+callback TabsVoidCallback = void();
+callback TabsAnyCallback = void(optional any response);
+callback TabsTabCallback = void(tabs.Tab tab);
+callback TabsOptionalTabCallback = void(optional tabs.Tab tab);
+callback TabsTabsCallback = void(sequence<tabs.Tab> tabs);
+callback TabsWindowCallback = void(windows.Window window);
+callback TabsMovedTabsCallback = void(
+    (tabs.Tab | sequence<tabs.Tab>) tabs
+);
+callback TabsLanguageCallback = void(string language);
+callback TabsDataUrlCallback = void(string dataUrl);
+callback TabsInjectionResultCallback = void(optional sequence<any> result);
+callback TabsNumberCallback = void(number value);
+callback TabsZoomSettingsCallback = void(TabsZoomSettings zoomSettings);
+callback TabsIntegerCallback = void(integer value);
+callback TabsStringCallback = void(string value);
+
+callback TabsUpdatedListener = void(
+    integer tabId,
+    TabsUpdatedChangeInfo changeInfo,
+    tabs.Tab tab
+);
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage,DevToolsPage]
+[Global="tabs"]
+interface Tabs {
+    [Implementation=JavaScript("Tabs.TAB_ID_NONE")]
+    readonly property integer TAB_ID_NONE;
+
+    [Implementation=JavaScript("Tabs.SPLIT_VIEW_ID_NONE")]
+    readonly property integer SPLIT_VIEW_ID_NONE;
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Tabs.TAB_INDEX_NONE")]
+    readonly property integer TAB_INDEX_NONE;
+
+    [Tags=Chrome]
+    [Implementation=JavaScript("Tabs.MAX_CAPTURE_VISIBLE_TAB_CALLS_PER_SECOND")]
+    readonly property integer MAX_CAPTURE_VISIBLE_TAB_CALLS_PER_SECOND;
+
+    function Promise<tabs.Tab> get(integer tabId);
+
+    [Tags=Chrome]
+    function void get(integer tabId, TabsTabCallback callback);
+
+    function Promise<(tabs.Tab | undefined)> getCurrent();
+
+    [Tags=Chrome]
+    function void getCurrent(TabsOptionalTabCallback callback);
+
+    [Implementation=JavaScript("Tabs.connect")]
+    function Port connect(
+        integer tabId,
+        [Undefined=Missing,Null=Missing]
+        optional TabsConnectInfo connectInfo
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    function Promise<any> sendRequest(integer tabId, any request);
+
+    [Tags=Chrome]
+    [Deprecated]
+    function void sendRequest(
+        integer tabId,
+        any request,
+        TabsAnyCallback callback
+    );
+
+    function Promise<any> sendMessage(
+        integer tabId,
+        any message,
+        [Undefined=Missing,Null=Missing]
+        optional TabsSendMessageOptions options
+    );
+
+    [Tags=Chrome]
+    function void sendMessage(
+        integer tabId,
+        any message,
+        [Undefined=Missing,Null=Missing]
+        optional TabsSendMessageOptions options,
+        TabsAnyCallback callback
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    function Promise<tabs.Tab> getSelected(optional integer windowId);
+
+    [Tags=Chrome]
+    [Deprecated]
+    function void getSelected(
+        optional integer windowId,
+        TabsTabCallback callback
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    function Promise<sequence<tabs.Tab>> getAllInWindow(
+        optional integer windowId
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    function void getAllInWindow(
+        optional integer windowId,
+        TabsTabsCallback callback
+    );
+
+    function Promise<(tabs.Tab | undefined)> create(
+        TabsCreateProperties createProperties
+    );
+
+    [Tags=Chrome]
+    function void create(
+        TabsCreateProperties createProperties,
+        TabsTabCallback callback
+    );
+
+    [Tags=Chrome]
+    function Promise<integer> createSplit(
+        [MinLength=2,MaxLength=2] sequence<integer> tabIds
+    );
+
+    [Tags=Chrome]
+    function void createSplit(
+        [MinLength=2,MaxLength=2] sequence<integer> tabIds,
+        TabsIntegerCallback callback
+    );
+
+    function Promise<(tabs.Tab | undefined)> duplicate(
+        integer tabId,
+        [Tags=Firefox] optional TabsDuplicateProperties duplicateProperties
+    );
+
+    [Tags=Chrome]
+    [Implementation=Native("duplicateCallback")]
+    function void duplicate(
+        integer tabId,
+        TabsOptionalTabCallback callback
+    );
+
+    function Promise<sequence<tabs.Tab>> query(TabsQueryInfo queryInfo);
+
+    [Tags=Chrome]
+    function void query(
+        TabsQueryInfo queryInfo,
+        TabsTabsCallback callback
+    );
+
+    function Promise<windows.Window> highlight(TabsHighlightInfo highlightInfo);
+
+    [Tags=Chrome]
+    function void highlight(
+        TabsHighlightInfo highlightInfo,
+        TabsWindowCallback callback
+    );
+
+    function Promise<(tabs.Tab | undefined)> update(
+        optional integer tabId,
+        TabsUpdateProperties updateProperties
+    );
+
+    [Tags=Chrome]
+    function void update(
+        optional integer tabId,
+        TabsUpdateProperties updateProperties,
+        TabsOptionalTabCallback callback
+    );
+
+    function Promise<(tabs.Tab | sequence<tabs.Tab>)> move(
+        (integer | sequence<integer>) tabIds,
+        TabsMoveProperties moveProperties
+    );
+
+    [Tags=Chrome]
+    function void move(
+        (integer | sequence<integer>) tabIds,
+        TabsMoveProperties moveProperties,
+        TabsMovedTabsCallback callback
+    );
+
+    function Promise<void> reload(
+        optional integer tabId,
+        [Undefined=Missing,Null=Missing]
+        optional TabsReloadProperties reloadProperties
+    );
+
+    [Tags=Chrome]
+    function void reload(
+        optional integer tabId,
+        [Undefined=Missing,Null=Missing]
+        optional TabsReloadProperties reloadProperties,
+        TabsVoidCallback callback
+    );
+
+    [Tags=Firefox]
+    function Promise<void> warmup(integer tabId);
+
+    function Promise<void> remove((integer | sequence<integer>) tabIds);
+
+    [Tags=Chrome]
+    function void remove(
+        (integer | sequence<integer>) tabIds,
+        TabsVoidCallback callback
+    );
+
+    function Promise<(tabs.Tab | undefined)> discard(
+        optional (integer | sequence<integer>) tabIds
+    );
+
+    [Tags=Chrome]
+    function void discard(
+        optional (integer | sequence<integer>) tabIds,
+        TabsOptionalTabCallback callback
+    );
+
+    function Promise<integer> group(TabsGroupOptions options);
+
+    [Tags=Chrome]
+    function void group(
+        TabsGroupOptions options,
+        TabsIntegerCallback callback
+    );
+
+    function Promise<void> ungroup((integer | sequence<integer>) tabIds);
+
+    [Tags=Chrome]
+    function void ungroup(
+        (integer | sequence<integer>) tabIds,
+        TabsVoidCallback callback
+    );
+
+    function Promise<string> detectLanguage(optional integer tabId);
+
+    [Tags=Chrome]
+    function void detectLanguage(
+        optional integer tabId,
+        TabsLanguageCallback callback
+    );
+
+    [Tags=Firefox]
+    function Promise<void> toggleReaderMode(optional integer tabId);
+
+    [Tags=Firefox]
+    [Permissions="<all_urls>"]
+    function Promise<string> captureTab(
+        optional integer tabId,
+        optional TabsImageDetails options
+    );
+
+    function Promise<string> captureVisibleTab(
+        optional integer windowId,
+        optional TabsImageDetails options
+    );
+
+    [Tags=Chrome]
+    function void captureVisibleTab(
+        optional integer windowId,
+        optional TabsImageDetails options,
+        TabsDataUrlCallback callback
+    );
+
+    [Deprecated]
+    function Promise<(sequence<any> | undefined)> executeScript(
+        optional integer tabId,
+        TabsInjectDetails details
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    function void executeScript(
+        optional integer tabId,
+        TabsInjectDetails details,
+        TabsInjectionResultCallback callback
+    );
+
+    [Deprecated]
+    function Promise<void> insertCSS(
+        optional integer tabId,
+        TabsInjectDetails details
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    function void insertCSS(
+        optional integer tabId,
+        TabsInjectDetails details,
+        TabsVoidCallback callback
+    );
+
+    [Deprecated]
+    function Promise<void> removeCSS(
+        optional integer tabId,
+        TabsRemoveCSSDetails details
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    function void removeCSS(
+        optional integer tabId,
+        TabsRemoveCSSDetails details,
+        TabsVoidCallback callback
+    );
+
+    function Promise<void> setZoom(
+        optional integer tabId,
+        number zoomFactor
+    );
+
+    [Tags=Chrome]
+    function void setZoom(
+        optional integer tabId,
+        number zoomFactor,
+        TabsVoidCallback callback
+    );
+
+    function Promise<number> getZoom(optional integer tabId);
+
+    [Tags=Chrome]
+    function void getZoom(
+        optional integer tabId,
+        TabsNumberCallback callback
+    );
+
+    function Promise<void> setZoomSettings(
+        optional integer tabId,
+        TabsZoomSettings zoomSettings
+    );
+
+    [Tags=Chrome]
+    function void setZoomSettings(
+        optional integer tabId,
+        TabsZoomSettings zoomSettings,
+        TabsVoidCallback callback
+    );
+
+    function Promise<TabsZoomSettings> getZoomSettings(optional integer tabId);
+
+    [Tags=Chrome]
+    function void getZoomSettings(
+        optional integer tabId,
+        TabsZoomSettingsCallback callback
+    );
+
+    [Tags=Firefox]
+    function void print();
+
+    [Tags=Firefox]
+    function Promise<void> printPreview();
+
+    [Tags=Firefox]
+    function Promise<string> saveAsPDF(TabsPageSettings pageSettings);
+
+    [Tags=Firefox]
+    [Permissions=tabHide]
+    function Promise<void> show((integer | sequence<integer>) tabIds);
+
+    [Tags=Firefox]
+    [Permissions=tabHide]
+    function Promise<void> hide((integer | sequence<integer>) tabIds);
+
+    [Tags=Firefox]
+    function Promise<void> moveInSuccession(
+        [MinLength=1] sequence<integer> tabIds,
+        optional integer tabId = -1,
+        optional TabsMoveInSuccessionOptions options
+    );
+
+    function Promise<void> goForward(optional integer tabId);
+
+    [Tags=Chrome]
+    function void goForward(
+        optional integer tabId,
+        TabsVoidCallback callback
+    );
+
+    function Promise<void> goBack(optional integer tabId);
+
+    [Tags=Chrome]
+    function void goBack(
+        optional integer tabId,
+        TabsVoidCallback callback
+    );
+
+    event onCreated(tabs.Tab tab);
+
+    event onUpdated: TabsUpdatedListener with (
+        [Tags=Firefox] optional TabsUpdateFilter filter
+    );
+
+    event onMoved(integer tabId, TabsMovedInfo moveInfo);
+
+    [Tags=Chrome]
+    [Deprecated]
+    event onSelectionChanged(integer tabId, TabsSelectInfo selectInfo);
+
+    [Tags=Chrome]
+    [Deprecated]
+    event onActiveChanged(integer tabId, TabsSelectInfo selectInfo);
+
+    event onActivated(TabsActivatedInfo activeInfo);
+
+    [Tags=Chrome]
+    [Deprecated]
+    event onHighlightChanged(TabsHighlightedInfo selectInfo);
+
+    event onHighlighted(TabsHighlightedInfo highlightInfo);
+    event onDetached(integer tabId, TabsDetachedInfo detachInfo);
+    event onAttached(integer tabId, TabsAttachedInfo attachInfo);
+    event onRemoved(integer tabId, TabsRemovedInfo removeInfo);
+    event onReplaced(integer addedTabId, integer removedTabId);
+    event onZoomChange(TabsZoomChangeInfo zoomChangeInfo);
+};

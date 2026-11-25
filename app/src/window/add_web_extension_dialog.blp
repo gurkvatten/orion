@@ -1,0 +1,107 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $AddWebExtensionDialog: Adw.Dialog {
+  content-width: 460;
+  content-height: 250;  
+
+  Adw.ToolbarView {
+   
+     Box {
+      orientation: vertical;
+      valign: start;
+      halign: start;
+      margin-start: 20;      
+      margin-top: 20;
+      margin-end: 20;
+        Box {
+          halign: start;
+          Label add_label {         
+              label: "Would you like to add the web extension 'Dashlane (Example)'?"; // TODO: fill this dynamically
+              styles ["bold-text"]                  
+          }
+        }
+        Box {
+          halign: start;
+          Label {                  
+            margin-end: 20;
+            margin-top: 30;
+            label: _("This extension would like permission to:");
+          }
+        }
+        Box { // TODO: fill dynamically
+          halign: start;
+          Label {                  
+            margin-end: 20;
+            margin-top: 15;
+            label: _("• Change your privacy settings.");
+          }
+        }
+        Box {
+          halign: start;
+          Label {           
+            margin-end: 20;
+            margin-top: 5;
+            label: _("• Read your browsing history.");
+          }
+        }
+        Box {
+          halign: start;
+          Label {            
+            margin-end: 20;
+            margin-top: 5;
+            label: _("• Use unlimited storage space");
+          }
+        }           
+        Grid {
+          hexpand: true;
+          row-spacing: 0;
+          column-spacing: 40;
+            Box {
+              margin-top: 40;
+              margin-bottom: 20;
+              layout {
+                row:0;
+                column:0;
+              }              
+              halign:start;
+                DropDown webExtensionPermissionComboBox {
+                  hexpand:true;
+                  model: StringList {
+                  strings [
+                    _("Allow on all websites"),
+                    _("Allow for one day"),
+                    _("Ask for each website"),
+                    ]
+                  };
+                }
+            }
+            Box {
+              margin-top: 40;
+              margin-start:20;
+              margin-bottom: 20;
+              layout {
+                row:0;
+                column:1;
+              }             
+              halign:end;
+              hexpand: true;
+              homogeneous: true;                     
+                Button {                      
+                  label: _("Cancel");
+                  margin-end: 5;
+                  clicked => $on_cancel_clicked();                       
+                }
+                Button {                     
+                  label: _("Add"); 
+                  margin-start: 5;                     
+                  margin-end: 0;                     
+                  styles ["suggested-action"]
+                  clicked => $on_add_clicked();
+                }
+            }            
+        }               
+      }
+    }    
+  }
+

@@ -1,0 +1,50 @@
+// Chromium: extensions/common/api/i18n.json
+// Firefox:  toolkit/components/extensions/schemas/i18n.json
+
+[AdditionalProperties=false]
+dictionary I18nDetectedLanguage {
+    string language;
+    integer percentage;
+};
+
+[AdditionalProperties=false]
+dictionary I18nLanguageDetectionResult {
+    boolean isReliable;
+    sequence<I18nDetectedLanguage> languages;
+};
+
+[AdditionalProperties=false]
+dictionary I18nGetMessageOptions {
+    optional boolean escapeLt;
+};
+
+callback I18nLanguagesCallback = void(sequence<string> languages);
+callback I18nLanguageDetectionCallback = void(I18nLanguageDetectionResult result);
+
+[Tags=Chrome,Firefox,Everywhere]
+[Global="i18n"]
+interface I18n {
+    function Promise<sequence<string>> getAcceptLanguages();
+    function void getAcceptLanguages(I18nLanguagesCallback callback);
+
+    [Implementation=JavaScript("I18n.getMessage")]
+    function (string | undefined) getMessage(
+        string messageName,
+        [Undefined=Missing] optional any substitutions,
+        [Tags=Chrome]
+        [Undefined=Missing]
+        optional I18nGetMessageOptions options
+    );
+
+    [Tags=Firefox]
+    function Promise<sequence<string>> getPreferredSystemLanguages();
+
+    [Tags=Firefox]
+    function void getPreferredSystemLanguages(I18nLanguagesCallback callback);
+
+    [Implementation=JavaScript("I18n.getUILanguage")]
+    function string getUILanguage();
+
+    function Promise<I18nLanguageDetectionResult> detectLanguage(string text);
+    function void detectLanguage(string text, I18nLanguageDetectionCallback callback);
+};

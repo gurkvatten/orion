@@ -1,0 +1,114 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ClearHistoryDialog: Adw.Dialog {
+  content-width: 250;
+  content-height: 250;
+  title: _("Clear History");
+
+  Adw.ToolbarView {
+    
+   Grid {
+      Box {
+        layout {
+         row:0;
+         column:0;
+        } 
+        margin-top: 20;
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 49;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+      Box {
+        layout {
+          row:1;
+          column:0;
+        } 
+        margin-top: 20;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          styles [
+            "bold-text"
+          ]
+          label: _("Are you sure you want to clear");
+        }
+      }
+      Box {
+        layout {
+          row:2;
+          column:0;
+        } 
+        margin-top: 0;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          styles [
+            "bold-text"
+          ]
+          label: _(" your browser history?");
+        }
+      }
+      Box {
+        layout {
+          row:3;
+          column:0;
+        } 
+        margin-top: 20;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          label: _("Clearing history will remove related");         
+        }
+      }
+      Box {
+        layout {
+          row:4;
+          column:0;
+        } 
+        margin-top: 0;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+          label: _("cookies and other website data.");         
+        }
+      }
+       
+      Box {
+        layout {
+          row:5;
+          column:0;
+        } 
+        margin-top: 30;
+        margin-bottom: 20;
+        homogeneous: true; 
+        
+        Button {
+          label: _("Cancel");
+          margin-start: 40;
+          margin-end: 10;
+          clicked => $on_cancel_clicked();
+        }
+
+        Button {
+          label: _("Clear");
+          margin-start: 10;
+          margin-end: 40;
+          styles ["suggested-action"]
+          clicked => $on_clear_clicked();
+        }
+      }
+    }
+  }
+}
+
+

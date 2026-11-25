@@ -1,0 +1,241 @@
+using Gtk 4.0;
+
+template $WindowListBox : Box {
+  name: "window-list-box";
+  orientation: vertical;
+  vexpand: true;
+
+  ScrolledWindow {
+    //vexpand:true;
+    propagate-natural-height: true;
+    hscrollbar-policy: never;
+    propagate-natural-width: false;
+
+    Box {
+      orientation: vertical;
+
+      // this label is a hacky solution to a problem with header factory in ListView not displaying
+      // a header when no items are present in a given section
+      Label header_label {
+        styles [
+          "dim-label",
+          "bold-text"
+        ]
+        label: _("Tab Groups"); // set dynamically in code
+        halign: start;
+        hexpand: true;
+        margin-top: 16;
+        // visibility is set dynamically in code
+      }
+
+      ListView list_view {
+        styles [
+          "navigation-sidebar",
+          "dropdown-section-separators"
+        ]
+        hexpand:true;
+        map => $on_window_list_view_map();
+        //single-click-activate: true;
+        // item factory is set dynamically in code
+        header-factory: BuilderListItemFactory {
+          template ListHeader {
+            child: Box {
+              orientation: horizontal;
+              Label {   
+                styles [
+                  "dim-label"
+                ]
+                label: bind($get_middle_header_label(template.n-items)) as <string>;
+              }
+              margin-top: 16;
+              margin-bottom: 8;
+
+              // This hides the header if there are no Saved Windows. This is needed because
+              // otherwise the header would be shown above tab groups.
+              visible: bind template.start;
+            };
+          }
+        };
+      }
+
+      Box bottom_header {
+        // visibility is set dynamically in code
+        orientation: vertical;
+        margin-top: 8;
+        margin-start: 8;
+        margin-end: 8;
+        spacing: 8;
+
+        Label {
+          styles [
+            "dim-label",
+            "bold-text"
+          ]
+          label: _("Tab Groups");
+          halign: start;
+          hexpand: true;
+        }
+        Label drag_label{
+          styles [
+            "dim-label"
+          ]
+          label: _("Drag your windows here to save them for later.");
+          halign: start;
+          hexpand: true;
+          wrap: true;
+          //max-width-chars: 30;
+          width-chars: 30;
+          xalign: 0;
+        }
+      }
+    }
+  }
+  
+  Box {
+    valign: end;
+    hexpand: true;
+    vexpand: true;
+
+    Button new_window_button {
+      name: "new-window-button";
+      tooltip-text: _("New Tab Group");
+      icon-name: "plus-large-symbolic";
+      //action-name: "win.new-window-from-sidebar";
+      clicked => $on_new_saved_window_button_clicked();
+      valign: end;
+      halign: start;
+      hexpand: true;
+      vexpand: true;
+      margin-top: 8;
+      margin-start: 8;
+      margin-bottom: 8;
+    }
+
+    MenuButton {
+      icon-name: "sliders-horizontal-symbolic";
+      valign: end;
+      halign: end;
+      hexpand: true;
+      vexpand: true;
+      margin-top: 8;
+      margin-end: 8;
+      margin-bottom: 8;
+      menu-model: settings_menu;
+    }
+  }
+}
+
+menu settings_menu {
+  section {
+    item {
+      label: _("Show Recently Opened on Top");
+      action: "win.show-recently-opened-on-top";
+    }
+    item {
+      label: _("Switch Tab Groups In-Place");
+      action: "win.switch-saved-windows-in-place";
+    }
+  }
+
+  section {
+    item {
+      label: _("Restore Snapshot…");
+      action: "win.restore-snapshot-menu";
+    }
+    item {
+      label: _("Take Workspace Snapshot");
+      action: "win.take-workspace-snapshot";
+    }
+  }
+}
+
+menu tab_menu {
+  section {
+    item {
+      label: _("Save…");
+      action: "win.edit-current-window-group";
+    }
+  }
+
+  section {
+    item {
+      label: _("Duplicate");
+    }
+    item {
+      label: _("Close Window");
+    }
+  }
+
+  section {
+    submenu {
+      label: _("3 Tabs"); // TODO: this should be the number of tabs in the window
+
+      section {
+        item {
+          label: _("Copy Tab Links");
+        }
+        item {
+          label: _("Bookmark 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+        item {
+          label: _("Suspend 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+      }
+
+      section {
+        // TODO: fill this dynamically with the tabs in the window
+      }
+    }
+  }
+}
+
+//NOTE: has no actual use is only a template 
+menu window_menu {
+  section {
+    item {
+      label: _("Open in Separate Window"); // TODO: hide this dynamically
+    }
+  }
+
+  section {
+    item {
+      label: _("Edit…");
+      action: "win.edit-current-window-group";
+    }
+    item {
+      label: _("Duplicate");
+    }
+  }
+
+  section {
+    item {
+      label: _("Close Window");
+    }
+    item {
+      label: _("Delete");
+      action: "win.delete-stored-window-menu";
+    }
+  }
+
+  section {
+    submenu {
+      label: _("3 Tabs"); // TODO: this should be the number of tabs in the window
+
+      section {
+        item {
+          label: _("Copy Tab Links");
+        }
+        item {
+          label: _("Bookmark 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+        item {
+          label: _("Suspend 3 Tabs"); // TODO: this should be the number of tabs in the window
+        }
+      }
+
+      section {
+        // TODO: fill this dynamically with the tabs in the window
+      }
+    }
+  }
+}

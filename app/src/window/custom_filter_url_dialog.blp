@@ -1,0 +1,68 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $CustomFilterUrlDialog: Adw.Dialog {
+  content-width: 400;
+  Adw.ToolbarView {
+    margin-start:15;
+    margin-end:15;
+    margin-top:15;
+    margin-bottom:15;
+    content: Box {
+      orientation:vertical;
+      spacing:10;
+      halign:fill;
+      Label {
+        label:_("Custom filter URL:");
+        halign:start;
+      }
+      Entry url_entry {
+        hexpand:true;
+        halign:fill;
+        placeholder-text:"https://";
+      }
+
+      Label {
+        label:_("Title (optional):");
+        halign:start;
+      }
+      Entry title_entry {
+        hexpand:true;
+        halign:fill;
+      }
+
+      Label {
+        label:_("Description (optional):");
+        halign:start;
+      }
+      TextView description_text_view {
+        hexpand:true;
+        halign:fill;
+        wrap-mode:word;
+        height-request:100;
+        styles ["frame"]
+      }
+    };
+    [bottom]
+    Box {
+      margin-top:15;
+      orientation:horizontal;
+      spacing:8;
+      halign:end;
+      Button cancel_button {
+        label:_("Cancel");
+      }
+      Button add_button {
+        label:_("Add");
+        sensitive:false;
+      }
+    }
+  }    
+}
+
+SizeGroup {
+  widgets [
+    cancel_button,
+    add_button
+  ]
+}

@@ -1,0 +1,312 @@
+// Chromium: chrome/common/extensions/api/context_menus.json
+// Firefox:  browser/components/extensions/schemas/menus.json
+// Firefox:  browser/components/extensions/schemas/menus_child.json
+
+external type Element;
+
+enum ContextMenuContextType {
+    All = "all";
+    Page = "page";
+    Frame = "frame";
+    Selection = "selection";
+    Link = "link";
+    Editable = "editable";
+    Image = "image";
+    Video = "video";
+    Audio = "audio";
+    Launcher = "launcher";
+    BrowserAction = "browser_action";
+    PageAction = "page_action";
+    Action = "action";
+    Tab = "tab";
+
+    [Tags=Firefox]
+    Password = "password";
+    [Tags=Firefox]
+    Bookmark = "bookmark";
+    [Tags=Firefox]
+    ToolsMenu = "tools_menu";
+};
+
+enum ContextMenuItemType {
+    Normal = "normal";
+    Checkbox = "checkbox";
+    Radio = "radio";
+    Separator = "separator";
+};
+
+[Tags=Firefox]
+enum ContextMenuModifier {
+    Shift = "Shift";
+    Alt = "Alt";
+    Command = "Command";
+    Ctrl = "Ctrl";
+    MacCtrl = "MacCtrl";
+};
+
+[Tags=Firefox]
+enum ContextMenuOverrideContext {
+    Bookmark = "bookmark";
+    Tab = "tab";
+};
+
+[AdditionalProperties=false]
+dictionary ContextMenuCreateProperties {
+    optional ContextMenuItemType type;
+    optional string id;
+    optional string title;
+    optional boolean checked;
+    [MinLength=1]
+    optional sequence<ContextMenuContextType> contexts;
+    optional boolean visible;
+    optional any onclick;
+    optional (integer | string) parentId;
+    optional sequence<string> documentUrlPatterns;
+    optional sequence<string> targetUrlPatterns;
+    optional boolean enabled;
+
+    [Tags=Firefox]
+    optional object icons;
+    [Tags=Firefox]
+    [MinLength=1]
+    optional sequence<ExtensionViewType> viewTypes;
+    [Tags=Firefox]
+    optional string command;
+};
+
+[AdditionalProperties=false]
+dictionary ContextMenuUpdateProperties {
+    optional ContextMenuItemType type;
+    optional string title;
+    optional boolean checked;
+    [MinLength=1]
+    optional sequence<ContextMenuContextType> contexts;
+    optional boolean visible;
+    optional any onclick;
+    optional (integer | string) parentId;
+    optional sequence<string> documentUrlPatterns;
+    optional sequence<string> targetUrlPatterns;
+    optional boolean enabled;
+
+    [Tags=Firefox]
+    optional object icons;
+    [Tags=Firefox]
+    [MinLength=1]
+    optional sequence<ExtensionViewType> viewTypes;
+};
+
+[AdditionalProperties=false]
+dictionary ContextMenuOnClickData {
+    (integer | string) menuItemId;
+    optional (integer | string) parentMenuItemId;
+    optional string mediaType;
+    optional string linkUrl;
+    optional string srcUrl;
+    optional string pageUrl;
+    optional string frameUrl;
+    optional integer frameId;
+    optional string selectionText;
+    boolean editable;
+    optional boolean wasChecked;
+    optional boolean checked;
+
+    [Tags=Firefox]
+    optional ExtensionViewType viewType;
+    [Tags=Firefox]
+    optional string linkText;
+    [Tags=Firefox]
+    optional string bookmarkId;
+    [Tags=Firefox]
+    sequence<ContextMenuModifier> modifiers;
+    [Tags=Firefox]
+    optional integer button;
+    [Tags=Firefox]
+    optional integer targetElementId;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary ContextMenuShownData {
+    sequence<(integer | string)> menuIds;
+    sequence<ContextMenuContextType> contexts;
+    optional ExtensionViewType viewType;
+    boolean editable;
+    optional string mediaType;
+    optional string linkUrl;
+    optional string linkText;
+    optional string srcUrl;
+    optional string pageUrl;
+    optional string frameUrl;
+    optional string selectionText;
+    optional integer targetElementId;
+};
+
+[Tags=Firefox]
+[AdditionalProperties=false]
+dictionary ContextMenuOverrideOptions {
+    optional boolean showDefaults = false;
+    optional ContextMenuOverrideContext context;
+    [MinLength=1]
+    optional string bookmarkId;
+    optional integer tabId;
+};
+
+callback ContextMenuVoidCallback = void();
+callback ContextMenuClickedListener = void(
+    ContextMenuOnClickData info,
+    optional tabs.Tab tab
+);
+callback ContextMenuShownListener = void(
+    ContextMenuShownData info,
+    tabs.Tab tab
+);
+callback ContextMenuHiddenListener = void();
+
+[Tags=Chrome,Firefox,BackgroundScript,ExtensionPage]
+[Permissions=contextMenus]
+[Global="contextMenus"]
+interface ContextMenus {
+    [Implementation=JavaScript("ContextMenus.ACTION_MENU_TOP_LEVEL_LIMIT")]
+    readonly property number ACTION_MENU_TOP_LEVEL_LIMIT;
+
+    [Implementation=JavaScript("ContextMenus.create")]
+    function (integer | string) create(
+        ContextMenuCreateProperties createProperties,
+        optional ContextMenuVoidCallback callback
+    );
+
+    [Internal]
+    function Promise<void> __create(
+        (integer | string) id,
+        ContextMenuCreateProperties createProperties
+    );
+
+    [Implementation=JavaScript("ContextMenus.update")]
+    function Promise<void> update(
+        (integer | string) id,
+        ContextMenuUpdateProperties updateProperties
+    );
+    [Implementation=JavaScript("ContextMenus.update")]
+    function void update(
+        (integer | string) id,
+        ContextMenuUpdateProperties updateProperties,
+        ContextMenuVoidCallback callback
+    );
+    [Internal]
+    function Promise<void> __update(
+        (integer | string) id,
+        ContextMenuUpdateProperties updateProperties
+    );
+
+    [Implementation=JavaScript("ContextMenus.remove")]
+    function Promise<void> remove((integer | string) menuItemId);
+    [Implementation=JavaScript("ContextMenus.remove")]
+    function void remove(
+        (integer | string) menuItemId,
+        ContextMenuVoidCallback callback
+    );
+    [Internal]
+    function Promise<void> __remove((integer | string) menuItemId);
+
+    [Implementation=JavaScript("ContextMenus.removeAll")]
+    function Promise<void> removeAll();
+    [Implementation=JavaScript("ContextMenus.removeAll")]
+    function void removeAll(ContextMenuVoidCallback callback);
+    [Internal]
+    function Promise<void> __removeAll();
+
+    [Tags=Firefox]
+    [Permissions="menus.overrideContext"]
+    function void overrideContext(ContextMenuOverrideOptions contextOptions);
+    [Tags=Firefox]
+    function Promise<void> refresh();
+
+    event onClicked: ContextMenuClickedListener;
+    [Tags=Firefox]
+    event onShown: ContextMenuShownListener;
+    [Tags=Firefox]
+    event onHidden: ContextMenuHiddenListener;
+};
+
+// Firefox exposes the same model under browser.menus, with a distinct
+// permission and a content-script-only target lookup helper.
+[Tags=Firefox,Everywhere]
+[Permissions=menus]
+[Global="menus"]
+interface Menus {
+    [Implementation=JavaScript("Menus.ACTION_MENU_TOP_LEVEL_LIMIT")]
+    readonly property number ACTION_MENU_TOP_LEVEL_LIMIT;
+
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Menus.create")]
+    function (integer | string) create(
+        ContextMenuCreateProperties createProperties,
+        optional ContextMenuVoidCallback callback
+    );
+    [Tags=BackgroundScript,ExtensionPage]
+    [Internal]
+    function Promise<void> __create(
+        (integer | string) id,
+        ContextMenuCreateProperties createProperties
+    );
+
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Menus.update")]
+    function Promise<void> update(
+        (integer | string) id,
+        ContextMenuUpdateProperties updateProperties
+    );
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Menus.update")]
+    function void update(
+        (integer | string) id,
+        ContextMenuUpdateProperties updateProperties,
+        ContextMenuVoidCallback callback
+    );
+    [Tags=BackgroundScript,ExtensionPage]
+    [Internal]
+    function Promise<void> __update(
+        (integer | string) id,
+        ContextMenuUpdateProperties updateProperties
+    );
+
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Menus.remove")]
+    function Promise<void> remove((integer | string) menuItemId);
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Menus.remove")]
+    function void remove(
+        (integer | string) menuItemId,
+        ContextMenuVoidCallback callback
+    );
+    [Tags=BackgroundScript,ExtensionPage]
+    [Internal]
+    function Promise<void> __remove((integer | string) menuItemId);
+
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Menus.removeAll")]
+    function Promise<void> removeAll();
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Menus.removeAll")]
+    function void removeAll(ContextMenuVoidCallback callback);
+    [Tags=BackgroundScript,ExtensionPage]
+    [Internal]
+    function Promise<void> __removeAll();
+
+    [Tags=BackgroundScript,ExtensionPage]
+    [Permissions="menus.overrideContext"]
+    function void overrideContext(ContextMenuOverrideOptions contextOptions);
+    [Tags=BackgroundScript,ExtensionPage]
+    function Promise<void> refresh();
+
+    [Tags=ContentScript,DevToolsPage]
+    [Implementation=JavaScript("Menus.getTargetElement")]
+    function Element? getTargetElement(integer targetElementId);
+
+    [Tags=BackgroundScript,ExtensionPage]
+    event onClicked: ContextMenuClickedListener;
+    [Tags=BackgroundScript,ExtensionPage]
+    event onShown: ContextMenuShownListener;
+    [Tags=BackgroundScript,ExtensionPage]
+    event onHidden: ContextMenuHiddenListener;
+};

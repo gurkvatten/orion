@@ -1,0 +1,104 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ImportBrowserDataDialog: Adw.Dialog {
+  content-width: 400;
+  content-height: 200;
+  name: "import-browser-data-dialog";
+
+  Box {
+    orientation: vertical;
+    spacing: 8;
+    margin-top: 8;
+    margin-end: 8;
+    margin-bottom: 8;
+    margin-start: 8;
+
+    ListBox list_box {
+      styles ["navigation-sidebar"]
+
+      ListBoxRow { // TODO: fix icons
+        name: "browser";
+        Box {
+          spacing: 8;
+          Image {
+            icon-name: "orion-logo";
+            pixel-size: 32;
+          }
+          Label {
+            label: _("Mozilla Firefox");
+          }
+        }
+      }
+
+      ListBoxRow {
+        name: "browser";
+        Box {
+          spacing: 8;
+          Image {
+            icon-name: "orion-logo";
+            pixel-size: 32;
+          }
+          Label {
+            label: _("Opera");
+          }
+        }
+      }
+
+      ListBoxRow {
+        Separator {}
+        activatable: false;
+        selectable: false;
+        styles ["tight-separator"]
+      }
+
+      ListBoxRow {
+        name: "extension";
+        Box {
+          spacing: 8;
+          Image {
+            icon-name: "orion-logo";
+            pixel-size: 32;
+          }
+          Label {
+            label: _("1Password");
+          }
+        }
+      }
+
+      ListBoxRow {
+        name: "extension";
+        Box {
+          spacing: 8;
+          Image {
+            icon-name: "orion-logo";
+            pixel-size: 32;
+          }
+          Label {
+            label: _("LastPass");
+          }
+        }
+      }
+    }
+
+    Separator {
+    }
+  
+    Box {
+      halign: end;
+      hexpand: true;
+      homogeneous: true;
+
+      Button {
+        label: _("Cancel");
+        clicked => $on_cancel_clicked();
+      }
+      Button {
+        label: _("Import");
+        clicked => $on_import_clicked();
+        styles ["suggested-action"]
+        margin-start: 8;
+      }
+    }
+  }
+}

@@ -1,0 +1,164 @@
+using Gtk 4.0;
+
+template $StartPageSettingsPopover:Popover{
+  name:"start-page-settings-popover";
+
+   Box{
+      orientation:vertical;
+        CheckButton FavouritesCheckBox{
+         halign:start;
+        child:Box{
+            orientation:horizontal;
+        spacing:6;
+        Image{
+               icon-name:"star-outline-thick-symbolic";
+            }Label{
+               label:_("Favourites");
+            }
+         };
+      }CheckButton FrequentlyVisitedCheckBox{
+         halign:start;
+      child:Box{
+            orientation:horizontal;
+      spacing:6;
+      Image{
+               icon-name:"clock-alt-symbolic";
+            }Label{
+               label:_("Frequently Visited");
+            }
+         };
+      }CheckButton ReadingListCheckBox{
+         halign:start;
+      child:Box{
+            orientation:horizontal;
+        spacing:6;
+        Image{
+               icon-name:"open-book-symbolic";
+            }Label{
+               label:_("Reading List");
+            }
+         };
+      }CheckButton SuggestionsCheckBox{
+         halign:start;
+      child:Box{
+            orientation:horizontal;
+      spacing:6;
+      Image{
+               icon-name:"magic-wand-symbolic";
+            }Label{
+               label:_("Suggestions");
+            }
+         };
+      }CheckButton BackgroundImageCheckBox{
+         halign:start;
+      child:Box{
+            orientation:horizontal;
+      spacing:6;
+      Image{
+               icon-name:"image-round-symbolic";
+            }Label{
+               label:_("Background Image");
+            }
+         };
+      }
+
+    ScrolledWindow {
+      margin-top: 20;
+      width-request: 260;
+      height-request: 90;
+      hexpand: true;
+      vexpand: false;
+
+      Box {
+        orientation: horizontal;
+        spacing: 10;
+        Box{
+          orientation:vertical;
+          height-request: 90;
+          Button{
+            styles ["plus-button"]
+            clicked => $on_load_image_button_clocked();
+              child: Box {
+                width-request: 125;
+                height-request: 70;
+                vexpand: false;
+                orientation: vertical;
+                styles [
+                  "grey-background",
+                  "round-corners"
+                ]
+              Box {
+                vexpand: true;
+                }
+                Image {
+                  icon-name: "plus-large-symbolic";
+                  pixel-size: 25;
+                }
+                Box {
+                vexpand: true;
+                }
+              };
+          }
+          Box {
+            vexpand: true;
+          }
+        }
+        Overlay {
+        Box{
+          orientation:vertical;
+          height-request: 90;
+          Picture picture0 {
+            width-request: 125;
+            styles [
+              "round-corners",
+              "selected-item"
+           ]
+          }
+          Box {
+            vexpand: true;
+          }
+        }
+        [overlay]
+          Box {
+            halign: start;
+            valign: start;
+
+            Button {
+              styles ["no-spaces"]
+              child: Image {
+                icon-name: "cross-large-circle-filled-symbolic";
+                pixel-size: 16;
+              };
+            }
+          }
+        }
+        Box{
+          orientation:vertical;
+          height-request: 90;
+          Picture picture1 {
+            width-request: 125;
+            styles [
+              "round-corners"
+            ]
+          }
+          Box {
+            vexpand: true;
+          }
+        }        
+        Box{
+          orientation:vertical;
+          height-request: 90;
+          Picture picture2 {
+            width-request: 125;
+            styles [
+              "round-corners"
+            ]
+          }
+          Box {
+            vexpand: true;
+          }
+        }
+      }
+    }
+  }
+}

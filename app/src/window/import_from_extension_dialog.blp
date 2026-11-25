@@ -1,0 +1,76 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ImportFromExtensionDialog: Adw.Dialog {
+  content-width: 400;
+  content-height: 200;
+  name: "import-from-extension-dialog";
+  
+  Box {
+    orientation: vertical;
+    spacing: 8;
+    margin-top: 16;
+    margin-end: 16;
+    margin-bottom: 16;
+    margin-start: 16;
+
+    Label {
+      label: _("Step 1: Export your passwords from 1Password"); // TODO: fill the name dynamically
+      halign: start;
+    }
+    Box {
+      orientation: vertical;
+      spacing: 4;
+      margin-start: 32;
+
+      Label {
+        label: _("⏺ Open and unlock 1Password");
+        halign: start;
+      }
+      Label {
+        label: _("⏺ Select the vault you want to export (You can’t export from “All Vaults”.)");
+        halign: start;
+      }
+      Label {
+        label: _("⏺ Select “File” → “Export” → “All Items” from the Menu Bar");
+        halign: start;
+      }
+      Label {
+        label: _("⏺ Enter your 1Password master or account password");
+        halign: start;
+      }
+      Label {
+        label: _("⏺ Select the File Format: iCloud Keychain (.csv)");
+        halign: start;
+      }
+      Label {
+        label: _("⏺ Save the file on your Desktop");
+        halign: start;
+      }
+    }
+
+    Label {
+      margin-top: 16;
+      label: _("Step 2: Import your passwords");
+      halign: start;
+    }
+    Button {
+      label: _("Import 1Password CSV File…");
+      margin-start: 32;
+      halign: start;
+      clicked => $on_import_csv_file_clicked();
+    }
+
+    Separator {}
+    
+    Box {
+      halign: end;
+      hexpand: true;
+
+      Button {
+        label: _("Cancel");
+        clicked => $on_cancel_clicked();
+      }
+    }
+  }
+}

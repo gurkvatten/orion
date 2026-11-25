@@ -1,0 +1,94 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ExtensionsKeyboardShortcutsDialog: Adw.PreferencesDialog { //TODO: init this whole thing in code
+  styles [
+    "background",
+  ]
+
+  content-width: 300;
+  content-height: 310;
+  title:"1Password - Password Manager";
+
+  Adw.PreferencesPage pref_page {
+    title: bind template.title;
+    description:_("2 active keyboard shortcuts");
+    Adw.PreferencesGroup {
+
+      Adw.PreferencesRow {
+        Box {
+          margin-bottom: 10;
+          margin-start: 10;
+          margin-end: 10;
+          margin-top: 10;
+          orientation: horizontal;
+          hexpand: true;
+          halign: fill;
+
+          Label {
+            halign: start;
+            hexpand: true;
+            label: _("Activate:");
+          }
+
+          $OrionAcceleratorEntry activate_accelerator_entry {
+            halign:end;
+          }
+        }
+      }
+
+      Adw.PreferencesRow {
+        Box {
+          margin-bottom: 10;
+          margin-start: 10;
+          margin-end: 10;
+          margin-top: 10;
+          orientation: horizontal;
+          hexpand: true;
+          halign: fill;
+
+          Label {
+            halign: start;
+            hexpand: true;
+            label: _("Lock the extension:");
+          }
+
+          $OrionAcceleratorEntry lock_accelerator_entry {
+            halign: end;
+          }
+        }
+      }
+      
+      Box {
+        margin-start:10;
+        margin-end:10;
+        margin-top:26;
+        hexpand:true;
+        orientation:horizontal;
+        halign:fill;
+        spacing:10;
+        Button reset_button {
+          halign:start;
+          label:_("Reset");
+          clicked => $on_reset_clicked();
+        }
+        Button cancel_button {
+          halign:end;
+          hexpand:true;
+          label:_("Cancel");
+          clicked => $on_cancel_clicked();
+        }
+        Button save_button {
+          halign:end;
+          label:_("Save");
+          styles ["suggested-action"]
+          clicked => $on_save_clicked();
+        }
+      }
+    }
+  }
+}
+
+SizeGroup {
+  widgets [reset_button, cancel_button, save_button]
+}

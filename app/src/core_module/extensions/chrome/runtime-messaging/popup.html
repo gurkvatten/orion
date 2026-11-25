@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chrome Runtime Messaging Test</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+    }
+
+    html {
+      max-width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    body {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: visible;
+      background: #111827;
+      color: #e5e7eb;
+    }
+
+    header {
+      display: flex;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid #374151;
+    }
+
+    h1 {
+      flex: 1 1 12rem;
+      margin: 0;
+      font-size: 15px;
+    }
+
+    button {
+      border: 1px solid #4b5563;
+      border-radius: 5px;
+      padding: 6px 10px;
+      background: #1f2937;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #374151;
+    }
+
+    #console-output {
+      box-sizing: border-box;
+      flex: 0 0 auto;
+      overflow: visible;
+      padding: 8px 0;
+      background: #0b1020;
+      font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .console-line {
+      display: grid;
+      grid-template-columns: 5.5rem 4rem minmax(0, 1fr);
+      gap: 8px;
+      padding: 3px 10px;
+      border-bottom: 1px solid rgb(255 255 255 / 5%);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .console-time {
+      color: #6b7280;
+    }
+
+    .console-level {
+      text-transform: uppercase;
+    }
+
+    .console-debug {
+      color: #a78bfa;
+    }
+
+    .console-log {
+      color: #e5e7eb;
+    }
+
+    .console-info {
+      color: #60a5fa;
+    }
+
+    .console-warn {
+      color: #fbbf24;
+    }
+
+    .console-error {
+      color: #f87171;
+    }
+  </style>
+  <script src="popup.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>chrome.runtime messaging and ports</h1>
+    <button id="run-tests" type="button">Run tests</button>
+    <button id="clear-console" type="button">Clear</button>
+  </header>
+  <main id="console-output" role="log" aria-live="polite"></main>
+</body>
+</html>

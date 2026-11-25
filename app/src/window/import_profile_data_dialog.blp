@@ -1,0 +1,61 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ImportProfileDataDialog: Adw.Dialog {
+  title: _("Import Profile Data");
+  name: "import-profile-data-dialog";
+  content-width: 620;
+  content-height: 420;
+
+  Box {
+    orientation: vertical;
+    spacing: 10;
+    margin-top: 16;
+    margin-end: 16;
+    margin-bottom: 16;
+    margin-start: 16;
+    hexpand: true;
+    vexpand: true;
+
+    ScrolledWindow {
+      hexpand: true;
+      vexpand: true;
+      min-content-height: 220;
+
+      TextView log_text_view {
+        editable: false;
+        cursor-visible: false;
+        monospace: true;
+        wrap-mode: none;
+        left-margin: 10;
+        right-margin: 10;
+        top-margin: 10;
+        bottom-margin: 10;
+        styles ["frame", "monospace-font"]
+      }
+    }
+
+    Box {
+      spacing: 8;
+      halign: end;
+
+      Button cancel_button {
+        label: _("Cancel");
+        clicked => $on_cancel_clicked();
+      }
+
+      Button ok_button {
+        label: _("OK");
+        sensitive: false;
+        styles ["suggested-action"]
+        clicked => $on_ok_clicked();
+      }
+    }
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [cancel_button, ok_button]
+}
+

@@ -1,0 +1,122 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $AboutDialog: Adw.Dialog {
+  content-width: 700;
+  content-height: 300;
+  title: _("About Orion");
+  name: "about-dialog";
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    Grid {
+      Box {
+        layout {
+          row: 0;
+          column: 0;
+        }
+
+        margin-top: 20;
+
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 196;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+
+      Box {
+        layout {
+          row: 0;
+          column: 1;
+        }
+
+        orientation: vertical;
+        valign: center;
+        halign: start;
+        margin-start: 10;
+        margin-top: 20;
+
+        Box {
+          orientation: vertical;
+          homogeneous: true;
+          halign: start;
+
+          Label {
+            label: _("Orion");
+
+            styles [
+              "heading",
+            ]
+          }
+        }
+
+        Box {
+          Label {
+            label: _("Version 0.0.0.0.1 (WebKit development)");
+          }
+        }
+
+        Box {
+          margin-top: 4;
+
+          Label {
+            label: _("Build date Mar 5 2025");
+
+            styles [
+              "build",
+            ]
+          }
+        }
+
+        Box {
+          margin-top: 4;
+
+          Label {
+            label: _("x86_64 (Ubuntu 22.04.5 LTS)");
+
+            styles [
+              "build",
+            ]
+          }
+        }
+
+        Box {
+          margin-top: 8;
+
+          Label {
+            label: _("Orion Browser by Kagi. Copyright © 2020-2025 Kagi.");
+          }
+        }
+
+        Box {
+          Label {
+            label: _("All rights reserved. Humanize the Web.");
+          }
+        }
+
+        Box {
+          margin-top: 10;
+
+          Button {
+            label: _("Get Orion+");
+          }
+
+          Button {
+            label: _("Send Feedback");
+            margin-start: 10;
+          }
+
+          Button {
+            label: _("Licenses");
+            margin-start: 10;
+          }
+        }
+      }
+    }
+  }
+}

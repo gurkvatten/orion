@@ -1,0 +1,791 @@
+using Gtk 4.0;
+using Adw 1;
+
+//TODO: fix the styles to actually look good
+
+SizeGroup {
+  mode:vertical;
+  widgets [
+    rightSideHeaderBarBookmarks,
+    rightSideHeaderBarExtensions,
+    rightSideHeaderBarHistory,
+    rightSideHeaderBarLogin,
+    rightSideHeaderBarPasswords,
+    rightSideHeaderBarProfiles,
+    rightSideHeaderBarReading,
+  ]
+}
+
+template $BookmarksDialog: Adw.Dialog {
+  content-width: 1000;
+  content-height: 700;
+  title: _("Bookmarks window");
+  name: "bookmarks-dialog";
+
+  Adw.NavigationSplitView {
+    sidebar: Adw.NavigationPage navigationSidebar{
+      title:_("sidebar");
+      Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar leftSideHeaderBar{
+          show-title:false;
+        }
+
+        content: ListBox sidebar_list_box {
+          styles [
+          ]
+          margin-top:20;
+          margin-start:20;
+          margin-end:20;
+          margin-bottom:20;
+          vexpand:true;
+          show-separators:false;
+          activate-on-single-click:true;
+          Box history{
+            Image {
+              margin-top:7;
+              margin-start:7;
+              margin-end:9;
+              margin-bottom:7;
+              icon-name:"clock-alt-symbolic";
+              pixel-size:24;
+            }
+            Label {
+              margin-end:20;
+              label:_("History");
+            }
+          }
+          Box bookmarks{
+            Image {
+              margin-top:7;
+              margin-start:7;
+              margin-end:9;
+              margin-bottom:7;
+              icon-name:"bookmark-filled-symbolic";
+              pixel-size:24;
+            }
+            Label {
+              margin-end:20;
+              label:_("Bookmarks");
+            }
+          }
+          Box reading_list {
+            Image {
+              margin-top:7;
+              margin-start:7;
+              margin-end:9;
+              margin-bottom:7;
+              icon-name:"open-book-symbolic"; //TODO: find a glasses icon
+              pixel-size:24;
+            }
+            Label {
+              margin-end:20;
+              label:_("Reading List");
+            }
+          }
+          Box passwords{
+            Image {
+              margin-top:7;
+              margin-start:7;
+              margin-end:9;
+              margin-bottom:7;
+              icon-name:"key4-symbolic";
+              pixel-size:24;
+            }
+            Label {
+              margin-end:20;
+              label:_("Passwords");
+            }
+          }
+          Box extensions{
+            Image {
+              margin-top:7;
+              margin-start:7;
+              margin-end:9;
+              margin-bottom:7;
+              icon-name:"puzzle-piece-symbolic";
+              pixel-size:24;
+            }
+            Label {
+              margin-end:20;
+              label:_("Extensions");
+            }
+          }
+          Box profiles{
+            Image {
+              margin-top:7;
+              margin-start:7;
+              margin-end:9;
+              margin-bottom:7;
+              icon-name:"person-symbolic";
+              pixel-size:24;
+            }
+            Label {
+              margin-end:20;
+              label:_("Profiles");
+            }
+          }
+        };
+      }
+    };
+
+
+    content: Adw.NavigationPage {
+      title:_("content");
+      
+      Stack content_stack {
+        StackPage history_page {
+          name:"history-page";
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar rightSideHeaderBarHistory {
+              show-title:true;
+              title-widget: Box {
+                margin-top:10;
+                hexpand:true;
+                orientation:horizontal;
+
+                Box {
+                  hexpand:true;
+                  orientation:vertical;
+                  halign:start;
+                  Label {
+                    styles [
+                      "headingB",
+                    ]
+                    halign:start;
+                    label:_("History");
+                  }
+                  Label history_items_label {
+                    styles [
+                      "small-text",
+                    ]
+                    halign:start;
+                    map => $on_history_items_label_map();
+                    label:_("8 items"); //TODO: get this information in code
+                  }
+                }
+                Entry history_search_entry {
+                  halign:end;
+                  max-width-chars:25;
+                  primary-icon-name:"loupe-large-symbolic";
+                  placeholder-text: _("Search");
+                }
+              };
+            }
+            content: ScrolledWindow {
+              styles [
+                "bookmarks-window-stack-page-style-A",
+              ]
+              hscrollbar-policy:never;
+              ColumnView history_column_view{
+                styles [
+                  "column-view-row-style-A",
+                  "bookmarks-window-stack-page-style-A",
+                  "frame"
+                ]
+                margin-top:10;
+                margin-start:20;
+                margin-end:20;
+                margin-bottom:20;
+                hexpand:true;
+                vexpand:true;
+              }
+            };
+          };
+        }
+        StackPage bookmarks_page {
+          name:"bookmarks-page";
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar rightSideHeaderBarBookmarks {
+              show-title:true;
+              title-widget: Box {
+                margin-top:10;
+                hexpand:true;
+                orientation:horizontal;
+
+                Box {
+                  hexpand:true;
+                  orientation:vertical;
+                  halign:start;
+                  Label {
+                    styles [
+                      "headingB",
+                    ]
+                    halign:start;
+                    label:_("Bookmarks");
+                  }
+                  Label bookmarks_items_label {
+                    styles [
+                      "small-text",
+                    ]
+                    halign:start;
+                    map => $on_bookmarks_items_label_map();
+                    label:_("8 items"); //TODO: get this information in code
+                  }
+                }
+                Entry bookmarks_search_entry {
+                  halign:end;
+                  max-width-chars:25;
+                  primary-icon-name:"loupe-large-symbolic";
+                  placeholder-text: _("Search");
+                }
+              };
+            }
+            content: ScrolledWindow {
+              styles [
+                "bookmarks-window-stack-page-style-A",
+              ]
+
+              ColumnView bookmarks_column_view{
+                styles [
+                  "column-view-row-style-A",
+                  "bookmarks-window-stack-page-style-A",
+                  "frame",
+                ]
+                margin-top:10;
+                margin-start:20;
+                margin-end:20;
+                margin-bottom:20;
+                hexpand:true;
+                vexpand:true;
+                activate => $on_bookmarks_column_view_activate();
+              }
+            };
+          };
+        }
+        StackPage reading_list_page {
+          name:"reading-list-page";
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar rightSideHeaderBarReading {
+              show-title:true;
+              title-widget: Box {
+                margin-top:10;
+                hexpand:true;
+                orientation:horizontal;
+
+                Box {
+                  hexpand:true;
+                  orientation:vertical;
+                  halign:start;
+                  Label {
+                    styles [
+                      "headingB",
+                    ]
+                    halign:start;
+                    label:_("Reading List");
+                  }
+                  Label reading_list_items_label {
+                    styles [
+                      "small-text",
+                    ]
+                    halign:start;
+                    map => $on_reading_list_items_label_map();
+                    label:_("8 items"); //TODO: get this information in code
+                  }
+                }
+                Entry reading_list_search_entry {
+                  halign:end;
+                  max-width-chars:25;
+                  primary-icon-name:"loupe-large-symbolic";
+                  placeholder-text: _("Search");
+                }
+              };
+            }
+            content: ScrolledWindow {
+              styles [
+                "bookmarks-window-stack-page-style-A",
+              ]
+              hscrollbar-policy:never;
+              ColumnView reading_column_view{
+                styles [
+                  "column-view-row-style-A",
+                  "bookmarks-window-stack-page-style-A",
+                  "frame",
+                ]
+                margin-top:10;
+                margin-start:20;
+                margin-end:20;
+                margin-bottom:20;
+                hexpand:true;
+                vexpand:true;
+              }
+            };
+          };
+        }
+        StackPage passwords_page {
+          name:"passwords-page";
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar rightSideHeaderBarPasswords {
+              title-widget: Box passwords_headerbar_box {
+                margin-top:10;
+                hexpand:true;
+                orientation:horizontal;
+
+                Box {
+                  hexpand:true;
+                  halign:start;
+                  Label {
+                    styles [
+                      "headingB",
+                    ]
+                    halign:start;
+                    label:_("Passwords");
+                  }
+                }
+                Entry passwords_search_entry {
+                  halign:end;
+                  max-width-chars:25;
+                  primary-icon-name:"loupe-large-symbolic";
+                  placeholder-text: _("Search");
+                }
+              };
+            }
+            content: Box { //inner table
+              vexpand:true;
+              hexpand:true;
+              ScrolledWindow {
+                hexpand:true;
+                vexpand:true;
+                hscrollbar-policy:never;
+
+                ColumnView passwords_column_view{
+                  styles ["frame"]
+                  margin-top:10;
+                  margin-start:20;
+                  margin-end:20;
+                }
+              }
+            };
+            [bottom]
+            Box {
+              styles [
+                "bookmarks-window-rightside-controls",
+              ]
+              valign:end;
+              hexpand:true;
+              Box {
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:20;
+                margin-end:20;
+                spacing:15;
+                hexpand:true;
+                halign:start;
+                MenuButton importFromButton {
+                  valign:center;
+                  label:_("Import From");
+                  menu-model: import_passwords_from_menu;
+                }
+                Button exportButton {
+                  valign:center;
+                  label:_("Export");
+                  clicked => $on_passwords_export_clicked();
+                }
+              }
+              Box {
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:20;
+                margin-end:20;
+                spacing:15;
+                halign:end;
+                Button add_password_button {
+                  valign:center;
+                  label:_("Add Password");
+                  clicked => $on_add_password_clicked();
+                }
+                Button remove_password_button {
+                  valign:center;
+                  label:_("Remove Password");
+                  styles ["destructive-action"]
+                  clicked => $on_remove_password_clicked();
+                  sensitive: false;
+                }
+              }
+            }
+          };
+        }
+        StackPage loginPage { //TODO: link this to the password page in code
+          name:"login-page";
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar rightSideHeaderBarLogin {
+              title-widget: Box login_headerbar_box { //TODO: maybe instead transfer the headerbar from passwords in code, change to not sensitive
+                margin-top:10;
+                hexpand:true;
+                orientation:horizontal;
+
+                Box {
+                  hexpand:true;
+                  halign:start;
+                  Label {
+                    styles [
+                      "headingB",
+                    ]
+                    halign:start;
+                    label:_("Passwords");
+                  }
+                }
+                Entry login_search_entry {
+                  halign:end;
+                  max-width-chars:25;
+                  primary-icon-name:"loupe-large-symbolic";
+                  placeholder-text: _("Search");
+                }
+              };
+            }
+            content: Box { //inner table
+              vexpand:true;
+              hexpand:true;
+              Box {
+                hexpand:true;
+                halign:center;
+                valign:center;
+                spacing:20;
+                orientation:vertical;
+                Image {
+                  pixel-size:256;
+                  icon-name:"padlock2-symbolic";
+                }
+                Label {
+                  label:_("Passwords Are Locked");
+                }
+                Label {
+                  max-width-chars:30; //TODO: wrapping tries to make both rows same length seemingly
+                  wrap:true;
+                  label:_("To unlock passwords, enter the password for the user \"Example User\"."); //TODO: programatically change user here
+                }
+                PasswordEntry login_password_entry {
+                  width-chars:15; //TODO: not working
+                  max-width-chars:5;
+                  show-peek-icon:true; //TODO: wanted?
+                  hexpand:false;
+                }
+              }
+            };
+          };
+        }
+        StackPage extensions_page {
+          name:"extensions-page";
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar rightSideHeaderBarExtensions {
+              show-title:true;
+              title-widget: Box {
+                margin-top:10;
+                hexpand:true;
+                orientation:horizontal;
+                Box {
+                  hexpand:true;
+                  halign:start;
+                  Label {
+                    styles [
+                      "headingB",
+                    ]
+                    halign:start;
+                    label:_("Extensions");
+                  }
+                }
+                Entry extensions_search_entry {
+                  halign:end;
+                  max-width-chars:25;
+                  primary-icon-name:"loupe-large-symbolic";
+                  placeholder-text: _("Search");
+                }
+              };
+            }
+            content: Box { //inner table
+              vexpand:true;
+              hexpand:true;
+              ScrolledWindow {
+                hexpand:true;
+                vexpand:true;
+                hscrollbar-policy:never;
+                ListView extensions_list_view{ //TODO: fill this with bookmarks_dialog_extension_item.blp based items in code
+                  styles [
+                    "bg-inherit",
+                    "navigation-sidebar"
+                  ]
+                  factory: BuilderListItemFactory {
+                    template ListItem {
+                      child: Box {
+                        Grid {
+                          margin-start:10;
+                          margin-end:10;
+                          margin-top:10;
+                          margin-bottom:10;
+                          column-spacing:10;
+                          row-spacing:10;
+                          hexpand:true;
+                          halign:fill;
+                          $UrlImage {
+                            layout {
+                              row:0;
+                              column:0;
+                            }
+                            pixel-size:35;
+                            url: bind ($get_extension_icon_ref(template.item)) as <string>;
+                          }
+                          Box {
+                            layout {
+                              row:0;
+                              column:1;
+                            }
+                            hexpand:true;
+                            orientation:vertical;
+                            Label title_label {
+                              halign:start;
+                              label: bind ($get_extension_title_label(template.item)) as <string>;
+                            }
+                            Label source_label {
+                              halign:start;
+                              label: bind ($get_extension_source_label(template.item)) as <string>;
+                            }
+                          }
+                          Box { //TODO: probably should have these invisible by default otherwise changing that in runtime will keep spacing
+                            layout {
+                              row:1;
+                              column:1;
+                            }
+                            spacing:10;
+                            Button reload_extension_button {
+                              icon-name: "arrow-circular-top-right-symbolic";
+                              //visible: bind ($get_extension_reload_button_visible(template.item)) as <bool>;
+                            }
+                            MenuButton extension_menu_button {
+                              icon-name: "sliders-horizontal";
+                              //menu-model: extension_menu;
+                              map => $on_extension_menu_button_map();
+                            }
+                            Button extension_keyboard_shortcuts_button {
+                              icon-name: "keyboard3-symbolic";
+                              visible: bind ($get_extension_keyboard_shortcuts_button_visible(template.item)) as <bool>;
+                              clicked => $on_extension_keyboard_shortcuts_button_clicked();
+                            }
+                            Button extension_uninstall_button {
+                              label:_("Uninstall");
+                              clicked => $on_extension_uninstall_button_clicked();
+                            }
+                          }
+                          Box {
+                            layout {
+                              row:1;
+                              column:2;
+                            }
+                            halign:end;
+                            Switch {
+                              valign:center;
+                              map => $on_extension_enable_switch_map();
+                              state-set => $on_extension_enable_switch_state_set();
+                            }
+                          }
+                        }
+                      };
+                    }
+                  };
+                  map => $on_extensions_list_view_map();
+                }
+              }
+            };
+            [bottom]
+            Box {
+              styles [
+                "bookmarks-window-rightside-controls",
+              ]
+              valign:end;
+              hexpand:true;
+              Box {
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:20;
+                spacing:15;
+                hexpand:true;
+                halign:fill;
+                MenuButton add_extensions_button {
+                  label:_("Add Extensions");
+                  menu-model:add_extensions_menu;
+                }
+                Adw.SplitButton disable_uninstall_extensions_button {
+                  label:_("Disable All");
+                  menu-model:disable_extensions_menu;
+                }
+                Button update_extensions_button {
+                  label:_("Update");
+                }
+                CheckButton {
+                  hexpand:true;
+                  halign:end;
+                  label:_("Automatic updates");
+                }
+              }
+              Box {
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:20;
+                margin-end:20;
+                spacing:15;
+                halign:end;
+              }
+            }
+          };
+        }
+        StackPage profiles_page {
+          name:"profiles-page";
+          child: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar rightSideHeaderBarProfiles {
+              show-title:true;
+              title-widget: Box {
+                margin-top:10;
+                hexpand:true;
+                orientation:horizontal;
+
+                Box {
+                  hexpand:true;
+                  orientation:vertical;
+                  halign:start;
+                  Label {
+                    styles [
+                      "headingB",
+                    ]
+                    halign:start;
+                    label:_("Profiles");
+                  }
+                  Label profiles_items_label {
+                    styles [
+                      "small-text",
+                    ]
+                    halign:start;
+                    label:_("2 items"); //TODO: get this information in code
+                    map => $on_profiles_items_label_map();
+                  }
+                }
+                Entry profiles_search_entry {
+                  halign:end;
+                  max-width-chars:25;
+                  primary-icon-name:"loupe-large-symbolic";
+                  placeholder-text: _("Search");
+                }
+              };
+            }
+            content: Box { //inner table
+              vexpand:true;
+              hexpand:true;
+              ScrolledWindow {
+                hexpand:true;
+                vexpand:true;
+                hscrollbar-policy:never;
+                ColumnView profiles_column_view{
+                  styles [
+                    "frame"
+                  ]
+                  name:"profiles";
+                  margin-top:10;
+                  margin-start:20;
+                  margin-end:20;
+                }
+              }
+            };
+            [bottom]
+            Box {
+              styles [
+                "bookmarks-window-rightside-controls",
+              ]
+              valign:end;
+              hexpand:true;
+              Box {
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:20;
+                margin-end:20;
+                spacing:15;
+                hexpand:true;
+                halign:start;
+                Button add_profile_button{
+                  label:"New Profile…";
+                  clicked => $on_new_profile_clicked();
+                }
+              }
+              Box {
+                margin-top:20;
+                margin-bottom:20;
+                margin-start:20;
+                margin-end:20;
+                spacing:15;
+                halign:end;
+              }
+            }
+          };
+        }
+      }
+    };
+  }
+}
+
+menu disable_extensions_menu {
+  section {
+    item (_("Disable All"))
+    item (_("Uninstall All"))
+  }
+}
+
+menu add_extensions_menu {
+  section {
+    item {
+      label: _("Install from Firefox Store");
+      action: "win.install-from-firefox-store";
+    }
+    item {
+      label: _("Install from Chrome Store");
+      action: "win.install-from-chrome-store";
+    }
+    item {
+      label: _("Install from Disk…");
+      action: "win.install-from-disk";
+    }
+  }
+  section {
+    item {
+      label: _("Popular Extensions");
+      action: "win.popular-extensions";
+    }
+  }
+}
+
+menu import_passwords_from_menu { // TODO: fill items dynamically
+  section {
+    // TODO: add icons
+    item {
+      label: "Mozilla Firefox";
+      action: "win.import-passwords-from-browser";
+    }
+    item {
+      label: "Chrome";
+      action: "win.import-passwords-from-browser";
+    }
+    item {
+      label: "Opera";
+      action: "win.import-passwords-from-browser";
+    }
+  }
+  section {
+    item {
+      label: "1Password (not implemented yet)";
+      action: "win.import-passwords-from-extension";
+    }
+    item {
+      label: "LastPass (not implemented yet)";
+      action: "win.import-passwords-from-extension";
+    }
+  }
+  section {
+    item {
+      label: _("Passwords CSV File…");
+      action: "win.import-passwords-csv-file";
+    }
+  }
+}

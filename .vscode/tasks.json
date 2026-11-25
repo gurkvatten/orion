@@ -1,0 +1,48 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "debugLaunch",
+			"dependsOrder": "sequence",
+			"command": "gnome-terminal",
+			"args": [
+        "--wait",
+				"--",
+				"bash",
+				"-c",
+				"flatpak uninstall --user --assumeyes --noninteractive ${input:flatpakApplicationId} ; flatpak install --include-sdk --user --assumeyes --noninteractive --no-pull --no-deps --bundle ${command:cmake.launchTargetDirectory}/${command:cmake.buildTargetName}.flatpak && GSK_RENDERER=opengl flatpak run --user --devel ${input:flatpakApplicationId} --debug"
+        //for future debugger use: --filesystem=~/.vscode-server:ro --command=/app/bin/app.gdbserver.sh
+			],
+			"type": "shell",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			}
+        },
+		{
+			"label": "debugStop",
+			"command": "echo TERMINATE",
+			"type": "shell",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			}
+		}
+	],
+    "inputs": [
+        {
+            "id": "flatpakApplicationId",
+            "type": "command",
+            "command": "extension.commandvariable.file.content",
+            "args": {
+                "fileName": "${workspaceFolder}/.vscode/flatpak.application.id.txt"
+            }
+        }
+    ]
+}

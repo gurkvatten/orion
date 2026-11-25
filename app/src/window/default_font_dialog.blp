@@ -1,0 +1,113 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $DefaultFontDialog: Adw.Dialog {
+  content-width: 300;
+  content-height: 200;
+  name: "import-from-extension-dialog";
+  
+  Box {
+    orientation: vertical;
+    spacing: 8;
+    margin-top: 16;
+    margin-end: 16;
+    margin-bottom: 16;
+    margin-start: 16;
+
+    Label {
+      label: _("Default font:");
+      halign: start;
+    }
+
+    FontDialogButton {
+      level: face;
+      use-size: false;
+      dialog: FontDialog {
+        modal: true;
+      };
+    }
+
+    Label {
+      label: _("Font size:");
+      halign: start;
+    }
+
+    DropDown {
+      halign: start;
+      model: StringList {
+        strings [
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "16",
+          "18",
+          "24",
+        ]
+      };
+    }
+
+    Separator {
+      margin-top: 8;
+      margin-bottom: 8;
+    }
+
+    Label {
+      label: _("Monospaced font:");
+      halign: start;
+    }
+
+    FontDialogButton {
+      level: face;
+      use-size: false;
+      dialog: FontDialog {
+        modal: true;
+      };
+    }
+
+    Label {
+      label: _("Font size:");
+      halign: start;
+    }
+
+    DropDown {
+      halign: start;
+      model: StringList {
+        strings [
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "16",
+          "18",
+          "24",
+        ]
+      };
+    }
+    
+    Box {
+      halign: end;
+      hexpand: true;
+
+      Button cancel_button {
+        label: _("Cancel");
+        clicked => $on_cancel_clicked();
+      }
+      Button done_button {
+        sensitive: false; // TODO: implement this
+        label: _("Done");
+        clicked => $on_done_clicked();
+        margin-start: 8;
+        styles ["suggested-action"]
+      }
+    }
+  }
+}
+
+SizeGroup {
+  widgets [cancel_button, done_button]
+}

@@ -1,0 +1,93 @@
+enum ExtensionViewType {
+    Tab = "tab";
+    Popup = "popup";
+
+    [Tags=Firefox]
+    Sidebar = "sidebar";
+};
+
+[AdditionalProperties=false]
+dictionary ExtensionViewFetchProperties {
+    optional ExtensionViewType type;
+    optional integer windowId;
+    optional integer tabId;
+};
+
+callback ExtensionAnyCallback = void(any response);
+callback ExtensionBooleanCallback = void(boolean isAllowedAccess);
+
+[Tags=Chrome,Firefox,Everywhere]
+[Global="extension"]
+interface Extension {
+    [Deprecated]
+    [Implementation=JavaScript("Extension.lastError")]
+    readonly property (RuntimeLastError | undefined) lastError;
+
+    [Implementation=JavaScript("Extension.inIncognitoContext")]
+    readonly property boolean inIncognitoContext;
+
+    [Tags=Chrome]
+    [Deprecated]
+    [Implementation=JavaScript("Extension.sendRequest")]
+    function Promise<any> sendRequest(
+        [Undefined=Missing] optional string extensionId,
+        any request
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    [Implementation=JavaScript("Extension.sendRequest")]
+    function void sendRequest(
+        [Undefined=Missing] optional string extensionId,
+        any request,
+        ExtensionAnyCallback callback
+    );
+
+    [Deprecated]
+    [Implementation=JavaScript("Extension.getURL")]
+    function string getURL(string path);
+
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Extension.getViews")]
+    function sequence<Window> getViews(
+        [Undefined=Missing,Null=Missing]
+        optional ExtensionViewFetchProperties fetchProperties
+    );
+
+    [Tags=BackgroundScript,ExtensionPage]
+    [Implementation=JavaScript("Extension.getBackgroundPage")]
+    function (Window | undefined) getBackgroundPage();
+
+    [Tags=BackgroundScript,ExtensionPage,DevToolsPage,OffscreenDocument]
+    function Promise<boolean> isAllowedIncognitoAccess();
+
+    [Tags=Chrome,BackgroundScript,ExtensionPage,DevToolsPage,OffscreenDocument]
+    function void isAllowedIncognitoAccess(ExtensionBooleanCallback callback);
+
+    [Tags=BackgroundScript,ExtensionPage,DevToolsPage,OffscreenDocument]
+    function Promise<boolean> isAllowedFileSchemeAccess();
+
+    [Tags=Chrome,BackgroundScript,ExtensionPage,DevToolsPage,OffscreenDocument]
+    function void isAllowedFileSchemeAccess(ExtensionBooleanCallback callback);
+
+    [Tags=Chrome,BackgroundScript,ExtensionPage,DevToolsPage,OffscreenDocument]
+    function void setUpdateUrlData([MaxLength=1024] string data);
+
+    [Tags=Chrome]
+    [Deprecated]
+    [Implementation=JavaScript("Extension.events")]
+    event onRequest(
+        optional any request,
+        MessageSender sender,
+        AnyCallback sendResponse
+    );
+
+    [Tags=Chrome]
+    [Deprecated]
+    [Implementation=JavaScript("Extension.events")]
+    event onRequestExternal(
+        optional any request,
+        MessageSender sender,
+        AnyCallback sendResponse
+    );
+};

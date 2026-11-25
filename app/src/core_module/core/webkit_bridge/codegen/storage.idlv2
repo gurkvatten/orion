@@ -1,0 +1,255 @@
+// Chromium: extensions/common/api/storage.json
+// Firefox:  toolkit/components/extensions/schemas/storage.json
+
+enum StorageAccessLevel {
+    TrustedContexts = "TRUSTED_CONTEXTS";
+    TrustedAndUntrustedContexts = "TRUSTED_AND_UNTRUSTED_CONTEXTS";
+};
+
+[AdditionalProperties=false]
+dictionary StorageAccessLevelOptions {
+    StorageAccessLevel accessLevel;
+};
+
+[AdditionalProperties=false]
+dictionary StorageChange {
+    optional any oldValue;
+    optional any newValue;
+};
+
+callback StorageObjectCallback = void(object items);
+callback StorageKeysCallback = void(sequence<string> keys);
+callback StorageBytesCallback = void(number bytesInUse);
+callback StorageVoidCallback = void();
+callback StorageAreaChangedListener = void(object changes);
+callback StorageChangedListener = void(object changes, string areaName);
+
+[Tags=Chrome,Firefox,Everywhere]
+[Permissions=storage]
+[Global="storage"]
+interface Storage {
+    event onChanged: StorageChangedListener;
+};
+
+[Tags=Chrome,Firefox,Everywhere]
+[Permissions=storage]
+[Global="storage.local"]
+interface StorageAreaLocal {
+    [Implementation=JavaScript("StorageAreaLocal.QUOTA_BYTES")]
+    readonly property number QUOTA_BYTES;
+
+    function Promise<object> get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys
+    );
+    function void get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys,
+        StorageObjectCallback callback
+    );
+
+    function Promise<sequence<string>> getKeys();
+    function void getKeys(StorageKeysCallback callback);
+
+    function Promise<number> getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys
+    );
+    function void getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys,
+        StorageBytesCallback callback
+    );
+
+    function Promise<void> set(object items);
+    function void set(object items, StorageVoidCallback callback);
+
+    function Promise<void> remove((string | sequence<string>) keys);
+    function void remove(
+        (string | sequence<string>) keys,
+        StorageVoidCallback callback
+    );
+
+    function Promise<void> clear();
+    function void clear(StorageVoidCallback callback);
+
+    [Tags=BackgroundScript,ExtensionPage]
+    function Promise<void> setAccessLevel(StorageAccessLevelOptions accessOptions);
+    [Tags=BackgroundScript,ExtensionPage]
+    function void setAccessLevel(
+        StorageAccessLevelOptions accessOptions,
+        StorageVoidCallback callback
+    );
+
+    event onChanged: StorageAreaChangedListener;
+};
+
+[Tags=Chrome,Firefox,Everywhere]
+[Permissions=storage]
+[Global="storage.sync"]
+interface StorageAreaSync {
+    [Implementation=JavaScript("StorageAreaSync.QUOTA_BYTES")]
+    readonly property number QUOTA_BYTES;
+    [Implementation=JavaScript("StorageAreaSync.QUOTA_BYTES_PER_ITEM")]
+    readonly property number QUOTA_BYTES_PER_ITEM;
+    [Implementation=JavaScript("StorageAreaSync.MAX_ITEMS")]
+    readonly property number MAX_ITEMS;
+    [Implementation=JavaScript("StorageAreaSync.MAX_WRITE_OPERATIONS_PER_HOUR")]
+    readonly property number MAX_WRITE_OPERATIONS_PER_HOUR;
+    [Implementation=JavaScript("StorageAreaSync.MAX_WRITE_OPERATIONS_PER_MINUTE")]
+    readonly property number MAX_WRITE_OPERATIONS_PER_MINUTE;
+    [Deprecated]
+    [Implementation=JavaScript("StorageAreaSync.MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE")]
+    readonly property number MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE;
+
+    function Promise<object> get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys
+    );
+    function void get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys,
+        StorageObjectCallback callback
+    );
+
+    function Promise<sequence<string>> getKeys();
+    function void getKeys(StorageKeysCallback callback);
+
+    function Promise<number> getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys
+    );
+    function void getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys,
+        StorageBytesCallback callback
+    );
+
+    function Promise<void> set(object items);
+    function void set(object items, StorageVoidCallback callback);
+
+    function Promise<void> remove((string | sequence<string>) keys);
+    function void remove(
+        (string | sequence<string>) keys,
+        StorageVoidCallback callback
+    );
+
+    function Promise<void> clear();
+    function void clear(StorageVoidCallback callback);
+
+    [Tags=BackgroundScript,ExtensionPage]
+    function Promise<void> setAccessLevel(StorageAccessLevelOptions accessOptions);
+    [Tags=BackgroundScript,ExtensionPage]
+    function void setAccessLevel(
+        StorageAccessLevelOptions accessOptions,
+        StorageVoidCallback callback
+    );
+
+    event onChanged: StorageAreaChangedListener;
+};
+
+[Tags=Chrome,Firefox,Everywhere]
+[Permissions=storage]
+[Global="storage.managed"]
+interface StorageAreaManaged {
+    [Implementation=JavaScript("StorageAreaManaged.QUOTA_BYTES")]
+    readonly property number QUOTA_BYTES;
+
+    function Promise<object> get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys
+    );
+    function void get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys,
+        StorageObjectCallback callback
+    );
+
+    function Promise<sequence<string>> getKeys();
+    function void getKeys(StorageKeysCallback callback);
+
+    function Promise<number> getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys
+    );
+    function void getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys,
+        StorageBytesCallback callback
+    );
+
+    function Promise<void> set(object items);
+    function void set(object items, StorageVoidCallback callback);
+
+    function Promise<void> remove((string | sequence<string>) keys);
+    function void remove(
+        (string | sequence<string>) keys,
+        StorageVoidCallback callback
+    );
+
+    function Promise<void> clear();
+    function void clear(StorageVoidCallback callback);
+
+    [Tags=BackgroundScript,ExtensionPage]
+    function Promise<void> setAccessLevel(StorageAccessLevelOptions accessOptions);
+    [Tags=BackgroundScript,ExtensionPage]
+    function void setAccessLevel(
+        StorageAccessLevelOptions accessOptions,
+        StorageVoidCallback callback
+    );
+
+    event onChanged: StorageAreaChangedListener;
+};
+
+[Tags=Chrome,Firefox,Everywhere]
+[Permissions=storage]
+[Global="storage.session"]
+interface StorageAreaSession {
+    [Implementation=JavaScript("StorageAreaSession.QUOTA_BYTES")]
+    readonly property number QUOTA_BYTES;
+
+    function Promise<object> get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys
+    );
+    function void get(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string> | object) keys,
+        StorageObjectCallback callback
+    );
+
+    function Promise<sequence<string>> getKeys();
+    function void getKeys(StorageKeysCallback callback);
+
+    function Promise<number> getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys
+    );
+    function void getBytesInUse(
+        [Undefined=Missing,Null=Missing]
+        optional (string | sequence<string>) keys,
+        StorageBytesCallback callback
+    );
+
+    function Promise<void> set(object items);
+    function void set(object items, StorageVoidCallback callback);
+
+    function Promise<void> remove((string | sequence<string>) keys);
+    function void remove(
+        (string | sequence<string>) keys,
+        StorageVoidCallback callback
+    );
+
+    function Promise<void> clear();
+    function void clear(StorageVoidCallback callback);
+
+    [Tags=BackgroundScript,ExtensionPage]
+    function Promise<void> setAccessLevel(StorageAccessLevelOptions accessOptions);
+    [Tags=BackgroundScript,ExtensionPage]
+    function void setAccessLevel(
+        StorageAccessLevelOptions accessOptions,
+        StorageVoidCallback callback
+    );
+
+    event onChanged: StorageAreaChangedListener;
+};

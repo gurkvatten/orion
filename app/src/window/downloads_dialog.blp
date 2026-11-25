@@ -1,0 +1,104 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $DownloadsDialog: Adw.Dialog {
+  width-request: 500;
+  follows-content-size: true;
+  Box content_box {
+    //implemented as padding to properly claim clicks on the contents of the dialog
+    styles [
+      "padding-8px",
+    ]
+    orientation: vertical;
+
+    Box {
+      hexpand: true;
+      halign: fill;
+
+      Label {
+        label: _("Downloads");
+      }
+
+      Box {
+        halign: end;
+        hexpand: true;
+
+        Button clear_button {
+          label: _("Clear");
+          clicked => $on_clear_button_clicked();
+          sensitive: bind template.show_listview;
+        }
+
+        Button move_to_trash_button{
+          label: _("Move to Trash");
+          margin-start: 6;
+          clicked => $on_move_to_trash_button_clicked();
+          sensitive: bind template.show_listview;
+        }
+      }
+    }
+
+    ScrolledWindow listview_container {
+      max-content-height: 450;
+      propagate-natural-height: true;
+      hscrollbar-policy: never;
+      visible: bind template.show-listview;
+      ListView downloads_listview {
+        styles [
+          "boxed-list-separate",
+          "navigation-sidebar",
+        ]
+        margin-top: 8;
+        margin-bottom: 8;
+        single-click-activate: true;
+        activate => $on_downloads_listview_activate();
+        factory: BuilderListItemFactory {
+          template ListItem {
+            //context menu:
+              //open
+              //show in files
+              //copy address
+              //remove from list
+            child: $DownloadsItemWidget {
+              item: bind template.item;
+              context-menu-closed => $on_context_menu_closed();
+            };
+          }
+        };
+      }
+    }
+
+    //TODO: an empty message
+    Box empty_list_message {
+      visible: bind $invert_bool(template.show-listview) as <bool>;
+      hexpand:true;
+      Label {
+        styles [
+          "bold-text"
+        ]
+        hexpand: true;
+        halign: center;
+        label: _("No Downloads");
+        margin-top: 8;
+        margin-bottom: 8;
+      }
+    }
+  }
+  GestureClick {
+    button: 1;
+    propagation-phase: bubble;
+    pressed => $downloads_dialog_on_dialog_clicked(content_box);
+    //detects clicks outside of the content box, closing dialog if so
+    //(dialog widget covers whole window)
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+  widgets [clear_button, move_to_trash_button]
+}
+
+// SizeGroup {
+//   mode: horizontal;
+//   widgets [listview_container]
+// }

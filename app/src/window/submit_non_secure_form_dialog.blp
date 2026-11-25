@@ -1,0 +1,86 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $SubmitNonSecureFormDialog: Adw.Dialog {
+  content-width: 350;
+  content-height: 250;
+  title: _("Submit Non Secure Form");
+  //TODO nastav jmeno
+
+  Adw.ToolbarView {
+    //[top]
+   // Adw.HeaderBar {}
+
+   Box {
+      orientation: vertical;
+      Box {
+        margin-top: 20;
+        halign: center;
+        Image {
+          name: "orion-logo";
+          icon-name: "orion-logo";
+          pixel-size: 49;
+          margin-start: 40;
+          margin-end: 40;
+        }
+      }
+
+      Box {          
+        margin-top: 20;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {
+         styles [
+          "bold-text"
+          ]
+          label: _("This is a non-secure form");
+        }
+      }
+      
+      Box {
+        margin-top: 15;
+        margin-start: 20;
+        margin-end: 20;
+        halign: center;
+        Label {     
+          wrap: true;
+          max-width-chars: 60;
+          width-chars:15;
+          justify: center;
+          label: _("This form will be sent in a way that is not secure. Are you sure you want to send it?");         
+          }
+        }  
+        Box {
+          orientation: horizontal;
+          margin-top: 20;
+          margin-bottom: 20;
+          margin-end: 20;
+          margin-start: 20;
+          spacing: 10;
+
+          Button cancel_button {
+            label: _("Cancel");
+            hexpand: true; 
+            halign: fill; 
+            valign: center;
+            clicked => $on_close_button_clicked();
+          }
+          
+          Button enable_button{
+            label: _("Submit");
+            styles ["suggested-action"]
+            hexpand: true; 
+            halign: fill; 
+            valign: center;
+          }
+          
+        }
+      }
+    }
+  }
+
+SizeGroup {
+  mode: horizontal;
+  widgets [enable_button, cancel_button]
+}
