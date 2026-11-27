@@ -1,0 +1,83 @@
+name: Build Debian package
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip WebKit submodule
+        run: git config --global submodule.third_party/WebKit.update none
+
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Build .deb
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          cat > "$RUNNER_TEMP/build-deb.sh" <<'SCRIPT'
+          set -eu
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build pkg-config \
+            libgtk-4-dev libadwaita-1-dev libsecret-1-dev \
+            libfontconfig1-dev libpango1.0-dev libsoup-3.0-dev \
+            python3 python3-gi golang-go gettext libbz2-dev libwebp-dev \
+            dpkg-dev ca-certificates
+
+          cmake -S . -B build/deb -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DORION_COMMON_USE_GLIB=ON
+          cmake --build build/deb --parallel 2
+
+          package_root="$PWD/package-root"
+          package_dir="$PWD/dist"
+          mkdir -p "$package_root/DEBIAN" "$package_dir"
+          DESTDIR="$package_root" cmake --install build/deb
+
+          app_version="$(sed -n 's/^[[:space:]]*set(APPLICATION_VERSION "\([^"]*\)").*/\1/p' Manifest.cmake)"
+          test -n "$app_version"
+          short_sha="$(printf '%.7s' "$GITHUB_SHA")"
+          package_version="${app_version}+git${GITHUB_RUN_NUMBER}.${short_sha}"
+          architecture="$(dpkg --print-architecture)"
+          depends="$(dpkg-shlibdeps -O -e"$package_root/usr/bin/oriongtk" | sed -n 's/^shlibs:Depends=//p')"
+          test -n "$depends"
+
+          cat > "$package_root/DEBIAN/control" <<CONTROL
+          Package: oriongtk
+          Version: $package_version
+          Section: web
+          Priority: optional
+          Architecture: $architecture
+          Maintainer: Orion GTK developers <noreply@github.com>
+          Depends: $depends
+          Description: Orion GTK web browser
+           Native GTK frontend for the Orion browser.
+          CONTROL
+
+          dpkg-deb --build --root-owner-group "$package_root" \
+            "$package_dir/oriongtk_${package_version}_${architecture}.deb"
+          SCRIPT
+
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/src" \
+            --volume "$RUNNER_TEMP/build-deb.sh:/tmp/build-deb.sh:ro" \
+            --workdir /src \
+            --env GITHUB_SHA \
+            --env GITHUB_RUN_NUMBER \
+            debian:trixie-slim sh /tmp/build-deb.sh
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: orion-deb
+          path: dist/*.deb
+          if-no-files-found: error
